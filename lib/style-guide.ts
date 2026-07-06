@@ -62,5 +62,6 @@ export const componentNames = [
   'Scrollspy',
   'Spinners',
   'Toasts',
-  'Tooltips'
+  'Tooltips',
+  'WYSIWYG editor'
 ] as const;

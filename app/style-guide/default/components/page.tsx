@@ -3,6 +3,7 @@ import {
   PreviewPanel,
   StyleGuideSection
 } from 'app/style-guide/default/_components/style-guide-section';
+import { DefaultWysiwygEditor } from 'app/style-guide/default/components/_components/default-wysiwyg-editor';
 import { componentNames } from 'lib/style-guide';
 
 export default function StyleGuideComponentsPage() {
@@ -175,6 +176,10 @@ export default function StyleGuideComponentsPage() {
             </div>
           </PreviewPanel>
         </div>
+      </StyleGuideSection>
+
+      <StyleGuideSection eyebrow="Editor" title="WYSIWYG editor">
+        <DefaultWysiwygEditor />
       </StyleGuideSection>
     </>
   );
