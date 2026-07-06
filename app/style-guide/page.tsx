@@ -12,21 +12,6 @@ const styleGuides = [
     desc: '강한 보더 라인과 세리프 서체를 조합한 지면 매거진 스타일입니다.'
   },
   {
-    href: '/style-guide/glassmorphism',
-    label: 'Glassmorphism',
-    desc: '배경 이미지를 받쳐주는 반투명 유리 질감의 디자인입니다.'
-  },
-  {
-    href: '/style-guide/ios',
-    label: 'iOS / iPadOS',
-    desc: '큰 터치 영역과 부드러운 카드형 인터페이스의 모바일 친화 스타일입니다.'
-  },
-  {
-    href: '/style-guide/mac-os-native',
-    label: 'macOS Native',
-    desc: '세밀한 블러와 정밀한 네이티브 데스크톱 감성의 스타일입니다.'
-  },
-  {
     href: '/style-guide/minimalism',
     label: 'Minimalism',
     desc: '불필요한 요소를 극도로 절제한 중립적 레이아웃입니다.'
