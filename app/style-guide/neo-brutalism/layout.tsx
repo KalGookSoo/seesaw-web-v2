@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/neo-brutalism/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import neoBrutalismTheme from 'styles/themes/neo-brutalism.module.css';
+import { ArrowLeft } from 'lucide-react';
+import neoBrutalismTheme from '@/app/style-guide/neo-brutalism/neo-brutalism.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="border-b-4 border-[var(--neo-brutalism-separator)] bg-[var(--neo-brutalism-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-5 inline-flex w-fit items-center gap-2 border-2 border-[var(--neo-brutalism-separator)] bg-[var(--neo-brutalism-warning)] px-3 py-1.5 text-sm font-black text-[var(--neo-brutalism-label)] uppercase shadow-[var(--neo-brutalism-shadow)] transition hover:-translate-x-0.5 hover:-translate-y-0.5"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Style Guide Index
+            </Link>
             <p className="w-fit border-2 border-[var(--neo-brutalism-separator)] bg-[var(--neo-brutalism-surface-grouped)] px-3 py-1 text-sm font-black text-[var(--neo-brutalism-label)] uppercase shadow-[var(--neo-brutalism-shadow)]">
               Seesaw Web v2
             </p>

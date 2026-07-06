@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/windows-98-fluent/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import windows98FluentTheme from 'styles/themes/windows-98-fluent.module.css';
+import { ArrowLeft } from 'lucide-react';
+import windows98FluentTheme from '@/app/style-guide/windows-98-fluent/windows-98-fluent.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="border-b-2 border-[var(--windows-98-fluent-separator)] bg-[var(--windows-98-fluent-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-5 inline-flex w-fit items-center gap-2 border border-[var(--windows-98-fluent-separator)] bg-[var(--windows-98-fluent-fill)] px-3 py-1.5 font-mono text-sm font-bold text-[var(--windows-98-fluent-label)] shadow-[var(--windows-98-fluent-shadow)] transition hover:bg-[var(--windows-98-fluent-surface-elevated)]"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              ..\STYLE-GUIDE
+            </Link>
             <p className="w-fit border border-[var(--windows-98-fluent-separator)] bg-[var(--windows-98-fluent-fill)] px-3 py-1 font-mono text-sm font-bold text-[var(--windows-98-fluent-label)] shadow-[var(--windows-98-fluent-inset)]">
               C:\SEESAW\WEB_V2.EXE
             </p>

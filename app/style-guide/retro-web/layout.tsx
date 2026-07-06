@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/retro-web/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import retroWebTheme from 'styles/themes/retro-web.module.css';
+import { ArrowLeft } from 'lucide-react';
+import retroWebTheme from '@/app/style-guide/retro-web/retro-web.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="border-b-2 border-[var(--retro-web-separator)] bg-[var(--retro-web-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-5 inline-flex w-fit items-center gap-2 border border-[var(--retro-web-separator)] bg-[var(--retro-web-fill)] px-3 py-1.5 font-mono text-sm font-bold text-[var(--retro-web-secondary-label)] shadow-[var(--retro-web-shadow-soft)] transition hover:bg-[var(--retro-web-accent-soft)] hover:text-[var(--retro-web-blue)]"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              ../STYLE-GUIDE
+            </Link>
             <p className="w-fit border border-[var(--retro-web-separator)] bg-[var(--retro-web-accent-soft)] px-3 py-1 font-mono text-sm font-bold text-[var(--retro-web-blue)] shadow-[var(--retro-web-shadow-soft)]">
               SEESAW_WEB_V2.EXE
             </p>

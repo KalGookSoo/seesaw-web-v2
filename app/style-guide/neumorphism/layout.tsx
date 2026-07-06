@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/neumorphism/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import neumorphismTheme from 'styles/themes/neumorphism.module.css';
+import { ArrowLeft } from 'lucide-react';
+import neumorphismTheme from '@/app/style-guide/neumorphism/neumorphism.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="bg-[var(--neumorphism-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-[var(--neumorphism-surface)] px-4 py-2 text-sm font-semibold text-[var(--neumorphism-secondary-label)] shadow-[var(--neumorphism-shadow-soft)] transition hover:text-[var(--neumorphism-label)]"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Style Guide Index
+            </Link>
             <p className="w-fit rounded-full bg-[var(--neumorphism-surface)] px-4 py-2 text-sm font-semibold text-[var(--neumorphism-blue)] shadow-[var(--neumorphism-shadow-soft)]">
               Seesaw Web v2
             </p>

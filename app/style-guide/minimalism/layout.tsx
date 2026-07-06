@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/minimalism/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import minimalismTheme from 'styles/themes/minimalism.module.css';
+import { ArrowLeft } from 'lucide-react';
+import minimalismTheme from '@/app/style-guide/minimalism/minimalism.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="border-b border-[var(--minimalism-separator)] bg-[var(--minimalism-surface)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-5 inline-flex w-fit items-center gap-2 rounded-lg border border-[var(--minimalism-separator)] bg-[var(--minimalism-surface)] px-3 py-1.5 text-sm font-medium text-[var(--minimalism-secondary-label)] transition hover:bg-[var(--minimalism-fill)] hover:text-[var(--minimalism-label)]"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Style Guide Index
+            </Link>
             <p className="text-sm font-medium text-[var(--minimalism-secondary-label)]">
               Seesaw Web v2
             </p>

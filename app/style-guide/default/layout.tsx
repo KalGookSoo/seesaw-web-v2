@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/default/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import defaultTheme from 'styles/themes/default.module.css';
+import { ArrowLeft } from 'lucide-react';
+import defaultTheme from '@/app/style-guide/default/default.module.css';
 
 export default function StyleGuideLayout({
   children
@@ -15,6 +17,13 @@ export default function StyleGuideLayout({
       <header className="border-b border-[var(--default-separator)] bg-[var(--default-surface)]/80 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 lg:flex-row lg:items-end lg:justify-between lg:px-8">
           <div>
+            <Link
+              className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-[var(--default-separator)] bg-[var(--default-surface)] px-3 py-1.5 text-sm font-medium text-[var(--default-secondary-label)] shadow-[var(--default-shadow-soft)] transition hover:bg-[var(--default-fill)] hover:text-[var(--default-label)]"
+              href="/style-guide"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Style Guide Index
+            </Link>
             <p className="text-sm font-semibold text-[var(--default-blue)] uppercase">
               Seesaw Web v2
             </p>
