@@ -1,17 +1,33 @@
 .theme {
-  --minimalism-background: #ffffff;
+  --minimalism-background: color-mix(
+    in srgb,
+    var(--site-background, #ffffff) 10%,
+    #ffffff
+  );
   --minimalism-surface: #ffffff;
   --minimalism-surface-elevated: #ffffff;
-  --minimalism-surface-grouped: #fafafa;
+  --minimalism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #fafafa) 18%,
+    #fafafa
+  );
   --minimalism-fill: #f4f4f5;
   --minimalism-fill-strong: #e4e4e7;
   --minimalism-separator: #e4e4e7;
   --minimalism-label: #18181b;
   --minimalism-secondary-label: #52525b;
   --minimalism-tertiary-label: #a1a1aa;
-  --minimalism-accent: #18181b;
-  --minimalism-accent-soft: #f4f4f5;
-  --minimalism-accent-muted: #3f3f46;
+  --minimalism-accent: var(--site-accent, #18181b);
+  --minimalism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #18181b) 8%,
+    #ffffff
+  );
+  --minimalism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #18181b) 70%,
+    #18181b
+  );
   --minimalism-accent-contrast: #ffffff;
   --minimalism-success: #166534;
   --minimalism-success-soft: #f0fdf4;
@@ -56,19 +72,35 @@
 }
 
 :global(.dark) .theme {
-  --minimalism-background: #09090b;
+  --minimalism-background: color-mix(
+    in srgb,
+    var(--site-background, #09090b) 8%,
+    #09090b
+  );
   --minimalism-surface: #09090b;
   --minimalism-surface-elevated: #18181b;
-  --minimalism-surface-grouped: #111113;
+  --minimalism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #111113) 12%,
+    #111113
+  );
   --minimalism-fill: #18181b;
   --minimalism-fill-strong: #27272a;
   --minimalism-separator: #27272a;
   --minimalism-label: #fafafa;
   --minimalism-secondary-label: #a1a1aa;
   --minimalism-tertiary-label: #71717a;
-  --minimalism-accent: #fafafa;
-  --minimalism-accent-soft: #18181b;
-  --minimalism-accent-muted: #e4e4e7;
+  --minimalism-accent: var(--site-accent, #fafafa);
+  --minimalism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #fafafa) 14%,
+    #09090b
+  );
+  --minimalism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #fafafa) 70%,
+    #ffffff
+  );
   --minimalism-accent-contrast: #09090b;
   --minimalism-success: #86efac;
   --minimalism-success-soft: #052e16;

@@ -1,5 +1,5 @@
 .theme {
-  --windows-98-fluent-background: #008080;
+  --windows-98-fluent-background: var(--site-background, #008080);
   --windows-98-fluent-surface: #c0c0c0;
   --windows-98-fluent-surface-elevated: #d4d0c8;
   --windows-98-fluent-surface-grouped: #b8b4ad;
@@ -9,9 +9,17 @@
   --windows-98-fluent-label: #000000;
   --windows-98-fluent-secondary-label: #303030;
   --windows-98-fluent-tertiary-label: #5f5f5f;
-  --windows-98-fluent-accent: #000080;
-  --windows-98-fluent-accent-soft: #c7d8ff;
-  --windows-98-fluent-accent-muted: #0a246a;
+  --windows-98-fluent-accent: var(--site-accent, #000080);
+  --windows-98-fluent-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #000080) 22%,
+    #ffffff
+  );
+  --windows-98-fluent-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #000080) 84%,
+    #000000
+  );
   --windows-98-fluent-accent-contrast: #ffffff;
   --windows-98-fluent-success: #008000;
   --windows-98-fluent-success-soft: #c9dfc4;
@@ -63,7 +71,11 @@
 }
 
 :global(.dark) .theme {
-  --windows-98-fluent-background: #004747;
+  --windows-98-fluent-background: color-mix(
+    in srgb,
+    var(--site-background, #004747) 55%,
+    #004747
+  );
   --windows-98-fluent-surface: #8e8e8e;
   --windows-98-fluent-surface-elevated: #a6a39e;
   --windows-98-fluent-surface-grouped: #77736d;
@@ -73,9 +85,17 @@
   --windows-98-fluent-label: #050505;
   --windows-98-fluent-secondary-label: #202020;
   --windows-98-fluent-tertiary-label: #383838;
-  --windows-98-fluent-accent: #0a246a;
-  --windows-98-fluent-accent-soft: #6f87b7;
-  --windows-98-fluent-accent-muted: #07184a;
+  --windows-98-fluent-accent: var(--site-accent, #0a246a);
+  --windows-98-fluent-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #0a246a) 32%,
+    #a6a39e
+  );
+  --windows-98-fluent-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #0a246a) 82%,
+    #000000
+  );
   --windows-98-fluent-accent-contrast: #ffffff;
   --windows-98-fluent-success: #0f6b0f;
   --windows-98-fluent-success-soft: #8ba586;

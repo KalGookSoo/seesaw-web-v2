@@ -1,17 +1,33 @@
 .theme {
-  --neumorphism-background: #eef3ef;
-  --neumorphism-surface: #eef3ef;
+  --neumorphism-background: color-mix(
+    in srgb,
+    var(--site-background, #eef3ef) 30%,
+    #eef3ef
+  );
+  --neumorphism-surface: var(--neumorphism-background);
   --neumorphism-surface-elevated: #f6faf7;
-  --neumorphism-surface-grouped: #e7eee9;
+  --neumorphism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #e7eee9) 35%,
+    #e7eee9
+  );
   --neumorphism-fill: #e3ebe6;
   --neumorphism-fill-strong: #d7e1dc;
   --neumorphism-separator: rgba(96, 120, 108, 0.18);
   --neumorphism-label: #28342e;
   --neumorphism-secondary-label: #5f7068;
   --neumorphism-tertiary-label: #8a9992;
-  --neumorphism-accent: #7aa7a0;
-  --neumorphism-accent-soft: #d8ebe8;
-  --neumorphism-accent-muted: #5f8f88;
+  --neumorphism-accent: var(--site-accent, #7aa7a0);
+  --neumorphism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #7aa7a0) 18%,
+    #eef3ef
+  );
+  --neumorphism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #7aa7a0) 72%,
+    #28342e
+  );
   --neumorphism-accent-contrast: #ffffff;
   --neumorphism-success: #72ad82;
   --neumorphism-success-soft: #dcefe0;
@@ -67,19 +83,35 @@
 }
 
 :global(.dark) .theme {
-  --neumorphism-background: #202824;
-  --neumorphism-surface: #202824;
+  --neumorphism-background: color-mix(
+    in srgb,
+    var(--site-background, #202824) 18%,
+    #202824
+  );
+  --neumorphism-surface: var(--neumorphism-background);
   --neumorphism-surface-elevated: #27302b;
-  --neumorphism-surface-grouped: #1c231f;
+  --neumorphism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #1c231f) 22%,
+    #1c231f
+  );
   --neumorphism-fill: #29332e;
   --neumorphism-fill-strong: #334039;
   --neumorphism-separator: rgba(224, 235, 229, 0.12);
   --neumorphism-label: #edf4f0;
   --neumorphism-secondary-label: #bdcbc4;
   --neumorphism-tertiary-label: #8ea098;
-  --neumorphism-accent: #9bc9c1;
-  --neumorphism-accent-soft: #263d39;
-  --neumorphism-accent-muted: #b5d9d3;
+  --neumorphism-accent: var(--site-accent, #9bc9c1);
+  --neumorphism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #9bc9c1) 20%,
+    #202824
+  );
+  --neumorphism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #9bc9c1) 74%,
+    #ffffff
+  );
   --neumorphism-accent-contrast: #1f2a25;
   --neumorphism-success: #a8d8b2;
   --neumorphism-success-soft: #24392a;

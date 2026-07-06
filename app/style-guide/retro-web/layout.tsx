@@ -3,6 +3,11 @@ import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/retro-web/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
 import { ArrowLeft } from 'lucide-react';
+
+import {
+  ThemeColorControls,
+  ThemeColorPlayground
+} from '@/app/style-guide/_components/theme-color-playground';
 import retroWebTheme from '@/app/style-guide/retro-web/retro-web.module.css';
 
 export default function StyleGuideLayout({
@@ -11,12 +16,14 @@ export default function StyleGuideLayout({
   children: ReactNode;
 }>) {
   return (
-    <main
+    <ThemeColorPlayground
       className={`${retroWebTheme.theme} min-h-dvh bg-[var(--retro-web-background)] font-sans text-[var(--retro-web-label)] transition-colors duration-200`}
+      initialAccentColor="#2f6f73"
+      initialBackgroundColor="#d8c3a5"
     >
       <header className="border-b-2 border-[var(--retro-web-separator)] bg-[var(--retro-web-surface)]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-start lg:px-8">
+          <div className="min-w-0">
             <Link
               className="mb-5 inline-flex w-fit items-center gap-2 border border-[var(--retro-web-separator)] bg-[var(--retro-web-fill)] px-3 py-1.5 font-mono text-sm font-bold text-[var(--retro-web-secondary-label)] shadow-[var(--retro-web-shadow-soft)] transition hover:bg-[var(--retro-web-accent-soft)] hover:text-[var(--retro-web-blue)]"
               href="/style-guide"
@@ -35,10 +42,18 @@ export default function StyleGuideLayout({
               라이트/다크 모드에 자연스럽게 녹아드는 디자인 시스템 문서입니다.
             </p>
           </div>
-          <div className="border border-[var(--retro-web-separator)] bg-[var(--retro-web-fill)] px-4 py-3 font-mono text-sm text-[var(--retro-web-secondary-label)] shadow-[var(--retro-web-shadow)]">
-            /style-guide/retro-web
+          <div className="flex min-w-0 flex-col gap-4">
+            <div className="w-full border border-[var(--retro-web-separator)] bg-[var(--retro-web-fill)] px-4 py-3 font-mono text-sm text-[var(--retro-web-secondary-label)] shadow-[var(--retro-web-shadow)]">
+              /style-guide/retro-web
+            </div>
+            <ThemeColorControls
+              className="w-full space-y-3 border border-[var(--retro-web-separator)] bg-[var(--retro-web-fill)] px-4 py-3 shadow-[var(--retro-web-shadow)]"
+              inputClassName="size-8 rounded-none border border-[var(--retro-web-separator)] bg-transparent p-0 shadow-[var(--retro-web-inset)]"
+              labelClassName="font-mono text-xs font-bold text-[var(--retro-web-secondary-label)]"
+              resetButtonClassName="border border-[var(--retro-web-separator)] bg-[var(--retro-web-surface)] px-2 py-1 font-mono text-xs font-bold text-[var(--retro-web-secondary-label)] shadow-[var(--retro-web-shadow-soft)] transition hover:bg-[var(--retro-web-accent-soft)] hover:text-[var(--retro-web-blue)]"
+            />
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
         <div className="border-t border-[var(--retro-web-line-soft)] bg-[var(--retro-web-fill)]">
           <div className="mx-auto max-w-7xl">
@@ -50,6 +65,6 @@ export default function StyleGuideLayout({
       <div className="mx-auto max-w-7xl space-y-10 px-6 py-10 lg:px-8">
         {children}
       </div>
-    </main>
+    </ThemeColorPlayground>
   );
 }

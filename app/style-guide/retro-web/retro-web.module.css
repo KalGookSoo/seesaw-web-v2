@@ -1,17 +1,33 @@
 .theme {
-  --retro-web-background: #d8c3a5;
+  --retro-web-background: color-mix(
+    in srgb,
+    var(--site-background, #d8c3a5) 35%,
+    #d8c3a5
+  );
   --retro-web-surface: #ead7b5;
   --retro-web-surface-elevated: #f3e4c8;
-  --retro-web-surface-grouped: #c9b28d;
+  --retro-web-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #c9b28d) 28%,
+    #c9b28d
+  );
   --retro-web-fill: #bda37b;
   --retro-web-fill-strong: #a98b62;
   --retro-web-separator: #4f3b25;
   --retro-web-label: #2b2118;
   --retro-web-secondary-label: #5a442c;
   --retro-web-tertiary-label: #7b6548;
-  --retro-web-accent: #2f6f73;
-  --retro-web-accent-soft: #b8c7b0;
-  --retro-web-accent-muted: #22565a;
+  --retro-web-accent: var(--site-accent, #2f6f73);
+  --retro-web-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #2f6f73) 26%,
+    #d8c3a5
+  );
+  --retro-web-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #2f6f73) 76%,
+    #2b2118
+  );
   --retro-web-accent-contrast: #f8ead0;
   --retro-web-success: #5d7c3b;
   --retro-web-success-soft: #c5c99b;
@@ -63,19 +79,35 @@
 }
 
 :global(.dark) .theme {
-  --retro-web-background: #211911;
+  --retro-web-background: color-mix(
+    in srgb,
+    var(--site-background, #211911) 20%,
+    #211911
+  );
   --retro-web-surface: #2d2318;
   --retro-web-surface-elevated: #3a2b1d;
-  --retro-web-surface-grouped: #493821;
+  --retro-web-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #493821) 24%,
+    #493821
+  );
   --retro-web-fill: #594224;
   --retro-web-fill-strong: #6a4f2c;
   --retro-web-separator: #c6a673;
   --retro-web-label: #f0d9b2;
   --retro-web-secondary-label: #d2b886;
   --retro-web-tertiary-label: #aa8f61;
-  --retro-web-accent: #6fa6a4;
-  --retro-web-accent-soft: #284443;
-  --retro-web-accent-muted: #9cc7c5;
+  --retro-web-accent: var(--site-accent, #6fa6a4);
+  --retro-web-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #6fa6a4) 22%,
+    #211911
+  );
+  --retro-web-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #6fa6a4) 72%,
+    #f0d9b2
+  );
   --retro-web-accent-contrast: #201811;
   --retro-web-success: #9eb26a;
   --retro-web-success-soft: #334124;

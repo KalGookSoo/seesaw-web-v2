@@ -1,11 +1,27 @@
 .theme {
-  --default-background: #ffffff;
+  --default-background: color-mix(
+    in srgb,
+    var(--site-background, #ffffff) 16%,
+    #ffffff
+  );
   --default-surface: #ffffff;
   --default-surface-elevated: #ffffff;
-  --default-surface-grouped: #f2f2f7;
-  --default-blue: #007aff;
-  --default-blue-soft: #e8f2ff;
-  --default-blue-muted: #8ec8ff;
+  --default-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #f2f2f7) 26%,
+    #f2f2f7
+  );
+  --default-blue: var(--site-accent, #007aff);
+  --default-blue-soft: color-mix(
+    in srgb,
+    var(--site-accent, #007aff) 12%,
+    #ffffff
+  );
+  --default-blue-muted: color-mix(
+    in srgb,
+    var(--site-accent, #007aff) 45%,
+    #ffffff
+  );
   --default-blue-contrast: #004b9a;
   --default-indigo: #5856d6;
   --default-indigo-soft: #efefff;
@@ -84,13 +100,29 @@
 }
 
 :global(.dark) .theme {
-  --default-background: #000000;
+  --default-background: color-mix(
+    in srgb,
+    var(--site-background, #000000) 10%,
+    #000000
+  );
   --default-surface: #1c1c1e;
   --default-surface-elevated: #2c2c2e;
-  --default-surface-grouped: #121214;
-  --default-blue: #0a84ff;
-  --default-blue-soft: #06284f;
-  --default-blue-muted: #64b2ff;
+  --default-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #121214) 16%,
+    #121214
+  );
+  --default-blue: var(--site-accent, #0a84ff);
+  --default-blue-soft: color-mix(
+    in srgb,
+    var(--site-accent, #0a84ff) 20%,
+    #111827
+  );
+  --default-blue-muted: color-mix(
+    in srgb,
+    var(--site-accent, #0a84ff) 70%,
+    #ffffff
+  );
   --default-blue-contrast: #cfe6ff;
   --default-indigo: #5e5ce6;
   --default-indigo-soft: #22215b;

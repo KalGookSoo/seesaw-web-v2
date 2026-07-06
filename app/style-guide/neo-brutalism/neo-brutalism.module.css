@@ -1,17 +1,33 @@
 .theme {
-  --neo-brutalism-background: #f6f0df;
+  --neo-brutalism-background: color-mix(
+    in srgb,
+    var(--site-background, #f6f0df) 30%,
+    #f6f0df
+  );
   --neo-brutalism-surface: #fffaf0;
   --neo-brutalism-surface-elevated: #ffffff;
-  --neo-brutalism-surface-grouped: #ffe66d;
+  --neo-brutalism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #ffe66d) 35%,
+    #ffe66d
+  );
   --neo-brutalism-fill: #f2f2f2;
   --neo-brutalism-fill-strong: #d9d9d9;
   --neo-brutalism-separator: #111111;
   --neo-brutalism-label: #111111;
   --neo-brutalism-secondary-label: #333333;
   --neo-brutalism-tertiary-label: #666666;
-  --neo-brutalism-accent: #0057ff;
-  --neo-brutalism-accent-soft: #dce8ff;
-  --neo-brutalism-accent-muted: #003db8;
+  --neo-brutalism-accent: var(--site-accent, #0057ff);
+  --neo-brutalism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #0057ff) 16%,
+    #ffffff
+  );
+  --neo-brutalism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #0057ff) 82%,
+    #111111
+  );
   --neo-brutalism-accent-contrast: #ffffff;
   --neo-brutalism-success: #00a86b;
   --neo-brutalism-success-soft: #ccf5e7;
@@ -59,19 +75,35 @@
 }
 
 :global(.dark) .theme {
-  --neo-brutalism-background: #111111;
+  --neo-brutalism-background: color-mix(
+    in srgb,
+    var(--site-background, #111111) 14%,
+    #111111
+  );
   --neo-brutalism-surface: #1b1b1b;
   --neo-brutalism-surface-elevated: #242424;
-  --neo-brutalism-surface-grouped: #ffd60a;
+  --neo-brutalism-surface-grouped: color-mix(
+    in srgb,
+    var(--site-background, #ffd60a) 22%,
+    #ffd60a
+  );
   --neo-brutalism-fill: #2f2f2f;
   --neo-brutalism-fill-strong: #444444;
   --neo-brutalism-separator: #f8f8f8;
   --neo-brutalism-label: #f8f8f8;
   --neo-brutalism-secondary-label: #d6d6d6;
   --neo-brutalism-tertiary-label: #a3a3a3;
-  --neo-brutalism-accent: #4da3ff;
-  --neo-brutalism-accent-soft: #0b2b55;
-  --neo-brutalism-accent-muted: #8fc5ff;
+  --neo-brutalism-accent: var(--site-accent, #4da3ff);
+  --neo-brutalism-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #4da3ff) 20%,
+    #111111
+  );
+  --neo-brutalism-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #4da3ff) 76%,
+    #ffffff
+  );
   --neo-brutalism-accent-contrast: #111111;
   --neo-brutalism-success: #38f29b;
   --neo-brutalism-success-soft: #073b27;

@@ -1,16 +1,32 @@
 .theme {
-  --editorial-background: #f1f3f5;
+  --editorial-background: color-mix(
+    in srgb,
+    var(--site-background, #f1f3f5) 18%,
+    #f1f3f5
+  );
   --editorial-surface: #fbfcfd;
   --editorial-surface-elevated: #ffffff;
-  --editorial-surface-muted: #e4e8ed;
+  --editorial-surface-muted: color-mix(
+    in srgb,
+    var(--site-background, #e4e8ed) 24%,
+    #e4e8ed
+  );
   --editorial-ink: #151922;
   --editorial-ink-soft: #4d5663;
   --editorial-ink-muted: #7a8491;
   --editorial-line: #1c2430;
   --editorial-line-soft: rgb(28 36 48 / 0.2);
-  --editorial-accent: #006f94;
-  --editorial-accent-soft: #d8edf4;
-  --editorial-accent-muted: #3a9fbe;
+  --editorial-accent: var(--site-accent, #006f94);
+  --editorial-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #006f94) 14%,
+    #ffffff
+  );
+  --editorial-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #006f94) 58%,
+    #ffffff
+  );
   --editorial-accent-contrast: #ffffff;
   --editorial-success: #20715f;
   --editorial-success-soft: #dceee9;
@@ -41,18 +57,34 @@
 }
 
 :global(.dark) .theme {
-  --editorial-background: #090b0f;
+  --editorial-background: color-mix(
+    in srgb,
+    var(--site-background, #090b0f) 10%,
+    #090b0f
+  );
   --editorial-surface: #11161d;
   --editorial-surface-elevated: #171d26;
-  --editorial-surface-muted: #0d1117;
+  --editorial-surface-muted: color-mix(
+    in srgb,
+    var(--site-background, #0d1117) 14%,
+    #0d1117
+  );
   --editorial-ink: #f1f5f9;
   --editorial-ink-soft: #b8c2cf;
   --editorial-ink-muted: #8b96a6;
   --editorial-line: #d8e2f0;
   --editorial-line-soft: rgb(216 226 240 / 0.2);
-  --editorial-accent: #78d8f0;
-  --editorial-accent-soft: #12313b;
-  --editorial-accent-muted: #a4e8f8;
+  --editorial-accent: var(--site-accent, #78d8f0);
+  --editorial-accent-soft: color-mix(
+    in srgb,
+    var(--site-accent, #78d8f0) 22%,
+    #090b0f
+  );
+  --editorial-accent-muted: color-mix(
+    in srgb,
+    var(--site-accent, #78d8f0) 75%,
+    #ffffff
+  );
   --editorial-accent-contrast: #061015;
   --editorial-success: #78d6bd;
   --editorial-success-soft: #102d27;

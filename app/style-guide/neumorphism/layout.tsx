@@ -3,6 +3,11 @@ import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/neumorphism/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
 import { ArrowLeft } from 'lucide-react';
+
+import {
+  ThemeColorControls,
+  ThemeColorPlayground
+} from '@/app/style-guide/_components/theme-color-playground';
 import neumorphismTheme from '@/app/style-guide/neumorphism/neumorphism.module.css';
 
 export default function StyleGuideLayout({
@@ -11,12 +16,14 @@ export default function StyleGuideLayout({
   children: ReactNode;
 }>) {
   return (
-    <main
+    <ThemeColorPlayground
       className={`${neumorphismTheme.theme} min-h-dvh bg-[var(--neumorphism-background)] font-sans text-[var(--neumorphism-label)] transition-colors duration-200`}
+      initialAccentColor="#7aa7a0"
+      initialBackgroundColor="#eef3ef"
     >
       <header className="bg-[var(--neumorphism-surface)]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-start lg:px-8">
+          <div className="min-w-0">
             <Link
               className="mb-5 inline-flex w-fit items-center gap-2 rounded-full bg-[var(--neumorphism-surface)] px-4 py-2 text-sm font-semibold text-[var(--neumorphism-secondary-label)] shadow-[var(--neumorphism-shadow-soft)] transition hover:text-[var(--neumorphism-label)]"
               href="/style-guide"
@@ -35,10 +42,18 @@ export default function StyleGuideLayout({
               조용하게 분리하는 디자인 시스템 문서입니다.
             </p>
           </div>
-          <div className="rounded-3xl bg-[var(--neumorphism-surface)] px-5 py-4 font-mono text-sm text-[var(--neumorphism-secondary-label)] shadow-[var(--neumorphism-shadow-soft)]">
-            /style-guide/neumorphism
+          <div className="flex min-w-0 flex-col gap-4">
+            <div className="w-full rounded-3xl bg-[var(--neumorphism-surface)] px-5 py-4 font-mono text-sm text-[var(--neumorphism-secondary-label)] shadow-[var(--neumorphism-shadow-soft)]">
+              /style-guide/neumorphism
+            </div>
+            <ThemeColorControls
+              className="w-full space-y-3 rounded-3xl bg-[var(--neumorphism-surface)] px-5 py-4 shadow-[var(--neumorphism-shadow-soft)]"
+              inputClassName="size-8 rounded-full border border-[var(--neumorphism-separator)] bg-transparent p-0 shadow-[var(--neumorphism-shadow-inset)]"
+              labelClassName="text-xs font-semibold text-[var(--neumorphism-secondary-label)]"
+              resetButtonClassName="rounded-full bg-[var(--neumorphism-surface)] px-3 py-1 text-xs font-semibold text-[var(--neumorphism-secondary-label)] shadow-[var(--neumorphism-shadow-soft)] transition hover:text-[var(--neumorphism-label)]"
+            />
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
         <div className="mx-auto max-w-7xl px-6 pb-4 lg:px-8">
           <div className="mx-auto max-w-7xl">
@@ -50,6 +65,6 @@ export default function StyleGuideLayout({
       <div className="mx-auto max-w-7xl space-y-10 px-6 py-8 lg:px-8">
         {children}
       </div>
-    </main>
+    </ThemeColorPlayground>
   );
 }

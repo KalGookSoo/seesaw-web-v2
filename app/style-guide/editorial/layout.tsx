@@ -4,6 +4,10 @@ import { StyleGuideNavigation } from 'app/style-guide/editorial/_components/styl
 import { ThemeToggle } from 'components/theme/theme-toggle';
 import { ArrowLeft } from 'lucide-react';
 
+import {
+  ThemeColorControls,
+  ThemeColorPlayground
+} from '@/app/style-guide/_components/theme-color-playground';
 import editorialTheme from '@/app/style-guide/editorial/editorial.module.css';
 
 export default function StyleGuideLayout({
@@ -12,12 +16,14 @@ export default function StyleGuideLayout({
   children: ReactNode;
 }>) {
   return (
-    <main
+    <ThemeColorPlayground
       className={`${editorialTheme.theme} min-h-dvh bg-[var(--editorial-background)] font-sans text-[var(--editorial-ink)] transition-colors duration-200`}
+      initialAccentColor="#006f94"
+      initialBackgroundColor="#f1f3f5"
     >
       <header className="border-b border-[var(--editorial-line-soft)] bg-[var(--editorial-surface)]/85 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 lg:flex-row lg:items-end lg:justify-between lg:px-8">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-start lg:px-8">
+          <div className="min-w-0">
             <Link
               className="mb-5 inline-flex w-fit items-center gap-2 border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-3 py-1.5 text-xs font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
               href="/style-guide"
@@ -36,10 +42,18 @@ export default function StyleGuideLayout({
               구성한 디자인 시스템 문서입니다.
             </p>
           </div>
-          <div className="border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-2 font-mono text-xs tracking-wider text-[var(--editorial-ink-soft)] uppercase">
-            /style-guide/editorial
+          <div className="flex min-w-0 flex-col gap-3">
+            <div className="w-full border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-2 font-mono text-xs tracking-wider text-[var(--editorial-ink-soft)] uppercase">
+              /style-guide/editorial
+            </div>
+            <ThemeColorControls
+              className="w-full space-y-3 border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-3"
+              inputClassName="size-8 rounded-none border border-[var(--editorial-line)] bg-transparent p-0"
+              labelClassName="font-mono text-[10px] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase"
+              resetButtonClassName="border border-[var(--editorial-line-soft)] px-2 py-1 font-mono text-[10px] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:border-[var(--editorial-line)] hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
+            />
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
         <div className="border-t border-[var(--editorial-line-soft)]">
           <div className="mx-auto max-w-7xl">
@@ -51,6 +65,6 @@ export default function StyleGuideLayout({
       <div className="mx-auto max-w-7xl space-y-12 px-6 py-12 lg:px-8">
         {children}
       </div>
-    </main>
+    </ThemeColorPlayground>
   );
 }
