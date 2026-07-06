@@ -1,0 +1,280 @@
+/* ==========================================================================
+   기본 테마 컬러 토큰
+   Default Interface Guidelines 기반의 시스템 컬러 팔레트
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Light Mode
+   -------------------------------------------------------------------------- */
+:root {
+  /* 서피스 */
+  --default-background: #ffffff;
+  --default-surface: #ffffff;
+  --default-surface-elevated: #ffffff;
+  --default-surface-grouped: #f2f2f7;
+
+  /* System Colors — Blue */
+  --default-blue: #007aff;
+  --default-blue-soft: #e8f2ff;
+  --default-blue-muted: #8ec8ff;
+  --default-blue-contrast: #004b9a;
+
+  /* System Colors — Indigo */
+  --default-indigo: #5856d6;
+  --default-indigo-soft: #efefff;
+  --default-indigo-muted: #b7b6f2;
+  --default-indigo-contrast: #34328f;
+
+  /* System Colors — Purple */
+  --default-purple: #af52de;
+  --default-purple-soft: #f7ebff;
+  --default-purple-muted: #dba9f4;
+  --default-purple-contrast: #75349a;
+
+  /* System Colors — Pink */
+  --default-pink: #ff2d55;
+  --default-pink-soft: #fff0f3;
+  --default-pink-muted: #ff9aac;
+  --default-pink-contrast: #b01635;
+
+  /* System Colors — Red */
+  --default-red: #ff3b30;
+  --default-red-soft: #fff0ef;
+  --default-red-muted: #ff9f99;
+  --default-red-contrast: #b51f18;
+
+  /* System Colors — Orange */
+  --default-orange: #ff9500;
+  --default-orange-soft: #fff5e6;
+  --default-orange-muted: #ffc46f;
+  --default-orange-contrast: #9a5a00;
+
+  /* System Colors — Yellow */
+  --default-yellow: #ffcc00;
+  --default-yellow-soft: #fff9db;
+  --default-yellow-muted: #ffe680;
+  --default-yellow-contrast: #735c00;
+
+  /* System Colors — Green */
+  --default-green: #34c759;
+  --default-green-soft: #eaf9ee;
+  --default-green-muted: #91e3a7;
+  --default-green-contrast: #1d7934;
+
+  /* System Colors — Mint */
+  --default-mint: #00c7be;
+  --default-mint-soft: #e3fbfa;
+  --default-mint-muted: #84e5e0;
+  --default-mint-contrast: #007871;
+
+  /* System Colors — Teal */
+  --default-teal: #30b0c7;
+  --default-teal-soft: #e8f8fb;
+  --default-teal-muted: #8bd6e4;
+  --default-teal-contrast: #1b7281;
+
+  /* System Colors — Cyan */
+  --default-cyan: #32ade6;
+  --default-cyan-soft: #eaf7fd;
+  --default-cyan-muted: #91d4f2;
+  --default-cyan-contrast: #1a6f96;
+
+  /* System Gray Scale */
+  --default-gray: #8e8e93;
+  --default-gray-2: #aeaeb2;
+  --default-gray-3: #c7c7cc;
+  --default-gray-4: #d1d1d6;
+  --default-gray-5: #e5e5ea;
+  --default-gray-6: #f2f2f7;
+
+  /* 레이블 · UI 요소 */
+  --default-label: #1d1d1f;
+  --default-secondary-label: #6e6e73;
+  --default-tertiary-label: #86868b;
+  --default-fill: #f5f5f7;
+  --default-separator: #d2d2d7;
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode
+   -------------------------------------------------------------------------- */
+.dark {
+  /* 서피스 */
+  --default-background: #000000;
+  --default-surface: #1c1c1e;
+  --default-surface-elevated: #2c2c2e;
+  --default-surface-grouped: #121214;
+
+  /* System Colors — Blue */
+  --default-blue: #0a84ff;
+  --default-blue-soft: #06284f;
+  --default-blue-muted: #64b2ff;
+  --default-blue-contrast: #cfe6ff;
+
+  /* System Colors — Indigo */
+  --default-indigo: #5e5ce6;
+  --default-indigo-soft: #22215b;
+  --default-indigo-muted: #aaa8ff;
+  --default-indigo-contrast: #e5e4ff;
+
+  /* System Colors — Purple */
+  --default-purple: #bf5af2;
+  --default-purple-soft: #3a174d;
+  --default-purple-muted: #dc9cff;
+  --default-purple-contrast: #f3ddff;
+
+  /* System Colors — Pink */
+  --default-pink: #ff375f;
+  --default-pink-soft: #4d1020;
+  --default-pink-muted: #ff9aaf;
+  --default-pink-contrast: #ffd8df;
+
+  /* System Colors — Red */
+  --default-red: #ff453a;
+  --default-red-soft: #4c1512;
+  --default-red-muted: #ff9d97;
+  --default-red-contrast: #ffdcda;
+
+  /* System Colors — Orange */
+  --default-orange: #ff9f0a;
+  --default-orange-soft: #4f2d00;
+  --default-orange-muted: #ffc46d;
+  --default-orange-contrast: #ffe5bd;
+
+  /* System Colors — Yellow */
+  --default-yellow: #ffd60a;
+  --default-yellow-soft: #4a3d00;
+  --default-yellow-muted: #ffe576;
+  --default-yellow-contrast: #fff3b8;
+
+  /* System Colors — Green */
+  --default-green: #30d158;
+  --default-green-soft: #0f3d1d;
+  --default-green-muted: #8ee7a6;
+  --default-green-contrast: #d2f8dc;
+
+  /* System Colors — Mint */
+  --default-mint: #63e6e2;
+  --default-mint-soft: #123f3d;
+  --default-mint-muted: #a8f3f0;
+  --default-mint-contrast: #ddfbfa;
+
+  /* System Colors — Teal */
+  --default-teal: #40c8e0;
+  --default-teal-soft: #123c45;
+  --default-teal-muted: #98e3ef;
+  --default-teal-contrast: #d9f6fa;
+
+  /* System Colors — Cyan */
+  --default-cyan: #64d2ff;
+  --default-cyan-soft: #133f52;
+  --default-cyan-muted: #a7e5ff;
+  --default-cyan-contrast: #ddf5ff;
+
+  /* System Gray Scale */
+  --default-gray: #98989d;
+  --default-gray-2: #636366;
+  --default-gray-3: #48484a;
+  --default-gray-4: #3a3a3c;
+  --default-gray-5: #2c2c2e;
+  --default-gray-6: #1c1c1e;
+
+  /* 레이블 · UI 요소 */
+  --default-label: #f5f5f7;
+  --default-secondary-label: #a1a1a6;
+  --default-tertiary-label: #7c7c80;
+  --default-fill: #2c2c2e;
+  --default-separator: #38383a;
+}
+
+/* --------------------------------------------------------------------------
+   Tailwind CSS v4 @theme inline — 기본 시스템 컬러 토큰 등록
+   -------------------------------------------------------------------------- */
+@theme inline {
+  /* 서피스 */
+  --color-default-background: var(--default-background);
+  --color-default-surface: var(--default-surface);
+  --color-default-surface-elevated: var(--default-surface-elevated);
+  --color-default-surface-grouped: var(--default-surface-grouped);
+
+  /* Blue */
+  --color-default-blue: var(--default-blue);
+  --color-default-blue-soft: var(--default-blue-soft);
+  --color-default-blue-muted: var(--default-blue-muted);
+  --color-default-blue-contrast: var(--default-blue-contrast);
+
+  /* Indigo */
+  --color-default-indigo: var(--default-indigo);
+  --color-default-indigo-soft: var(--default-indigo-soft);
+  --color-default-indigo-muted: var(--default-indigo-muted);
+  --color-default-indigo-contrast: var(--default-indigo-contrast);
+
+  /* Purple */
+  --color-default-purple: var(--default-purple);
+  --color-default-purple-soft: var(--default-purple-soft);
+  --color-default-purple-muted: var(--default-purple-muted);
+  --color-default-purple-contrast: var(--default-purple-contrast);
+
+  /* Pink */
+  --color-default-pink: var(--default-pink);
+  --color-default-pink-soft: var(--default-pink-soft);
+  --color-default-pink-muted: var(--default-pink-muted);
+  --color-default-pink-contrast: var(--default-pink-contrast);
+
+  /* Red */
+  --color-default-red: var(--default-red);
+  --color-default-red-soft: var(--default-red-soft);
+  --color-default-red-muted: var(--default-red-muted);
+  --color-default-red-contrast: var(--default-red-contrast);
+
+  /* Orange */
+  --color-default-orange: var(--default-orange);
+  --color-default-orange-soft: var(--default-orange-soft);
+  --color-default-orange-muted: var(--default-orange-muted);
+  --color-default-orange-contrast: var(--default-orange-contrast);
+
+  /* Yellow */
+  --color-default-yellow: var(--default-yellow);
+  --color-default-yellow-soft: var(--default-yellow-soft);
+  --color-default-yellow-muted: var(--default-yellow-muted);
+  --color-default-yellow-contrast: var(--default-yellow-contrast);
+
+  /* Green */
+  --color-default-green: var(--default-green);
+  --color-default-green-soft: var(--default-green-soft);
+  --color-default-green-muted: var(--default-green-muted);
+  --color-default-green-contrast: var(--default-green-contrast);
+
+  /* Mint */
+  --color-default-mint: var(--default-mint);
+  --color-default-mint-soft: var(--default-mint-soft);
+  --color-default-mint-muted: var(--default-mint-muted);
+  --color-default-mint-contrast: var(--default-mint-contrast);
+
+  /* Teal */
+  --color-default-teal: var(--default-teal);
+  --color-default-teal-soft: var(--default-teal-soft);
+  --color-default-teal-muted: var(--default-teal-muted);
+  --color-default-teal-contrast: var(--default-teal-contrast);
+
+  /* Cyan */
+  --color-default-cyan: var(--default-cyan);
+  --color-default-cyan-soft: var(--default-cyan-soft);
+  --color-default-cyan-muted: var(--default-cyan-muted);
+  --color-default-cyan-contrast: var(--default-cyan-contrast);
+
+  /* Gray Scale */
+  --color-default-gray: var(--default-gray);
+  --color-default-gray-2: var(--default-gray-2);
+  --color-default-gray-3: var(--default-gray-3);
+  --color-default-gray-4: var(--default-gray-4);
+  --color-default-gray-5: var(--default-gray-5);
+  --color-default-gray-6: var(--default-gray-6);
+
+  /* 레이블 · UI 요소 */
+  --color-default-label: var(--default-label);
+  --color-default-secondary-label: var(--default-secondary-label);
+  --color-default-tertiary-label: var(--default-tertiary-label);
+  --color-default-fill: var(--default-fill);
+  --color-default-separator: var(--default-separator);
+}

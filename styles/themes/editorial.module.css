@@ -1,0 +1,63 @@
+.theme {
+  --editorial-background: #f7f1e7;
+  --editorial-surface: #fffaf1;
+  --editorial-surface-elevated: #ffffff;
+  --editorial-surface-muted: #eee3d2;
+  --editorial-ink: #201a17;
+  --editorial-ink-soft: #5f554d;
+  --editorial-ink-muted: #8a7d70;
+  --editorial-line: #2a211c;
+  --editorial-line-soft: rgb(42 33 28 / 0.18);
+  --editorial-accent: #7b2436;
+  --editorial-accent-soft: #f0d4dc;
+  --editorial-accent-muted: #b55a6c;
+  --editorial-accent-contrast: #ffffff;
+  --editorial-success: #355f3d;
+  --editorial-success-soft: #dbe8dc;
+  --editorial-warning: #9a6a12;
+  --editorial-warning-soft: #f2dfb1;
+  --editorial-danger: #9d2c2c;
+  --editorial-danger-soft: #efd1cd;
+
+  --default-background: var(--editorial-background);
+  --default-surface: var(--editorial-surface);
+  --default-surface-elevated: var(--editorial-surface-elevated);
+  --default-surface-grouped: var(--editorial-surface-muted);
+  --default-label: var(--editorial-ink);
+  --default-secondary-label: var(--editorial-ink-soft);
+  --default-tertiary-label: var(--editorial-ink-muted);
+  --default-fill: var(--editorial-surface-muted);
+  --default-separator: var(--editorial-line-soft);
+  --default-blue: var(--editorial-accent);
+  --default-blue-soft: var(--editorial-accent-soft);
+  --default-blue-muted: var(--editorial-accent-muted);
+  --default-blue-contrast: var(--editorial-accent-contrast);
+  --default-green: var(--editorial-success);
+  --default-green-soft: var(--editorial-success-soft);
+  --default-orange: var(--editorial-warning);
+  --default-orange-soft: var(--editorial-warning-soft);
+  --default-red: var(--editorial-danger);
+  --default-red-soft: var(--editorial-danger-soft);
+}
+
+:global(.dark) .theme {
+  --editorial-background: #11100e;
+  --editorial-surface: #1a1714;
+  --editorial-surface-elevated: #24201c;
+  --editorial-surface-muted: #171411;
+  --editorial-ink: #f7efe4;
+  --editorial-ink-soft: #cfc2b2;
+  --editorial-ink-muted: #9d8e80;
+  --editorial-line: #efe1cc;
+  --editorial-line-soft: rgb(239 225 204 / 0.18);
+  --editorial-accent: #e77792;
+  --editorial-accent-soft: #3f1d27;
+  --editorial-accent-muted: #f0a3b5;
+  --editorial-accent-contrast: #1d0d12;
+  --editorial-success: #8fcf99;
+  --editorial-success-soft: #19321f;
+  --editorial-warning: #e9c46a;
+  --editorial-warning-soft: #3a2c12;
+  --editorial-danger: #f08982;
+  --editorial-danger-soft: #3b1917;
+}
