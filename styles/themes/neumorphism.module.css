@@ -1,0 +1,101 @@
+.theme {
+  --neumorphism-background: #eef3ef;
+  --neumorphism-surface: #eef3ef;
+  --neumorphism-surface-elevated: #f6faf7;
+  --neumorphism-surface-grouped: #e7eee9;
+  --neumorphism-fill: #e3ebe6;
+  --neumorphism-fill-strong: #d7e1dc;
+  --neumorphism-separator: rgba(96, 120, 108, 0.18);
+  --neumorphism-label: #28342e;
+  --neumorphism-secondary-label: #5f7068;
+  --neumorphism-tertiary-label: #8a9992;
+  --neumorphism-accent: #7aa7a0;
+  --neumorphism-accent-soft: #d8ebe8;
+  --neumorphism-accent-muted: #5f8f88;
+  --neumorphism-accent-contrast: #ffffff;
+  --neumorphism-success: #72ad82;
+  --neumorphism-success-soft: #dcefe0;
+  --neumorphism-warning: #d8ad68;
+  --neumorphism-warning-soft: #f3e7d1;
+  --neumorphism-danger: #d98585;
+  --neumorphism-danger-soft: #f3dddd;
+  --neumorphism-danger-contrast: #ffffff;
+  --neumorphism-purple: #a99bd7;
+  --neumorphism-pink: #d9a0b8;
+  --neumorphism-shadow:
+    10px 10px 22px rgba(132, 151, 142, 0.22),
+    -10px -10px 22px rgba(255, 255, 255, 0.72);
+  --neumorphism-shadow-soft:
+    6px 6px 14px rgba(132, 151, 142, 0.16),
+    -6px -6px 14px rgba(255, 255, 255, 0.68);
+  --neumorphism-shadow-inset:
+    inset 5px 5px 12px rgba(132, 151, 142, 0.18),
+    inset -5px -5px 12px rgba(255, 255, 255, 0.7);
+
+  --neumorphism-blue: var(--neumorphism-accent);
+  --neumorphism-blue-muted: var(--neumorphism-accent-muted);
+  --neumorphism-red: var(--neumorphism-danger);
+  --neumorphism-green: var(--neumorphism-success);
+  --neumorphism-orange: var(--neumorphism-warning);
+  --neumorphism-line: var(--neumorphism-separator);
+  --neumorphism-line-soft: var(--neumorphism-separator);
+  --neumorphism-ink: var(--neumorphism-label);
+  --neumorphism-ink-soft: var(--neumorphism-secondary-label);
+  --neumorphism-ink-muted: var(--neumorphism-tertiary-label);
+  --neumorphism-surface-muted: var(--neumorphism-fill);
+  --neumorphism-surface-strong: var(--neumorphism-surface-elevated);
+
+  --default-background: var(--neumorphism-background);
+  --default-surface: var(--neumorphism-surface);
+  --default-surface-elevated: var(--neumorphism-surface-elevated);
+  --default-surface-grouped: var(--neumorphism-surface-grouped);
+  --default-label: var(--neumorphism-label);
+  --default-secondary-label: var(--neumorphism-secondary-label);
+  --default-tertiary-label: var(--neumorphism-tertiary-label);
+  --default-fill: var(--neumorphism-fill);
+  --default-separator: var(--neumorphism-separator);
+  --default-blue: var(--neumorphism-accent);
+  --default-blue-soft: var(--neumorphism-accent-soft);
+  --default-blue-muted: var(--neumorphism-accent-muted);
+  --default-blue-contrast: var(--neumorphism-accent-contrast);
+  --default-green: var(--neumorphism-success);
+  --default-green-soft: var(--neumorphism-success-soft);
+  --default-orange: var(--neumorphism-warning);
+  --default-orange-soft: var(--neumorphism-warning-soft);
+  --default-red: var(--neumorphism-danger);
+  --default-red-soft: var(--neumorphism-danger-soft);
+}
+
+:global(.dark) .theme {
+  --neumorphism-background: #202824;
+  --neumorphism-surface: #202824;
+  --neumorphism-surface-elevated: #27302b;
+  --neumorphism-surface-grouped: #1c231f;
+  --neumorphism-fill: #29332e;
+  --neumorphism-fill-strong: #334039;
+  --neumorphism-separator: rgba(224, 235, 229, 0.12);
+  --neumorphism-label: #edf4f0;
+  --neumorphism-secondary-label: #bdcbc4;
+  --neumorphism-tertiary-label: #8ea098;
+  --neumorphism-accent: #9bc9c1;
+  --neumorphism-accent-soft: #263d39;
+  --neumorphism-accent-muted: #b5d9d3;
+  --neumorphism-accent-contrast: #1f2a25;
+  --neumorphism-success: #a8d8b2;
+  --neumorphism-success-soft: #24392a;
+  --neumorphism-warning: #e8c98f;
+  --neumorphism-warning-soft: #3f3422;
+  --neumorphism-danger: #e8a5a5;
+  --neumorphism-danger-soft: #422929;
+  --neumorphism-danger-contrast: #252525;
+  --neumorphism-purple: #c7bdf1;
+  --neumorphism-pink: #efbfd0;
+  --neumorphism-shadow:
+    10px 10px 22px rgba(9, 12, 10, 0.28),
+    -10px -10px 22px rgba(68, 82, 75, 0.24);
+  --neumorphism-shadow-soft:
+    6px 6px 14px rgba(9, 12, 10, 0.22), -6px -6px 14px rgba(68, 82, 75, 0.18);
+  --neumorphism-shadow-inset:
+    inset 5px 5px 12px rgba(9, 12, 10, 0.24),
+    inset -5px -5px 12px rgba(68, 82, 75, 0.18);
+}
