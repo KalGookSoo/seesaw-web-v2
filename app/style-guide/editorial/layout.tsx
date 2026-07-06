@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { StyleGuideNavigation } from 'app/style-guide/editorial/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
 import { ArrowLeft } from 'lucide-react';
+
 import editorialTheme from '@/app/style-guide/editorial/editorial.module.css';
 
 export default function StyleGuideLayout({

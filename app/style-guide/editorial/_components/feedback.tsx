@@ -3,14 +3,19 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId } from 'react';
 
-export type EditorialAlertVariant = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
+export type EditorialAlertVariant =
+  'info' | 'success' | 'warning' | 'danger' | 'neutral';
 
 const alertVariantClassNames: Record<EditorialAlertVariant, string> = {
   info: 'border-[var(--editorial-accent)] bg-[var(--editorial-accent-soft)] text-[var(--editorial-ink)]',
-  success: 'border-[var(--editorial-success)] bg-[var(--editorial-success-soft)] text-[var(--editorial-ink)]',
-  warning: 'border-[var(--editorial-warning)] bg-[var(--editorial-warning-soft)] text-[var(--editorial-ink)]',
-  danger: 'border-[var(--editorial-danger)] bg-[var(--editorial-danger-soft)] text-[var(--editorial-ink)]',
-  neutral: 'border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)]'
+  success:
+    'border-[var(--editorial-success)] bg-[var(--editorial-success-soft)] text-[var(--editorial-ink)]',
+  warning:
+    'border-[var(--editorial-warning)] bg-[var(--editorial-warning-soft)] text-[var(--editorial-ink)]',
+  danger:
+    'border-[var(--editorial-danger)] bg-[var(--editorial-danger-soft)] text-[var(--editorial-ink)]',
+  neutral:
+    'border-[var(--editorial-line)] bg-[var(--editorial-surface)] text-[var(--editorial-ink)]'
 };
 
 export type EditorialModalSize = 'sm' | 'md' | 'lg';
@@ -24,8 +29,10 @@ const modalSizeClassNames: Record<EditorialModalSize, string> = {
 export type EditorialConfirmTone = 'default' | 'danger';
 
 const confirmButtonClassNames: Record<EditorialConfirmTone, string> = {
-  default: 'bg-[var(--editorial-accent)] text-[var(--editorial-accent-contrast)] hover:bg-[var(--editorial-line)]',
-  danger: 'bg-[var(--editorial-danger)] text-white hover:bg-[var(--editorial-line)]'
+  default:
+    'bg-[var(--editorial-accent)] text-[var(--editorial-accent-contrast)] hover:bg-[var(--editorial-line)]',
+  danger:
+    'bg-[var(--editorial-danger)] text-white hover:bg-[var(--editorial-line)]'
 };
 
 const editorialSecondaryButtonClassName =
@@ -41,9 +48,20 @@ export function EditorialAlert({
   variant?: EditorialAlertVariant;
 }>) {
   return (
-    <div className={`border-l-4 px-5 py-4 shadow-none ${alertVariantClassNames[variant]}`} role="alert">
-      {title ? <p className="font-sans text-xs font-black tracking-widest uppercase">{title}</p> : null}
-      <div className={`${title ? 'mt-2' : ''} font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic`}>{children}</div>
+    <div
+      className={`border-l-4 px-5 py-4 shadow-none ${alertVariantClassNames[variant]}`}
+      role="alert"
+    >
+      {title ? (
+        <p className="font-sans text-xs font-black tracking-widest uppercase">
+          {title}
+        </p>
+      ) : null}
+      <div
+        className={`${title ? 'mt-2' : ''} font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic`}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -92,7 +110,12 @@ export function EditorialModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--editorial-line)]/35 px-4 py-6 backdrop-blur-sm"
       role="presentation"
     >
-      <button className="absolute inset-0 cursor-default" type="button" aria-label="모달 닫기" onClick={onClose} />
+      <button
+        className="absolute inset-0 cursor-default"
+        type="button"
+        aria-label="모달 닫기"
+        onClick={onClose}
+      />
       <section
         aria-describedby={description ? descriptionId : undefined}
         aria-labelledby={titleId}
@@ -102,12 +125,20 @@ export function EditorialModal({
       >
         <header className="flex items-start justify-between gap-4 border-b-2 border-[var(--editorial-line)] px-6 py-5">
           <div>
-            <p className="text-[10px] font-black tracking-[0.24em] text-[var(--editorial-accent)] uppercase">Editorial Dialog</p>
-            <h2 id={titleId} className="mt-2 font-serif text-2xl font-black text-[var(--editorial-ink)]">
+            <p className="text-[10px] font-black tracking-[0.24em] text-[var(--editorial-accent)] uppercase">
+              Editorial Dialog
+            </p>
+            <h2
+              id={titleId}
+              className="mt-2 font-serif text-2xl font-black text-[var(--editorial-ink)]"
+            >
               {title}
             </h2>
             {description ? (
-              <p id={descriptionId} className="mt-2 max-w-xl font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic">
+              <p
+                id={descriptionId}
+                className="mt-2 max-w-xl font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic"
+              >
                 {description}
               </p>
             ) : null}
@@ -161,7 +192,11 @@ export function EditorialConfirm({
       onClose={onCancel}
       footer={
         <>
-          <button className={editorialSecondaryButtonClassName} type="button" onClick={onCancel}>
+          <button
+            className={editorialSecondaryButtonClassName}
+            type="button"
+            onClick={onCancel}
+          >
             {cancelLabel}
           </button>
           <button
@@ -174,7 +209,9 @@ export function EditorialConfirm({
         </>
       }
     >
-      <div className="font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic">{children}</div>
+      <div className="font-serif text-sm leading-7 text-[var(--editorial-ink-soft)] italic">
+        {children}
+      </div>
     </EditorialModal>
   );
 }
