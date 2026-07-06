@@ -1,0 +1,94 @@
+.theme {
+  --retro-web-background: #d8c3a5;
+  --retro-web-surface: #ead7b5;
+  --retro-web-surface-elevated: #f3e4c8;
+  --retro-web-surface-grouped: #c9b28d;
+  --retro-web-fill: #bda37b;
+  --retro-web-fill-strong: #a98b62;
+  --retro-web-separator: #4f3b25;
+  --retro-web-label: #2b2118;
+  --retro-web-secondary-label: #5a442c;
+  --retro-web-tertiary-label: #7b6548;
+  --retro-web-accent: #2f6f73;
+  --retro-web-accent-soft: #b8c7b0;
+  --retro-web-accent-muted: #22565a;
+  --retro-web-accent-contrast: #f8ead0;
+  --retro-web-success: #5d7c3b;
+  --retro-web-success-soft: #c5c99b;
+  --retro-web-warning: #b67a2a;
+  --retro-web-warning-soft: #dbc084;
+  --retro-web-danger: #9b4f3d;
+  --retro-web-danger-soft: #c99a7e;
+  --retro-web-danger-contrast: #f8ead0;
+  --retro-web-purple: #6f5d8a;
+  --retro-web-pink: #9c5f67;
+  --retro-web-shadow: 3px 3px 0 rgba(54, 39, 23, 0.38);
+  --retro-web-shadow-soft: 2px 2px 0 rgba(54, 39, 23, 0.24);
+  --retro-web-inset:
+    inset 1px 1px 0 rgba(255, 245, 220, 0.55),
+    inset -1px -1px 0 rgba(54, 39, 23, 0.22);
+
+  --retro-web-blue: var(--retro-web-accent);
+  --retro-web-blue-muted: var(--retro-web-accent-muted);
+  --retro-web-red: var(--retro-web-danger);
+  --retro-web-green: var(--retro-web-success);
+  --retro-web-orange: var(--retro-web-warning);
+  --retro-web-line: var(--retro-web-separator);
+  --retro-web-line-soft: rgba(79, 59, 37, 0.42);
+  --retro-web-ink: var(--retro-web-label);
+  --retro-web-ink-soft: var(--retro-web-secondary-label);
+  --retro-web-ink-muted: var(--retro-web-tertiary-label);
+  --retro-web-surface-muted: var(--retro-web-fill);
+  --retro-web-surface-strong: var(--retro-web-surface-elevated);
+
+  --default-background: var(--retro-web-background);
+  --default-surface: var(--retro-web-surface);
+  --default-surface-elevated: var(--retro-web-surface-elevated);
+  --default-surface-grouped: var(--retro-web-surface-grouped);
+  --default-label: var(--retro-web-label);
+  --default-secondary-label: var(--retro-web-secondary-label);
+  --default-tertiary-label: var(--retro-web-tertiary-label);
+  --default-fill: var(--retro-web-fill);
+  --default-separator: var(--retro-web-separator);
+  --default-blue: var(--retro-web-accent);
+  --default-blue-soft: var(--retro-web-accent-soft);
+  --default-blue-muted: var(--retro-web-accent-muted);
+  --default-blue-contrast: var(--retro-web-accent-contrast);
+  --default-green: var(--retro-web-success);
+  --default-green-soft: var(--retro-web-success-soft);
+  --default-orange: var(--retro-web-warning);
+  --default-orange-soft: var(--retro-web-warning-soft);
+  --default-red: var(--retro-web-danger);
+  --default-red-soft: var(--retro-web-danger-soft);
+}
+
+:global(.dark) .theme {
+  --retro-web-background: #211911;
+  --retro-web-surface: #2d2318;
+  --retro-web-surface-elevated: #3a2b1d;
+  --retro-web-surface-grouped: #493821;
+  --retro-web-fill: #594224;
+  --retro-web-fill-strong: #6a4f2c;
+  --retro-web-separator: #c6a673;
+  --retro-web-label: #f0d9b2;
+  --retro-web-secondary-label: #d2b886;
+  --retro-web-tertiary-label: #aa8f61;
+  --retro-web-accent: #6fa6a4;
+  --retro-web-accent-soft: #284443;
+  --retro-web-accent-muted: #9cc7c5;
+  --retro-web-accent-contrast: #201811;
+  --retro-web-success: #9eb26a;
+  --retro-web-success-soft: #334124;
+  --retro-web-warning: #d19a43;
+  --retro-web-warning-soft: #4f3619;
+  --retro-web-danger: #c4765d;
+  --retro-web-danger-soft: #4a2a21;
+  --retro-web-danger-contrast: #201811;
+  --retro-web-purple: #a58fbd;
+  --retro-web-pink: #c4878b;
+  --retro-web-shadow: 3px 3px 0 rgba(7, 5, 3, 0.48);
+  --retro-web-shadow-soft: 2px 2px 0 rgba(7, 5, 3, 0.36);
+  --retro-web-inset:
+    inset 1px 1px 0 rgba(255, 221, 166, 0.12),
+    inset -1px -1px 0 rgba(7, 5, 3, 0.42);
+}
