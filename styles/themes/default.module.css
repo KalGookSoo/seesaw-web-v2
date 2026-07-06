@@ -1,0 +1,160 @@
+.theme {
+  --default-background: #ffffff;
+  --default-surface: #ffffff;
+  --default-surface-elevated: #ffffff;
+  --default-surface-grouped: #f2f2f7;
+  --default-blue: #007aff;
+  --default-blue-soft: #e8f2ff;
+  --default-blue-muted: #8ec8ff;
+  --default-blue-contrast: #004b9a;
+  --default-indigo: #5856d6;
+  --default-indigo-soft: #efefff;
+  --default-indigo-muted: #b7b6f2;
+  --default-indigo-contrast: #34328f;
+  --default-purple: #af52de;
+  --default-purple-soft: #f7ebff;
+  --default-purple-muted: #dba9f4;
+  --default-purple-contrast: #75349a;
+  --default-pink: #ff2d55;
+  --default-pink-soft: #fff0f3;
+  --default-pink-muted: #ff9aac;
+  --default-pink-contrast: #b01635;
+  --default-red: #ff3b30;
+  --default-red-soft: #fff0ef;
+  --default-red-muted: #ff9f99;
+  --default-red-contrast: #b51f18;
+  --default-orange: #ff9500;
+  --default-orange-soft: #fff5e6;
+  --default-orange-muted: #ffc46f;
+  --default-orange-contrast: #9a5a00;
+  --default-yellow: #ffcc00;
+  --default-yellow-soft: #fff9db;
+  --default-yellow-muted: #ffe680;
+  --default-yellow-contrast: #735c00;
+  --default-green: #34c759;
+  --default-green-soft: #eaf9ee;
+  --default-green-muted: #91e3a7;
+  --default-green-contrast: #1d7934;
+  --default-mint: #00c7be;
+  --default-mint-soft: #e3fbfa;
+  --default-mint-muted: #84e5e0;
+  --default-mint-contrast: #007871;
+  --default-teal: #30b0c7;
+  --default-teal-soft: #e8f8fb;
+  --default-teal-muted: #8bd6e4;
+  --default-teal-contrast: #1b7281;
+  --default-cyan: #32ade6;
+  --default-cyan-soft: #eaf7fd;
+  --default-cyan-muted: #91d4f2;
+  --default-cyan-contrast: #1a6f96;
+  --default-gray: #8e8e93;
+  --default-gray-2: #aeaeb2;
+  --default-gray-3: #c7c7cc;
+  --default-gray-4: #d1d1d6;
+  --default-gray-5: #e5e5ea;
+  --default-gray-6: #f2f2f7;
+  --default-label: #1d1d1f;
+  --default-secondary-label: #6e6e73;
+  --default-tertiary-label: #86868b;
+  --default-fill: #f5f5f7;
+  --default-fill-strong: #e8e8ed;
+  --default-separator: #d2d2d7;
+  --default-accent: var(--default-blue);
+  --default-accent-soft: color-mix(
+    in srgb,
+    var(--default-blue) 12%,
+    transparent
+  );
+  --default-accent-muted: color-mix(
+    in srgb,
+    var(--default-blue) 22%,
+    var(--default-surface)
+  );
+  --default-accent-contrast: #ffffff;
+  --default-success: var(--default-green);
+  --default-success-soft: var(--default-green-soft);
+  --default-warning: var(--default-orange);
+  --default-warning-soft: var(--default-orange-soft);
+  --default-danger: var(--default-red);
+  --default-danger-soft: var(--default-red-soft);
+  --default-danger-contrast: #ffffff;
+  --default-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  --default-shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --default-shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+:global(.dark) .theme {
+  --default-background: #000000;
+  --default-surface: #1c1c1e;
+  --default-surface-elevated: #2c2c2e;
+  --default-surface-grouped: #121214;
+  --default-blue: #0a84ff;
+  --default-blue-soft: #06284f;
+  --default-blue-muted: #64b2ff;
+  --default-blue-contrast: #cfe6ff;
+  --default-indigo: #5e5ce6;
+  --default-indigo-soft: #22215b;
+  --default-indigo-muted: #aaa8ff;
+  --default-indigo-contrast: #e5e4ff;
+  --default-purple: #bf5af2;
+  --default-purple-soft: #3a174d;
+  --default-purple-muted: #dc9cff;
+  --default-purple-contrast: #f3ddff;
+  --default-pink: #ff375f;
+  --default-pink-soft: #4d1020;
+  --default-pink-muted: #ff9aaf;
+  --default-pink-contrast: #ffd8df;
+  --default-red: #ff453a;
+  --default-red-soft: #4c1512;
+  --default-red-muted: #ff9d97;
+  --default-red-contrast: #ffdcda;
+  --default-orange: #ff9f0a;
+  --default-orange-soft: #4f2d00;
+  --default-orange-muted: #ffc46d;
+  --default-orange-contrast: #ffe5bd;
+  --default-yellow: #ffd60a;
+  --default-yellow-soft: #4a3d00;
+  --default-yellow-muted: #ffe576;
+  --default-yellow-contrast: #fff3b8;
+  --default-green: #30d158;
+  --default-green-soft: #0f3d1d;
+  --default-green-muted: #8ee7a6;
+  --default-green-contrast: #d2f8dc;
+  --default-mint: #63e6e2;
+  --default-mint-soft: #123f3d;
+  --default-mint-muted: #a8f3f0;
+  --default-mint-contrast: #ddfbfa;
+  --default-teal: #40c8e0;
+  --default-teal-soft: #123c45;
+  --default-teal-muted: #98e3ef;
+  --default-teal-contrast: #d9f6fa;
+  --default-cyan: #64d2ff;
+  --default-cyan-soft: #133f52;
+  --default-cyan-muted: #a7e5ff;
+  --default-cyan-contrast: #ddf5ff;
+  --default-gray: #98989d;
+  --default-gray-2: #636366;
+  --default-gray-3: #48484a;
+  --default-gray-4: #3a3a3c;
+  --default-gray-5: #2c2c2e;
+  --default-gray-6: #1c1c1e;
+  --default-label: #f5f5f7;
+  --default-secondary-label: #a1a1a6;
+  --default-tertiary-label: #7c7c80;
+  --default-fill: #2c2c2e;
+  --default-fill-strong: #3a3a3c;
+  --default-separator: #38383a;
+  --default-accent-soft: color-mix(
+    in srgb,
+    var(--default-blue) 18%,
+    transparent
+  );
+  --default-accent-muted: color-mix(
+    in srgb,
+    var(--default-blue) 26%,
+    var(--default-surface)
+  );
+  --default-shadow: 0 22px 56px rgba(0, 0, 0, 0.35);
+  --default-shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.26);
+  --default-shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
