@@ -47,8 +47,8 @@ const styleGuides = [
     desc: '고전 PC 베젤 감성 혹은 CLI 터미널 느낌의 레트로 테마입니다.'
   },
   {
-    href: '/style-guide/windows-fluent',
-    label: 'Windows Fluent',
+    href: '/style-guide/windows-98-fluent',
+    label: 'Windows 98 Fluent',
     desc: '아크릴릭 블러와 컴팩트한 레이어드 설정창 스타일입니다.'
   }
 ] as const;

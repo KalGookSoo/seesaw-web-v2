@@ -1,0 +1,94 @@
+.theme {
+  --windows-98-fluent-background: #008080;
+  --windows-98-fluent-surface: #c0c0c0;
+  --windows-98-fluent-surface-elevated: #d4d0c8;
+  --windows-98-fluent-surface-grouped: #b8b4ad;
+  --windows-98-fluent-fill: #d4d0c8;
+  --windows-98-fluent-fill-strong: #a8a39a;
+  --windows-98-fluent-separator: #404040;
+  --windows-98-fluent-label: #000000;
+  --windows-98-fluent-secondary-label: #303030;
+  --windows-98-fluent-tertiary-label: #5f5f5f;
+  --windows-98-fluent-accent: #000080;
+  --windows-98-fluent-accent-soft: #c7d8ff;
+  --windows-98-fluent-accent-muted: #0a246a;
+  --windows-98-fluent-accent-contrast: #ffffff;
+  --windows-98-fluent-success: #008000;
+  --windows-98-fluent-success-soft: #c9dfc4;
+  --windows-98-fluent-warning: #808000;
+  --windows-98-fluent-warning-soft: #e1dfb8;
+  --windows-98-fluent-danger: #800000;
+  --windows-98-fluent-danger-soft: #dfc4c4;
+  --windows-98-fluent-danger-contrast: #ffffff;
+  --windows-98-fluent-purple: #800080;
+  --windows-98-fluent-pink: #b05078;
+  --windows-98-fluent-shadow: 2px 2px 0 #404040;
+  --windows-98-fluent-shadow-soft: 1px 1px 0 #404040;
+  --windows-98-fluent-inset: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080;
+  --windows-98-fluent-inset-pressed:
+    inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+
+  --windows-98-fluent-blue: var(--windows-98-fluent-accent);
+  --windows-98-fluent-blue-muted: var(--windows-98-fluent-accent-muted);
+  --windows-98-fluent-red: var(--windows-98-fluent-danger);
+  --windows-98-fluent-green: var(--windows-98-fluent-success);
+  --windows-98-fluent-orange: var(--windows-98-fluent-warning);
+  --windows-98-fluent-line: var(--windows-98-fluent-separator);
+  --windows-98-fluent-line-soft: #808080;
+  --windows-98-fluent-ink: var(--windows-98-fluent-label);
+  --windows-98-fluent-ink-soft: var(--windows-98-fluent-secondary-label);
+  --windows-98-fluent-ink-muted: var(--windows-98-fluent-tertiary-label);
+  --windows-98-fluent-surface-muted: var(--windows-98-fluent-fill);
+  --windows-98-fluent-surface-strong: var(--windows-98-fluent-surface-elevated);
+
+  --default-background: var(--windows-98-fluent-background);
+  --default-surface: var(--windows-98-fluent-surface);
+  --default-surface-elevated: var(--windows-98-fluent-surface-elevated);
+  --default-surface-grouped: var(--windows-98-fluent-surface-grouped);
+  --default-label: var(--windows-98-fluent-label);
+  --default-secondary-label: var(--windows-98-fluent-secondary-label);
+  --default-tertiary-label: var(--windows-98-fluent-tertiary-label);
+  --default-fill: var(--windows-98-fluent-fill);
+  --default-separator: var(--windows-98-fluent-separator);
+  --default-blue: var(--windows-98-fluent-accent);
+  --default-blue-soft: var(--windows-98-fluent-accent-soft);
+  --default-blue-muted: var(--windows-98-fluent-accent-muted);
+  --default-blue-contrast: var(--windows-98-fluent-accent-contrast);
+  --default-green: var(--windows-98-fluent-success);
+  --default-green-soft: var(--windows-98-fluent-success-soft);
+  --default-orange: var(--windows-98-fluent-warning);
+  --default-orange-soft: var(--windows-98-fluent-warning-soft);
+  --default-red: var(--windows-98-fluent-danger);
+  --default-red-soft: var(--windows-98-fluent-danger-soft);
+}
+
+:global(.dark) .theme {
+  --windows-98-fluent-background: #004747;
+  --windows-98-fluent-surface: #8e8e8e;
+  --windows-98-fluent-surface-elevated: #a6a39e;
+  --windows-98-fluent-surface-grouped: #77736d;
+  --windows-98-fluent-fill: #a6a39e;
+  --windows-98-fluent-fill-strong: #67635e;
+  --windows-98-fluent-separator: #151515;
+  --windows-98-fluent-label: #050505;
+  --windows-98-fluent-secondary-label: #202020;
+  --windows-98-fluent-tertiary-label: #383838;
+  --windows-98-fluent-accent: #0a246a;
+  --windows-98-fluent-accent-soft: #6f87b7;
+  --windows-98-fluent-accent-muted: #07184a;
+  --windows-98-fluent-accent-contrast: #ffffff;
+  --windows-98-fluent-success: #0f6b0f;
+  --windows-98-fluent-success-soft: #8ba586;
+  --windows-98-fluent-warning: #6f6500;
+  --windows-98-fluent-warning-soft: #aaa36a;
+  --windows-98-fluent-danger: #6f1616;
+  --windows-98-fluent-danger-soft: #a77b7b;
+  --windows-98-fluent-danger-contrast: #ffffff;
+  --windows-98-fluent-purple: #661866;
+  --windows-98-fluent-pink: #8b4460;
+  --windows-98-fluent-shadow: 2px 2px 0 #151515;
+  --windows-98-fluent-shadow-soft: 1px 1px 0 #151515;
+  --windows-98-fluent-inset: inset 1px 1px 0 #d0d0d0, inset -1px -1px 0 #4d4d4d;
+  --windows-98-fluent-inset-pressed:
+    inset 1px 1px 0 #4d4d4d, inset -1px -1px 0 #d0d0d0;
+}
