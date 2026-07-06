@@ -1,0 +1,86 @@
+.theme {
+  --neo-brutalism-background: #f6f0df;
+  --neo-brutalism-surface: #fffaf0;
+  --neo-brutalism-surface-elevated: #ffffff;
+  --neo-brutalism-surface-grouped: #ffe66d;
+  --neo-brutalism-fill: #f2f2f2;
+  --neo-brutalism-fill-strong: #d9d9d9;
+  --neo-brutalism-separator: #111111;
+  --neo-brutalism-label: #111111;
+  --neo-brutalism-secondary-label: #333333;
+  --neo-brutalism-tertiary-label: #666666;
+  --neo-brutalism-accent: #0057ff;
+  --neo-brutalism-accent-soft: #dce8ff;
+  --neo-brutalism-accent-muted: #003db8;
+  --neo-brutalism-accent-contrast: #ffffff;
+  --neo-brutalism-success: #00a86b;
+  --neo-brutalism-success-soft: #ccf5e7;
+  --neo-brutalism-warning: #ffb000;
+  --neo-brutalism-warning-soft: #fff0bd;
+  --neo-brutalism-danger: #ff3b30;
+  --neo-brutalism-danger-soft: #ffd8d6;
+  --neo-brutalism-danger-contrast: #111111;
+  --neo-brutalism-purple: #8b5cf6;
+  --neo-brutalism-pink: #ff4fd8;
+  --neo-brutalism-shadow: 6px 6px 0 #111111;
+
+  --neo-brutalism-blue: var(--neo-brutalism-accent);
+  --neo-brutalism-blue-muted: var(--neo-brutalism-accent-muted);
+  --neo-brutalism-red: var(--neo-brutalism-danger);
+  --neo-brutalism-green: var(--neo-brutalism-success);
+  --neo-brutalism-orange: var(--neo-brutalism-warning);
+  --neo-brutalism-line: var(--neo-brutalism-separator);
+  --neo-brutalism-line-soft: var(--neo-brutalism-separator);
+  --neo-brutalism-ink: var(--neo-brutalism-label);
+  --neo-brutalism-ink-soft: var(--neo-brutalism-secondary-label);
+  --neo-brutalism-ink-muted: var(--neo-brutalism-tertiary-label);
+  --neo-brutalism-surface-muted: var(--neo-brutalism-fill);
+  --neo-brutalism-surface-strong: var(--neo-brutalism-surface-elevated);
+
+  --default-background: var(--neo-brutalism-background);
+  --default-surface: var(--neo-brutalism-surface);
+  --default-surface-elevated: var(--neo-brutalism-surface-elevated);
+  --default-surface-grouped: var(--neo-brutalism-surface-grouped);
+  --default-label: var(--neo-brutalism-label);
+  --default-secondary-label: var(--neo-brutalism-secondary-label);
+  --default-tertiary-label: var(--neo-brutalism-tertiary-label);
+  --default-fill: var(--neo-brutalism-fill);
+  --default-separator: var(--neo-brutalism-separator);
+  --default-blue: var(--neo-brutalism-accent);
+  --default-blue-soft: var(--neo-brutalism-accent-soft);
+  --default-blue-muted: var(--neo-brutalism-accent-muted);
+  --default-blue-contrast: var(--neo-brutalism-accent-contrast);
+  --default-green: var(--neo-brutalism-success);
+  --default-green-soft: var(--neo-brutalism-success-soft);
+  --default-orange: var(--neo-brutalism-warning);
+  --default-orange-soft: var(--neo-brutalism-warning-soft);
+  --default-red: var(--neo-brutalism-danger);
+  --default-red-soft: var(--neo-brutalism-danger-soft);
+}
+
+:global(.dark) .theme {
+  --neo-brutalism-background: #111111;
+  --neo-brutalism-surface: #1b1b1b;
+  --neo-brutalism-surface-elevated: #242424;
+  --neo-brutalism-surface-grouped: #ffd60a;
+  --neo-brutalism-fill: #2f2f2f;
+  --neo-brutalism-fill-strong: #444444;
+  --neo-brutalism-separator: #f8f8f8;
+  --neo-brutalism-label: #f8f8f8;
+  --neo-brutalism-secondary-label: #d6d6d6;
+  --neo-brutalism-tertiary-label: #a3a3a3;
+  --neo-brutalism-accent: #4da3ff;
+  --neo-brutalism-accent-soft: #0b2b55;
+  --neo-brutalism-accent-muted: #8fc5ff;
+  --neo-brutalism-accent-contrast: #111111;
+  --neo-brutalism-success: #38f29b;
+  --neo-brutalism-success-soft: #073b27;
+  --neo-brutalism-warning: #ffd60a;
+  --neo-brutalism-warning-soft: #4a3900;
+  --neo-brutalism-danger: #ff6961;
+  --neo-brutalism-danger-soft: #4a1111;
+  --neo-brutalism-danger-contrast: #111111;
+  --neo-brutalism-purple: #c4b5fd;
+  --neo-brutalism-pink: #ff8ae2;
+  --neo-brutalism-shadow: 6px 6px 0 #f8f8f8;
+}
