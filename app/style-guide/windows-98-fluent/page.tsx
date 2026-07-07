@@ -8,10 +8,6 @@ import {
 const windows98FluentNavigationItems = [
   { href: '/style-guide/windows-98-fluent/colors', label: 'Colors' },
   { href: '/style-guide/windows-98-fluent/forms', label: 'Forms' },
-  {
-    href: '/style-guide/windows-98-fluent/feedback',
-    label: 'Alert · Modal · Confirm'
-  },
   { href: '/style-guide/windows-98-fluent/components', label: 'Components' }
 ] as const;
 

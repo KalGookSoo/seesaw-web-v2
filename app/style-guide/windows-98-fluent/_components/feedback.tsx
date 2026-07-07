@@ -137,7 +137,7 @@ export function Windows98FluentModal({
             ) : null}
           </div>
           <button
-            className="border border-[var(--windows-98-fluent-separator)] bg-[var(--windows-98-fluent-surface)] px-3 py-1 text-2xl leading-none text-[var(--windows-98-fluent-label)] shadow-[var(--windows-98-fluent-inset)] active:shadow-[var(--windows-98-fluent-inset-pressed)]"
+            className="flex size-8 shrink-0 items-center justify-center border border-[var(--windows-98-fluent-separator)] bg-[var(--windows-98-fluent-surface)] font-mono text-xl leading-none font-bold text-[var(--windows-98-fluent-label)] shadow-[var(--windows-98-fluent-inset)] active:shadow-[var(--windows-98-fluent-inset-pressed)]"
             type="button"
             aria-label="닫기"
             onClick={onClose}
