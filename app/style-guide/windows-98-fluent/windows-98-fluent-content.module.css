@@ -1,0 +1,288 @@
+.window {
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: var(--windows-98-fluent-surface);
+  padding: 4px;
+  box-shadow: var(--windows-98-fluent-inset);
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  background: var(--windows-98-fluent-accent);
+  padding: 6px 8px;
+  color: var(--windows-98-fluent-accent-contrast);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.titleActions {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.titleAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: var(--windows-98-fluent-fill);
+  color: var(--windows-98-fluent-label);
+  box-shadow: var(--windows-98-fluent-inset);
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.viewer {
+  min-height: 420px;
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: var(--windows-98-fluent-surface-elevated);
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+  color: var(--windows-98-fluent-label);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  padding: clamp(16px, 3vw, 28px);
+}
+
+.viewer > :first-child {
+  margin-top: 0;
+}
+
+.viewer > :last-child {
+  margin-bottom: 0;
+}
+
+.viewer h1,
+.viewer h2,
+.viewer h3,
+.viewer h4,
+.viewer h5,
+.viewer h6 {
+  color: var(--windows-98-fluent-label);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.viewer h1 {
+  margin: 0 0 20px;
+  border-bottom: 2px solid var(--windows-98-fluent-separator);
+  padding-bottom: 8px;
+  font-size: clamp(1.875rem, 5vw, 2.75rem);
+}
+
+.viewer h2 {
+  margin: 32px 0 14px;
+  border-bottom: 1px solid var(--windows-98-fluent-line-soft);
+  padding-bottom: 6px;
+  font-size: clamp(1.5rem, 4vw, 2.125rem);
+}
+
+.viewer h3 {
+  margin: 28px 0 12px;
+  font-size: clamp(1.3125rem, 3vw, 1.75rem);
+}
+
+.viewer h4 {
+  margin: 24px 0 10px;
+  font-size: 1.25rem;
+}
+
+.viewer h5 {
+  margin: 22px 0 8px;
+  font-size: 1.0625rem;
+}
+
+.viewer h6 {
+  margin: 20px 0 8px;
+  color: var(--windows-98-fluent-secondary-label);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.viewer p {
+  margin: 14px 0;
+  color: var(--windows-98-fluent-secondary-label);
+}
+
+.viewer strong {
+  color: var(--windows-98-fluent-label);
+  font-weight: 700;
+}
+
+.viewer em {
+  color: var(--windows-98-fluent-label);
+}
+
+.viewer s,
+.viewer del {
+  color: var(--windows-98-fluent-tertiary-label);
+}
+
+.viewer a {
+  color: var(--windows-98-fluent-accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.viewer a:hover {
+  background: var(--windows-98-fluent-accent);
+  color: var(--windows-98-fluent-accent-contrast);
+}
+
+.viewer hr {
+  height: 0;
+  margin: 26px 0;
+  border: 0;
+  border-top: 1px solid var(--windows-98-fluent-separator);
+  border-bottom: 1px solid #ffffff;
+}
+
+.viewer ul,
+.viewer ol {
+  margin: 14px 0;
+  padding-left: 28px;
+  color: var(--windows-98-fluent-secondary-label);
+}
+
+.viewer ul {
+  list-style-type: square;
+}
+
+.viewer ol {
+  list-style-type: decimal;
+}
+
+.viewer li {
+  margin: 6px 0;
+}
+
+.viewer li::marker {
+  color: var(--windows-98-fluent-accent);
+  font-weight: 700;
+}
+
+.viewer blockquote {
+  margin: 20px 0;
+  border: 1px solid var(--windows-98-fluent-separator);
+  border-left-width: 8px;
+  background: var(--windows-98-fluent-fill);
+  padding: 14px 16px;
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+  color: var(--windows-98-fluent-label);
+}
+
+.viewer blockquote p {
+  color: inherit;
+}
+
+.viewer code {
+  border: 1px solid var(--windows-98-fluent-line-soft);
+  background: var(--windows-98-fluent-fill);
+  padding: 1px 5px;
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+  color: var(--windows-98-fluent-label);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.92em;
+}
+
+.viewer pre {
+  margin: 20px 0;
+  overflow: auto;
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: #000000;
+  padding: 14px;
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+  color: #00ff66;
+}
+
+.viewer pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  color: inherit;
+}
+
+.viewer table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: var(--windows-98-fluent-surface);
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+}
+
+.viewer th,
+.viewer td {
+  border: 1px solid var(--windows-98-fluent-separator);
+  padding: 9px 10px;
+  text-align: left;
+}
+
+.viewer th {
+  background: var(--windows-98-fluent-accent);
+  color: var(--windows-98-fluent-accent-contrast);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.8125rem;
+}
+
+.viewer td {
+  background: var(--windows-98-fluent-surface-elevated);
+  color: var(--windows-98-fluent-secondary-label);
+}
+
+.viewer figure {
+  margin: 22px 0;
+}
+
+.viewer img {
+  display: block;
+  max-width: 100%;
+  border: 1px solid var(--windows-98-fluent-separator);
+  background: var(--windows-98-fluent-surface);
+  padding: 4px;
+  box-shadow: var(--windows-98-fluent-inset);
+}
+
+.viewer figcaption {
+  margin-top: 8px;
+  color: var(--windows-98-fluent-tertiary-label);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.75rem;
+}
+
+.viewer input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  accent-color: var(--windows-98-fluent-accent);
+}
+
+.statusBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border: 1px solid var(--windows-98-fluent-separator);
+  border-top: 0;
+  background: var(--windows-98-fluent-fill);
+  padding: 4px;
+  box-shadow: var(--windows-98-fluent-inset);
+  color: var(--windows-98-fluent-secondary-label);
+  font-family: var(--font-mono), 'Courier New', monospace;
+  font-size: 0.75rem;
+}
+
+.statusItem {
+  border: 1px solid var(--windows-98-fluent-line-soft);
+  padding: 2px 8px;
+  box-shadow: var(--windows-98-fluent-inset-pressed);
+}

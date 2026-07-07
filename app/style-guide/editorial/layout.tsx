@@ -49,8 +49,8 @@ export default function StyleGuideLayout({
             <ThemeColorControls
               className="w-full space-y-3 border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-3"
               inputClassName="size-8 rounded-none border border-[var(--editorial-line)] bg-transparent p-0"
-              labelClassName="font-mono text-[10px] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase"
-              resetButtonClassName="border border-[var(--editorial-line-soft)] px-2 py-1 font-mono text-[10px] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:border-[var(--editorial-line)] hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
+              labelClassName="font-mono text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase"
+              resetButtonClassName="border border-[var(--editorial-line-soft)] px-2 py-1 font-mono text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:border-[var(--editorial-line)] hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
             />
             <ThemeToggle />
           </div>

@@ -79,7 +79,7 @@ export default function StyleGuideColorsPage() {
           <div className="border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-6 transition-colors duration-200">
             <div className="mb-4 flex items-center gap-2">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--editorial-line)]" />
-              <span className="text-[10px] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
+              <span className="text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
                 현재 테마
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function StyleGuideColorsPage() {
           <div className="border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] p-6 transition-colors duration-200">
             <div className="mb-4 flex items-center gap-2">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--editorial-accent)]" />
-              <span className="text-[10px] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
+              <span className="text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
                 다크 모드
               </span>
             </div>
@@ -109,7 +109,7 @@ export default function StyleGuideColorsPage() {
           <div className="border border-[var(--editorial-line)] bg-[var(--editorial-surface)] p-6 transition-colors duration-200">
             <div className="mb-4 flex items-center gap-2">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--editorial-accent)]" />
-              <span className="text-[10px] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
+              <span className="text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-muted)] uppercase">
                 포인트 컬러
               </span>
             </div>
@@ -152,7 +152,7 @@ export default function StyleGuideColorsPage() {
                     <div
                       className={`h-10 w-16 border border-[#1c2430]/20 ${color.lightClass}`}
                     />
-                    <span className="font-mono text-[10px] text-[#7a8491]">
+                    <span className="font-mono text-[0.625rem] text-[#7a8491]">
                       Graphite
                     </span>
                   </div>
@@ -170,7 +170,7 @@ export default function StyleGuideColorsPage() {
                     <div
                       className={`h-10 w-16 border border-[#d8e2f0]/35 ${color.darkClass}`}
                     />
-                    <span className="font-mono text-[10px] text-[#8b96a6]">
+                    <span className="font-mono text-[0.625rem] text-[#8b96a6]">
                       High-Contrast
                     </span>
                   </div>
@@ -205,7 +205,7 @@ export default function StyleGuideColorsPage() {
                 </div>
               </div>
               <div className="border-t border-[var(--editorial-line-soft)] bg-[var(--editorial-surface-muted)] p-3 text-center transition-colors duration-200">
-                <code className="font-mono text-[10px] text-[var(--editorial-ink-muted)]">
+                <code className="font-mono text-[0.625rem] text-[var(--editorial-ink-muted)]">
                   {color.bgLight.replace('bg-', '')} /{' '}
                   {color.bgDark.replace('bg-', '')}
                 </code>

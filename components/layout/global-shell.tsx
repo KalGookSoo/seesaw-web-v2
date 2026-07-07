@@ -24,7 +24,10 @@ import {
 
 import type { CategoryResponse } from '@/types/site';
 import type { NavigationPosition } from '@/lib/navigation-preferences';
-import { NAVIGATION_COLLAPSED_COOKIE_KEY, NAVIGATION_POSITION_COOKIE_KEY } from '@/lib/navigation-preferences';
+import {
+  NAVIGATION_COLLAPSED_COOKIE_KEY,
+  NAVIGATION_POSITION_COOKIE_KEY
+} from '@/lib/navigation-preferences';
 import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
 
@@ -41,12 +44,16 @@ type GlobalShellProps = Readonly<{
 }>;
 
 function getSystemTheme(): ThemeMode {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 }
 
 function getInitialTheme(): ThemeMode {
   const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-  return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : getSystemTheme();
+  return savedTheme === 'light' || savedTheme === 'dark'
+    ? savedTheme
+    : getSystemTheme();
 }
 
 function applyTheme(theme: ThemeMode) {
@@ -64,7 +71,9 @@ function getCategoryHref(category: CategoryResponse): string | null {
     return `/articles?categoryType=${category.type}&categoryId=${category.id}`;
   }
 
-  const firstChild = category.children?.find((child) => child.type && child.type !== 'NONE');
+  const firstChild = category.children?.find(
+    (child) => child.type && child.type !== 'NONE'
+  );
   if (firstChild?.type) {
     return `/articles?categoryType=${firstChild.type}&categoryId=${firstChild.id}`;
   }
@@ -72,15 +81,24 @@ function getCategoryHref(category: CategoryResponse): string | null {
   return null;
 }
 
-function isCategoryActive(category: CategoryResponse, currentCategory: CategoryResponse | null): boolean {
+function isCategoryActive(
+  category: CategoryResponse,
+  currentCategory: CategoryResponse | null
+): boolean {
   if (!currentCategory) {
     return false;
   }
 
-  return category.id === currentCategory.id || category.id === currentCategory.parentId;
+  return (
+    category.id === currentCategory.id ||
+    category.id === currentCategory.parentId
+  );
 }
 
-function isChildCategoryActive(category: CategoryResponse, currentCategory: CategoryResponse | null): boolean {
+function isChildCategoryActive(
+  category: CategoryResponse,
+  currentCategory: CategoryResponse | null
+): boolean {
   return currentCategory?.id === category.id;
 }
 
@@ -90,7 +108,7 @@ function RecentBadge({ count }: Readonly<{ count: number }>) {
   }
 
   return (
-    <span className="bg-default-orange-soft text-default-orange-contrast ring-default-orange-muted/50 rounded-full px-1.5 py-0.5 text-[10px] font-bold ring-1">
+    <span className="bg-default-orange-soft text-default-orange-contrast ring-default-orange-muted/50 rounded-full px-1.5 py-0.5 text-[0.625rem] font-bold ring-1">
       {count}
     </span>
   );
@@ -117,8 +135,14 @@ function ParentCategoryLink({
 
   const content = (
     <>
-      <span className={collapsed ? 'sr-only' : 'truncate'}>{category.name}</span>
-      {collapsed ? <span aria-hidden>{category.name.slice(0, 1)}</span> : <RecentBadge count={recentCount} />}
+      <span className={collapsed ? 'sr-only' : 'truncate'}>
+        {category.name}
+      </span>
+      {collapsed ? (
+        <span aria-hidden>{category.name.slice(0, 1)}</span>
+      ) : (
+        <RecentBadge count={recentCount} />
+      )}
     </>
   );
 
@@ -127,7 +151,12 @@ function ParentCategoryLink({
   }
 
   return (
-    <Link className={className} href={href} title={collapsed ? category.name : undefined} onClick={onNavigate}>
+    <Link
+      className={className}
+      href={href}
+      title={collapsed ? category.name : undefined}
+      onClick={onNavigate}
+    >
       {content}
     </Link>
   );
@@ -145,7 +174,9 @@ function ChildCategoryLink({
   const href = getCategoryHref(category);
   const recentCount = category.recentArticles?.length ?? 0;
   const className = `flex min-h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition ${
-    active ? 'bg-default-label text-default-background' : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
+    active
+      ? 'bg-default-label text-default-background'
+      : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
   }`;
   const content = (
     <>
@@ -190,7 +221,11 @@ function NavigationCategoryGroup({
         <ul className="border-default-separator mt-1 space-y-1 border-l pl-3">
           {children.map((child) => (
             <li key={child.id}>
-              <ChildCategoryLink active={isChildCategoryActive(child, currentCategory)} category={child} onNavigate={onNavigate} />
+              <ChildCategoryLink
+                active={isChildCategoryActive(child, currentCategory)}
+                category={child}
+                onNavigate={onNavigate}
+              />
             </li>
           ))}
         </ul>
@@ -211,7 +246,9 @@ function SegmentedButton({
   return (
     <button
       className={`inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold transition ${
-        active ? 'bg-default-label text-default-background' : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
+        active
+          ? 'bg-default-label text-default-background'
+          : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
       }`}
       type="button"
       aria-pressed={active}
@@ -249,8 +286,20 @@ function SideNavigation({
     <aside className="border-default-separator bg-default-surface flex h-full min-h-0 w-full flex-col lg:sticky lg:top-0 lg:h-dvh">
       <header className="border-default-separator flex h-16 flex-none items-center justify-between gap-2 border-b px-4">
         <Link className="min-w-0" href="/" onClick={onNavigate}>
-          <span className={collapsed ? 'sr-only' : 'text-default-label block truncate text-base font-semibold'}>{siteName}</span>
-          {collapsed ? <span className="text-default-label block text-lg font-semibold">{siteName.slice(0, 1)}</span> : null}
+          <span
+            className={
+              collapsed
+                ? 'sr-only'
+                : 'text-default-label block truncate text-base font-semibold'
+            }
+          >
+            {siteName}
+          </span>
+          {collapsed ? (
+            <span className="text-default-label block text-lg font-semibold">
+              {siteName.slice(0, 1)}
+            </span>
+          ) : null}
         </Link>
         <button
           className="text-default-secondary-label hover:bg-default-fill hover:text-default-label hidden size-8 items-center justify-center rounded-full transition lg:inline-flex"
@@ -258,11 +307,18 @@ function SideNavigation({
           aria-label={collapsed ? '내비게이션 펼치기' : '내비게이션 접기'}
           onClick={onToggleCollapsed}
         >
-          {navigationPosition === 'left' ? <ChevronLeft size={18} aria-hidden /> : <ChevronRight size={18} aria-hidden />}
+          {navigationPosition === 'left' ? (
+            <ChevronLeft size={18} aria-hidden />
+          ) : (
+            <ChevronRight size={18} aria-hidden />
+          )}
         </button>
       </header>
 
-      <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-4" aria-label="글로벌 내비게이션">
+      <nav
+        className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+        aria-label="글로벌 내비게이션"
+      >
         <ul className="space-y-2">
           <li>
             <Link
@@ -318,13 +374,19 @@ function SideNavigation({
             문의
           </button>
         </div>
-        <p className="text-default-tertiary-label text-xs leading-5">© 2025 SEESAW. All Rights Reserved.</p>
+        <p className="text-default-tertiary-label text-xs leading-5">
+          © 2025 SEESAW. All Rights Reserved.
+        </p>
       </footer>
     </aside>
   );
 }
 
-export function GlobalShell({ children, initialNavigationCollapsed, initialNavigationPosition }: GlobalShellProps) {
+export function GlobalShell({
+  children,
+  initialNavigationCollapsed,
+  initialNavigationPosition
+}: GlobalShellProps) {
   const [locale, setLocale] = useState<Locale>('ko');
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -332,10 +394,17 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
   const [reportOpen, setReportOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
-  const [navigationPosition, setNavigationPosition] = useState<NavigationPosition>(initialNavigationPosition);
-  const [navigationCollapsed, setNavigationCollapsed] = useState(initialNavigationCollapsed);
-  const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } = useSiteContext();
-  const categories = useMemo(() => NESTED_CATEGORIES.filter((category) => category.exposed), [NESTED_CATEGORIES]);
+  const [navigationPosition, setNavigationPosition] =
+    useState<NavigationPosition>(initialNavigationPosition);
+  const [navigationCollapsed, setNavigationCollapsed] = useState(
+    initialNavigationCollapsed
+  );
+  const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
+    useSiteContext();
+  const categories = useMemo(
+    () => NESTED_CATEGORIES.filter((category) => category.exposed),
+    [NESTED_CATEGORIES]
+  );
 
   const isAuthenticated = false;
   const signInHref = '/oauth2/authorization/naver';
@@ -413,8 +482,12 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="text-default-label truncate text-sm font-semibold">{SITE_CONTEXT.name}</p>
-          <p className="text-default-secondary-label truncate text-xs">{SITE_CONTEXT.domainName}</p>
+          <p className="text-default-label truncate text-sm font-semibold">
+            {SITE_CONTEXT.name}
+          </p>
+          <p className="text-default-secondary-label truncate text-xs">
+            {SITE_CONTEXT.domainName}
+          </p>
         </div>
 
         <button
@@ -453,7 +526,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
         )}
       </header>
 
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">{children}</main>
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
+        {children}
+      </main>
     </div>
   );
 
@@ -465,7 +540,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
         <>
           <div
             className={`bg-default-surface hidden min-w-0 self-stretch overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex ${
-              navigationCollapsed ? '-translate-x-4 opacity-0' : 'translate-x-0 opacity-100'
+              navigationCollapsed
+                ? '-translate-x-4 opacity-0'
+                : 'translate-x-0 opacity-100'
             } ${navigationCollapsed ? 'border-r-0' : 'border-default-separator border-r'}`}
           >
             {navigation}
@@ -477,7 +554,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
           {main}
           <div
             className={`bg-default-surface hidden min-w-0 self-stretch overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex ${
-              navigationCollapsed ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100'
+              navigationCollapsed
+                ? 'translate-x-4 opacity-0'
+                : 'translate-x-0 opacity-100'
             } ${navigationCollapsed ? 'border-l-0' : 'border-default-separator border-l'}`}
           >
             {navigation}
@@ -494,12 +573,19 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
           aria-label="내비게이션 열기"
           onClick={toggleNavigationCollapsed}
         >
-          {navigationPosition === 'left' ? <ChevronRight size={22} aria-hidden /> : <ChevronLeft size={22} aria-hidden />}
+          {navigationPosition === 'left' ? (
+            <ChevronRight size={22} aria-hidden />
+          ) : (
+            <ChevronLeft size={22} aria-hidden />
+          )}
         </button>
       ) : null}
 
       {mobileNavigationOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm lg:hidden" role="presentation">
+        <div
+          className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm lg:hidden"
+          role="presentation"
+        >
           <button
             className="absolute inset-0 cursor-default"
             type="button"
@@ -508,7 +594,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
           />
           <div
             className={`border-default-separator absolute top-0 h-full w-[min(20rem,88vw)] overflow-hidden shadow-2xl ${
-              navigationPosition === 'left' ? 'left-0 border-r' : 'right-0 border-l'
+              navigationPosition === 'left'
+                ? 'left-0 border-r'
+                : 'right-0 border-l'
             }`}
           >
             <SideNavigation
@@ -537,15 +625,25 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
         <div className="space-y-6">
           <section className="space-y-3">
             <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
-              {theme === 'dark' ? <Moon size={16} aria-hidden /> : <Sun size={16} aria-hidden />}
+              {theme === 'dark' ? (
+                <Moon size={16} aria-hidden />
+              ) : (
+                <Sun size={16} aria-hidden />
+              )}
               화면 모드
             </div>
             <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
-              <SegmentedButton active={theme === 'light'} onClick={() => changeTheme('light')}>
+              <SegmentedButton
+                active={theme === 'light'}
+                onClick={() => changeTheme('light')}
+              >
                 <Sun size={16} aria-hidden />
                 Light
               </SegmentedButton>
-              <SegmentedButton active={theme === 'dark'} onClick={() => changeTheme('dark')}>
+              <SegmentedButton
+                active={theme === 'dark'}
+                onClick={() => changeTheme('dark')}
+              >
                 <Moon size={16} aria-hidden />
                 Dark
               </SegmentedButton>
@@ -558,10 +656,16 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
               언어
             </div>
             <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
-              <SegmentedButton active={locale === 'ko'} onClick={() => changeLocale('ko')}>
+              <SegmentedButton
+                active={locale === 'ko'}
+                onClick={() => changeLocale('ko')}
+              >
                 한국어
               </SegmentedButton>
-              <SegmentedButton active={locale === 'en'} onClick={() => changeLocale('en')}>
+              <SegmentedButton
+                active={locale === 'en'}
+                onClick={() => changeLocale('en')}
+              >
                 English
               </SegmentedButton>
             </div>
@@ -569,15 +673,25 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
 
           <section className="space-y-3">
             <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
-              {navigationPosition === 'left' ? <PanelLeft size={16} aria-hidden /> : <PanelRight size={16} aria-hidden />}
+              {navigationPosition === 'left' ? (
+                <PanelLeft size={16} aria-hidden />
+              ) : (
+                <PanelRight size={16} aria-hidden />
+              )}
               GNB 위치
             </div>
             <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
-              <SegmentedButton active={navigationPosition === 'left'} onClick={() => changeNavigationPosition('left')}>
+              <SegmentedButton
+                active={navigationPosition === 'left'}
+                onClick={() => changeNavigationPosition('left')}
+              >
                 <PanelLeft size={16} aria-hidden />
                 좌측
               </SegmentedButton>
-              <SegmentedButton active={navigationPosition === 'right'} onClick={() => changeNavigationPosition('right')}>
+              <SegmentedButton
+                active={navigationPosition === 'right'}
+                onClick={() => changeNavigationPosition('right')}
+              >
                 <PanelRight size={16} aria-hidden />
                 우측
               </SegmentedButton>
@@ -597,26 +711,31 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
           <section>
             <h3 className="text-default-label font-semibold">운영 정책</h3>
             <p className="mt-2">
-              운영 정책을 지키지 않은 경우 서비스 이용이 제한될 수 있습니다. 서비스를 이용하기 전에 정책을 확인하고 준수해주세요.
+              운영 정책을 지키지 않은 경우 서비스 이용이 제한될 수 있습니다.
+              서비스를 이용하기 전에 정책을 확인하고 준수해주세요.
             </p>
           </section>
           <section>
             <h3 className="text-default-label font-semibold">서비스 이용</h3>
             <p className="mt-2">
-              회원은 사이트를 생성하고 게시글, 일정, 첨부파일 등 제공되는 기능을 이용할 수 있습니다. 관련 법령, 약관, 운영정책에 위반되는
-              콘텐츠는 제한될 수 있습니다.
+              회원은 사이트를 생성하고 게시글, 일정, 첨부파일 등 제공되는 기능을
+              이용할 수 있습니다. 관련 법령, 약관, 운영정책에 위반되는 콘텐츠는
+              제한될 수 있습니다.
             </p>
           </section>
           <section>
             <h3 className="text-default-label font-semibold">이용 제한</h3>
             <p className="mt-2">
-              음란물, 불법 게시물, 권리침해, 스팸성 콘텐츠, 타인에게 피해를 주는 행위가 확인되는 경우 게시물 차단, 삭제, 서비스 이용 제한
-              등의 조치가 이루어질 수 있습니다.
+              음란물, 불법 게시물, 권리침해, 스팸성 콘텐츠, 타인에게 피해를 주는
+              행위가 확인되는 경우 게시물 차단, 삭제, 서비스 이용 제한 등의
+              조치가 이루어질 수 있습니다.
             </p>
           </section>
           <section>
             <h3 className="text-default-label font-semibold">정책 변경</h3>
-            <p className="mt-2">운영정책의 추가, 삭제, 수정이 있는 경우 사전에 공지할 수 있습니다.</p>
+            <p className="mt-2">
+              운영정책의 추가, 삭제, 수정이 있는 경우 사전에 공지할 수 있습니다.
+            </p>
           </section>
         </div>
       </Modal>
@@ -624,7 +743,11 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
       <Modal
         open={reportOpen}
         title="신고하기"
-        description={isAuthenticated ? '부적절한 콘텐츠나 권리침해 내용을 신고합니다.' : '신고 기능은 로그인 후 이용할 수 있습니다.'}
+        description={
+          isAuthenticated
+            ? '부적절한 콘텐츠나 권리침해 내용을 신고합니다.'
+            : '신고 기능은 로그인 후 이용할 수 있습니다.'
+        }
         size="md"
         onClose={() => setReportOpen(false)}
         footer={
@@ -649,7 +772,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
       >
         <form className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-default-label text-sm font-medium">홈페이지명</span>
+            <span className="text-default-label text-sm font-medium">
+              홈페이지명
+            </span>
             <input
               className="border-default-separator bg-default-fill text-default-label h-11 w-full rounded-md border px-3 text-sm outline-none"
               readOnly
@@ -657,7 +782,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
             />
           </label>
           <label className="block space-y-2">
-            <span className="text-default-label text-sm font-medium">이메일</span>
+            <span className="text-default-label text-sm font-medium">
+              이메일
+            </span>
             <input
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
               type="email"
@@ -666,16 +793,31 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
             />
           </label>
           <fieldset className="space-y-2" disabled={!isAuthenticated}>
-            <legend className="text-default-label text-sm font-medium">신고사유</legend>
-            {['음란성 또는 청소년에게 부적합한 내용', '부적합한 스팸성 내용', '기타'].map((reason) => (
-              <label key={reason} className="text-default-secondary-label flex items-center gap-2 text-sm">
-                <input className="accent-default-blue size-4" type="radio" name="reportReason" />
+            <legend className="text-default-label text-sm font-medium">
+              신고사유
+            </legend>
+            {[
+              '음란성 또는 청소년에게 부적합한 내용',
+              '부적합한 스팸성 내용',
+              '기타'
+            ].map((reason) => (
+              <label
+                key={reason}
+                className="text-default-secondary-label flex items-center gap-2 text-sm"
+              >
+                <input
+                  className="accent-default-blue size-4"
+                  type="radio"
+                  name="reportReason"
+                />
                 {reason}
               </label>
             ))}
           </fieldset>
           <label className="block space-y-2">
-            <span className="text-default-label text-sm font-medium">상세내용</span>
+            <span className="text-default-label text-sm font-medium">
+              상세내용
+            </span>
             <textarea
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-28 w-full resize-none rounded-md border px-3 py-3 text-sm outline-none focus:ring-4"
               disabled={!isAuthenticated}
@@ -687,7 +829,11 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
       <Modal
         open={inquiryOpen}
         title="문의하기"
-        description={isAuthenticated ? '서비스 이용 중 궁금한 점을 문의합니다.' : '문의 기능은 로그인 후 이용할 수 있습니다.'}
+        description={
+          isAuthenticated
+            ? '서비스 이용 중 궁금한 점을 문의합니다.'
+            : '문의 기능은 로그인 후 이용할 수 있습니다.'
+        }
         size="md"
         onClose={() => setInquiryOpen(false)}
         footer={
@@ -712,7 +858,9 @@ export function GlobalShell({ children, initialNavigationCollapsed, initialNavig
       >
         <form className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-default-label text-sm font-medium">이메일</span>
+            <span className="text-default-label text-sm font-medium">
+              이메일
+            </span>
             <input
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
               type="email"

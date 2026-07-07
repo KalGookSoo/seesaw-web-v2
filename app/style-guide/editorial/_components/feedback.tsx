@@ -125,7 +125,7 @@ export function EditorialModal({
       >
         <header className="flex items-start justify-between gap-4 border-b-2 border-[var(--editorial-line)] px-6 py-5">
           <div>
-            <p className="text-[10px] font-black tracking-[0.24em] text-[var(--editorial-accent)] uppercase">
+            <p className="text-[0.625rem] font-black tracking-[0.24em] text-[var(--editorial-accent)] uppercase">
               Editorial Dialog
             </p>
             <h2

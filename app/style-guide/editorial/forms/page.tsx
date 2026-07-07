@@ -154,7 +154,7 @@ export default function StyleGuideFormsPage() {
                   placeholder=" "
                   defaultValue="대전포스트잇"
                 />
-                <span className="absolute top-2 left-3 font-sans text-[10px] font-bold tracking-wider text-neutral-400 uppercase dark:text-neutral-500">
+                <span className="absolute top-2 left-3 font-sans text-[0.625rem] font-bold tracking-wider text-neutral-400 uppercase dark:text-neutral-500">
                   사이트 이름
                 </span>
               </label>
@@ -164,7 +164,7 @@ export default function StyleGuideFormsPage() {
                   placeholder=" "
                   defaultValue="invalid-domain"
                 />
-                <span className="absolute top-2 left-3 font-sans text-[10px] font-bold tracking-wider text-red-600 uppercase dark:text-red-400">
+                <span className="absolute top-2 left-3 font-sans text-[0.625rem] font-bold tracking-wider text-red-600 uppercase dark:text-red-400">
                   도메인 이름
                 </span>
               </label>

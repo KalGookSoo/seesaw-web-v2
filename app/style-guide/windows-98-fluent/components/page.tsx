@@ -1,3 +1,4 @@
+import { RichContentPreview } from 'app/style-guide/windows-98-fluent/_components/rich-content-preview';
 import {
   PageIntro,
   PreviewPanel,
@@ -123,6 +124,13 @@ export default function StyleGuideComponentsPage() {
             </div>
           </PreviewPanel>
         </div>
+      </StyleGuideSection>
+
+      <StyleGuideSection
+        eyebrow="Typography"
+        title="Rich content viewer elements"
+      >
+        <RichContentPreview />
       </StyleGuideSection>
     </>
   );
