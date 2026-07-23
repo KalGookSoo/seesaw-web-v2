@@ -1,0 +1,2382 @@
+openapi: 3.0.1
+info:
+  title: seesaw-api API Documentation
+  description: API documentation for seesaw-api
+  contact:
+    name: Seesaw Team
+    email: ga.miro3721@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 0.0.1-SNAPSHOT
+servers:
+- url: /seesaw-api
+  description: Default Server URL
+security:
+- Bearer Authentication: []
+tags:
+- name: MessageApiController
+  description: 메세지 API 컨트롤러
+paths:
+  /api/events/{id}:
+    get:
+      tags:
+      - event-api-controller
+      operationId: find
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/VEventResponse"
+    put:
+      tags:
+      - event-api-controller
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEventRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/VEventResponse"
+    delete:
+      tags:
+      - event-api-controller
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/categories/{id}:
+    get:
+      tags:
+      - category-api-controller
+      operationId: getCategoryById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/CategoryResponse"
+    put:
+      tags:
+      - category-api-controller
+      operationId: updateCategory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategoryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/CategoryResponse"
+    delete:
+      tags:
+      - category-api-controller
+      operationId: deleteCategory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/categories/{id}/move:
+    put:
+      tags:
+      - category-api-controller
+      operationId: moveCategory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveCategoryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/CategoryResponse"
+  /api/articles/{id}/move:
+    put:
+      tags:
+      - article-api-controller
+      operationId: move
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveArticleRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/token/refresh:
+    post:
+      tags:
+      - sign-api-controller
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRefreshRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JsonWebToken"
+  /api/sites:
+    get:
+      tags:
+      - site-api-controller
+      operationId: getOwnSites
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SiteResponse"
+    post:
+      tags:
+      - site-api-controller
+      operationId: createSite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSiteRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+  /api/sites/{id}:
+    get:
+      tags:
+      - site-api-controller
+      operationId: getSiteById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+    post:
+      tags:
+      - site-api-controller
+      operationId: updateSite
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSiteRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+    delete:
+      tags:
+      - site-api-controller
+      operationId: deleteSite
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/sign-in:
+    post:
+      tags:
+      - sign-api-controller
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JsonWebToken"
+  /api/replies:
+    get:
+      tags:
+      - reply-api-controller
+      operationId: getRepliesByArticleId
+      parameters:
+      - name: articleId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ReplyResponse"
+    post:
+      tags:
+      - reply-api-controller
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReplyRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: string
+  /api/replies/{id}:
+    post:
+      tags:
+      - reply-api-controller
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReplyRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: string
+    delete:
+      tags:
+      - reply-api-controller
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/permissions:
+    get:
+      tags:
+      - permission-api-controller
+      operationId: getPermissionsByTargetId
+      parameters:
+      - name: targetId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PermissionResponse"
+    post:
+      tags:
+      - permission-api-controller
+      operationId: savePermission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavePermissionRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/PermissionResponse"
+  /api/events:
+    get:
+      tags:
+      - event-api-controller
+      operationId: findAll
+      parameters:
+      - name: request
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/SearchEventsRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VEventResponse"
+    post:
+      tags:
+      - event-api-controller
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/VEventResponse"
+  /api/categories:
+    post:
+      tags:
+      - category-api-controller
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/CategoryResponse"
+  /api/articles:
+    get:
+      tags:
+      - article-api-controller
+      operationId: getArticles
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/Pageable"
+      - name: search
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/SearchArticlesRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PagedModelArticleResponse"
+    post:
+      tags:
+      - article-api-controller
+      operationId: create_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateArticleRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - article-api-controller
+      operationId: deleteAll
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/articles/{id}:
+    get:
+      tags:
+      - article-api-controller
+      operationId: getArticle
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      - name: categoryId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/ArticleResponse"
+    post:
+      tags:
+      - article-api-controller
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArticleRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - article-api-controller
+      operationId: delete_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/test/sitemap.xml:
+    get:
+      tags:
+      - sitemap-api-controller
+      operationId: getSitemap
+      parameters:
+      - name: origin
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: domainName
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/xml:
+              schema:
+                type: string
+  /api/sites/by-domain/{domainName}:
+    get:
+      tags:
+      - site-api-controller
+      operationId: getSiteByDomainName
+      parameters:
+      - name: domainName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+  /api/sites/by-domain/{domainName}/context:
+    get:
+      tags:
+      - site-api-controller
+      operationId: getSiteContext
+      parameters:
+      - name: domainName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+  /api/sitemap.xml:
+    get:
+      tags:
+      - sitemap-api-controller
+      operationId: getSitemap_1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/xml:
+              schema:
+                type: string
+  /api/roles:
+    get:
+      tags:
+      - role-api-controller
+      operationId: getAllRoles
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/RoleResponse"
+  /api/messages:
+    get:
+      tags:
+      - MessageApiController
+      operationId: getAllMessages
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /api/messages/{code}:
+    get:
+      tags:
+      - MessageApiController
+      operationId: getMessageByCode
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: args
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/codes:
+    get:
+      tags:
+      - code-api-controller
+      operationId: getAllCodes
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: isNested
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CodeResponse"
+  /api/codes/{name}:
+    get:
+      tags:
+      - code-api-controller
+      operationId: getCode
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CodeResponse"
+  /api/categories/by-site-id/{siteId}:
+    get:
+      tags:
+      - category-api-controller
+      operationId: getCategories
+      parameters:
+      - name: siteId
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CategoryResponse"
+  /api/calendars/categories/{categoryId}/events.ics:
+    get:
+      tags:
+      - i-calendar-api-feed-controller
+      operationId: getEvents
+      parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      - name: start
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: end
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      responses:
+        "200":
+          description: OK
+          content:
+            text/calendar;charset=UTF-8:
+              schema:
+                type: string
+  /api/attachments:
+    get:
+      tags:
+      - attachment-api-controller
+      operationId: getAttachments
+      parameters:
+      - name: referenceId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AttachmentResponse"
+  /api/attachments/{id}:
+    get:
+      tags:
+      - attachment-api-controller
+      operationId: getAttachment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+    delete:
+      tags:
+      - attachment-api-controller
+      operationId: deleteAttachment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/articles/static-content:
+    get:
+      tags:
+      - article-api-controller
+      operationId: getStaticContentArticles
+      parameters:
+      - name: categoryId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArticleResponse"
+  /api/articles/fixed:
+    get:
+      tags:
+      - article-api-controller
+      operationId: getFixedArticles
+      parameters:
+      - name: categoryId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArticleResponse"
+components:
+  schemas:
+    UpdateEventRequest:
+      required:
+      - dtEnd
+      - dtStart
+      - title
+      type: object
+      properties:
+        dtStart:
+          type: string
+          description: 시작 일시
+          format: date-time
+        dtEnd:
+          type: string
+          description: 종료 일시
+          format: date-time
+        title:
+          type: string
+          description: 제목
+        content:
+          type: string
+          description: 상세 설명
+        location:
+          type: string
+          description: 장소
+        status:
+          type: string
+          description: 상태
+          enum:
+          - TENTATIVE
+          - CONFIRMED
+          - CANCELLED
+        tzid:
+          type: string
+          description: 시간대 식별자
+        categoryId:
+          type: string
+          description: 카테고리 ID
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          items:
+            type: string
+            format: binary
+        inlineImages:
+          type: array
+          description: 이미지
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+        inlineImagesSizeValid:
+          type: boolean
+      description: 일정 수정 커맨드
+    ArticleResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        parentId:
+          type: string
+          description: 부모 식별자
+          example: c1e2d3f4-0000-0000-0000-000000000001
+        parent:
+          $ref: "#/components/schemas/ArticleResponse"
+        children:
+          type: array
+          description: 자식 모델 목록
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/ArticleResponse"
+        exposed:
+          type: boolean
+        fixed:
+          type: boolean
+        fixedOrder:
+          type: integer
+          format: int32
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          type: string
+          enum:
+          - MAP
+          - HTML
+          - CAROUSEL
+          - BUTTON_GROUP
+          - IMAGE
+          - TABLE
+          - VIDEO
+        categoryId:
+          type: string
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentResponse"
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReplyResponse"
+        views:
+          type: array
+          items:
+            $ref: "#/components/schemas/ViewResponse"
+        votes:
+          type: array
+          items:
+            $ref: "#/components/schemas/VoteResponse"
+        url:
+          type: string
+        inlineImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentResponse"
+        plainContent:
+          type: string
+        maskedAuthor:
+          type: string
+        recentlyGenerated:
+          type: boolean
+        root:
+          type: boolean
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 게시글 모델
+    AttachmentResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        referenceId:
+          type: string
+          description: 참조 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        originalName:
+          type: string
+        name:
+          type: string
+        pathName:
+          type: string
+        mimeType:
+          type: string
+        size:
+          type: integer
+          format: int64
+        previewable:
+          type: boolean
+        attachment:
+          type: boolean
+        inlineImage:
+          type: boolean
+        iconClass:
+          type: string
+        formattedSize:
+          type: string
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 첨부파일 모델
+    BaseEntity:
+      type: object
+      properties:
+        id:
+          type: string
+        createdBy:
+          type: string
+        createdIp:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        lastModifiedBy:
+          type: string
+        lastModifiedIp:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        version:
+          type: integer
+          format: int32
+    RecurrenceRule:
+      type: object
+      properties:
+        freq:
+          type: string
+          enum:
+          - SECONDLY
+          - MINUTELY
+          - HOURLY
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+        interval:
+          type: integer
+          format: int32
+        until:
+          type: string
+          format: date-time
+        count:
+          type: integer
+          format: int32
+        byDay:
+          type: string
+        byMonth:
+          type: string
+        byMonthDay:
+          type: string
+        wkst:
+          type: string
+          enum:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+          - SUNDAY
+      description: 반복 규칙
+    ReplyResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        parentId:
+          type: string
+          description: 부모 식별자
+          example: c1e2d3f4-0000-0000-0000-000000000001
+        parent:
+          $ref: "#/components/schemas/ReplyResponse"
+        children:
+          type: array
+          description: 자식 모델 목록
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/ReplyResponse"
+        exposed:
+          type: boolean
+        content:
+          type: string
+          description: 댓글 본문
+        articleId:
+          type: string
+          description: 게시글 식별자(UUID)
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentResponse"
+        votes:
+          type: array
+          items:
+            $ref: "#/components/schemas/VoteResponse"
+        inlineImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentResponse"
+        maskedAuthor:
+          type: string
+        root:
+          type: boolean
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 댓글 모델
+    VEventResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        articleId:
+          type: string
+          description: 게시글 식별자
+        article:
+          $ref: "#/components/schemas/ArticleResponse"
+        dtStart:
+          type: string
+          description: 시작 일시
+          format: date-time
+        dtEnd:
+          type: string
+          description: 종료 일시
+          format: date-time
+        title:
+          type: string
+          description: 제목
+        description:
+          type: string
+          description: 상세 설명
+        location:
+          type: string
+          description: 장소
+        status:
+          type: string
+          description: 상태
+          enum:
+          - TENTATIVE
+          - CONFIRMED
+          - CANCELLED
+        rrule:
+          $ref: "#/components/schemas/RecurrenceRule"
+        tzid:
+          type: string
+          description: 시간대 식별자
+        duration:
+          type: string
+          description: 기간
+        statusDescription:
+          type: string
+          description: 상태 설명
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 일정 모델
+    ViewResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        articleId:
+          type: string
+          description: 게시글 식별자(UUID)
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 뷰 모델
+    VoteResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        referenceId:
+          type: string
+          description: 참조 식별자(UUID)
+        approved:
+          type: boolean
+          description: 찬성 여부
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 투표 모델
+    UpdateCategoryRequest:
+      required:
+      - name
+      - sequence
+      - siteId
+      - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: 카테고리 이름
+          example: 공지사항
+        description:
+          type: string
+          description: 카테고리 설명
+          example: 중요 공지 모음
+        type:
+          type: string
+          description: 카테고리 타입
+          example: BOARD
+          enum:
+          - NONE
+          - STATIC_CONTENT
+          - BOARD
+          - QNA
+          - SCHEDULE
+          - STORE
+          - BUSINESS
+        siteExposed:
+          type: boolean
+          description: 사이트 노출 여부
+          example: true
+        siteExposedOrder:
+          minimum: 0
+          type: integer
+          description: 사이트 노출 순서
+          format: int32
+          example: 1
+        exposed:
+          type: boolean
+          description: 노출 여부
+          example: true
+        sequence:
+          minimum: 0
+          type: integer
+          description: 정렬 순서
+          format: int32
+          example: 10
+        siteId:
+          type: string
+          description: 사이트 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        parentId:
+          type: string
+          description: 부모 카테고리 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+      description: 카테고리 수정 커맨드
+    CategoryResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        parentId:
+          type: string
+          description: 부모 식별자
+          example: c1e2d3f4-0000-0000-0000-000000000001
+        parent:
+          $ref: "#/components/schemas/CategoryResponse"
+        children:
+          type: array
+          description: 자식 모델 목록
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/CategoryResponse"
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleResponse"
+        name:
+          type: string
+          description: 카테고리 이름
+          example: 공지사항
+        description:
+          type: string
+          description: 카테고리 설명
+          example: 중요 공지 모음
+        type:
+          type: string
+          description: 카테고리 타입
+          example: BOARD
+          enum:
+          - NONE
+          - STATIC_CONTENT
+          - BOARD
+          - QNA
+          - SCHEDULE
+          - STORE
+          - BUSINESS
+        siteExposed:
+          type: boolean
+          description: 사이트 노출 여부
+          example: true
+        siteExposedOrder:
+          type: integer
+          description: 사이트 노출 순서
+          format: int32
+          example: 1
+        exposed:
+          type: boolean
+          description: 노출 여부
+          example: true
+        sequence:
+          type: integer
+          description: 정렬 순서
+          format: int32
+          example: 10
+        siteId:
+          type: string
+          description: 사이트 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        recentArticles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleResponse"
+        url:
+          type: string
+          description: 카테고리 링크 URL
+        root:
+          type: boolean
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 카테고리 모델
+    MoveCategoryRequest:
+      required:
+      - sequence
+      type: object
+      properties:
+        parentId:
+          type: string
+          description: 부모 카테고리 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        sequence:
+          minimum: 0
+          type: integer
+          description: 정렬 순서
+          format: int32
+          example: 10
+      description: 카테고리 이동 커맨드
+    MoveArticleRequest:
+      required:
+      - categoryId
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: 대상 카테고리 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+      description: 게시글 이동 커맨드
+    TokenRefreshRequest:
+      required:
+      - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+    JsonWebToken:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          format: int64
+    Address:
+      type: object
+      properties:
+        zipcode:
+          type: string
+        value:
+          type: string
+      description: 주소
+    CreateSiteRequest:
+      required:
+      - domainName
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 이름
+          example: 이름
+        domainName:
+          type: string
+          description: 도메인이름
+          example: www.example.com
+        description:
+          type: string
+          description: 설명
+          example: 설명
+        distributionCode:
+          type: string
+          description: 분류코드
+          example: 분류코드
+        searchEngineExposed:
+          type: boolean
+          description: 검색 엔진 노출 여부
+          example: true
+        imageExposed:
+          type: boolean
+          description: 이미지 노출 여부
+          example: true
+        themeColor:
+          type: string
+          description: 테마 색상
+          example: "#cc4202"
+        backgroundColor:
+          type: string
+          description: 배경 색상
+          example: "#ffffff"
+        tags:
+          type: string
+          description: 태그
+          example: "태그1,태그2"
+        address:
+          $ref: "#/components/schemas/Address"
+        contactNumber:
+          type: string
+          description: 연락처
+          example: 010-1234-5678
+        intro:
+          type: string
+          description: 소개글
+          example: 독서모임 홈페이지
+        content:
+          type: string
+          description: 본문
+          example: 독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!
+        profileImage:
+          type: string
+          format: binary
+        backgroundImage:
+          type: string
+          format: binary
+        profileImageSizeValid:
+          type: boolean
+        backgroundImageSizeValid:
+          type: boolean
+      description: 사이트 생성 커맨드
+    SiteResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        parentId:
+          type: string
+          description: 부모 식별자
+          example: c1e2d3f4-0000-0000-0000-000000000001
+        parent:
+          $ref: "#/components/schemas/SiteResponse"
+        children:
+          type: array
+          description: 자식 모델 목록
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/SiteResponse"
+        name:
+          type: string
+          description: 이름
+        domainName:
+          type: string
+          description: 도메인이름
+        description:
+          type: string
+          description: 설명
+        distributionCode:
+          type: string
+          description: 분류코드
+        searchEngineExposed:
+          type: boolean
+          description: 검색엔진 노출여부
+        imageExposed:
+          type: boolean
+          description: 이미지 노출여부
+        themeColor:
+          type: string
+          description: 테마 색상
+          example: "#cc4202"
+        backgroundColor:
+          type: string
+          description: 배경 색상
+          example: "#ffffff"
+        tags:
+          type: string
+          description: 태그
+        address:
+          $ref: "#/components/schemas/Address"
+        contactNumber:
+          type: string
+          description: 연락처
+        intro:
+          type: string
+          description: 소개글
+        content:
+          type: string
+          description: 본문
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryResponse"
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentResponse"
+        profileImage:
+          $ref: "#/components/schemas/AttachmentResponse"
+        backgroundImage:
+          $ref: "#/components/schemas/AttachmentResponse"
+        root:
+          type: boolean
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 사이트 모델
+    SignInRequest:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    CreateReplyRequest:
+      required:
+      - articleId
+      - content
+      type: object
+      properties:
+        exposed:
+          type: boolean
+          description: 노출 여부
+          example: true
+        articleId:
+          type: string
+          description: 게시글 식별자
+          example: 게시글 식별자
+        content:
+          type: string
+          description: 내용
+          example: 내용
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          example: 첨부파일
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+      description: 댓글 생성 커맨드
+    UpdateReplyRequest:
+      required:
+      - content
+      type: object
+      properties:
+        exposed:
+          type: boolean
+          description: 노출 여부
+          example: true
+        content:
+          type: string
+          description: 내용
+          example: 내용
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          example: 첨부파일
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+      description: 댓글 수정 커맨드
+    SavePermissionRequest:
+      type: object
+      properties:
+        targetId:
+          type: string
+        roleId:
+          type: string
+        mask:
+          type: integer
+          format: int32
+    PermissionResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        targetId:
+          type: string
+          description: 대상 식별자
+          example: 대상 식별자
+        roleId:
+          type: string
+          description: 역할 식별자
+          example: 역할 식별자
+        mask:
+          type: integer
+          description: 비트마스크
+          format: int32
+          example: 1
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 권한 모델
+    CreateEventRequest:
+      required:
+      - categoryId
+      - content
+      - dtEnd
+      - dtStart
+      - title
+      type: object
+      properties:
+        dtStart:
+          type: string
+          description: 시작 일시
+          format: date-time
+        dtEnd:
+          type: string
+          description: 종료 일시
+          format: date-time
+        title:
+          type: string
+          description: 제목
+        content:
+          type: string
+          description: 상세 설명
+        location:
+          type: string
+          description: 장소
+        status:
+          type: string
+          description: 상태
+          enum:
+          - TENTATIVE
+          - CONFIRMED
+          - CANCELLED
+        tzid:
+          type: string
+          description: 시간대 식별자
+        categoryId:
+          type: string
+          description: 카테고리 ID
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          items:
+            type: string
+            format: binary
+        inlineImages:
+          type: array
+          description: 이미지
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+        inlineImagesSizeValid:
+          type: boolean
+      description: 일정 생성 커맨드
+    CreateCategoryRequest:
+      required:
+      - name
+      - sequence
+      - siteId
+      - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: 카테고리 이름
+          example: 공지사항
+        description:
+          type: string
+          description: 카테고리 설명
+          example: 중요 공지 모음
+        type:
+          type: string
+          description: 카테고리 타입
+          example: BOARD
+          enum:
+          - NONE
+          - STATIC_CONTENT
+          - BOARD
+          - QNA
+          - SCHEDULE
+          - STORE
+          - BUSINESS
+        siteExposed:
+          type: boolean
+          description: 사이트 노출 여부
+          example: true
+        siteExposedOrder:
+          minimum: 0
+          type: integer
+          description: 사이트 노출 순서
+          format: int32
+          example: 1
+        exposed:
+          type: boolean
+          description: 노출 여부
+          example: true
+        sequence:
+          minimum: 0
+          type: integer
+          description: 정렬 순서
+          format: int32
+          example: 10
+        siteId:
+          type: string
+          description: 사이트 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        parentId:
+          type: string
+          description: 부모 카테고리 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+      description: 카테고리 생성 커맨드
+    CreateArticleRequest:
+      required:
+      - categoryId
+      - content
+      - title
+      - type
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: 카테고리 식별자
+          example: 카테고리 식별자
+        type:
+          type: string
+          description: 타입
+          example: 타입
+          enum:
+          - MAP
+          - HTML
+          - CAROUSEL
+          - BUTTON_GROUP
+          - IMAGE
+          - TABLE
+          - VIDEO
+        fixed:
+          type: boolean
+          description: 고정여부
+          example: false
+        fixedOrder:
+          type: integer
+          description: 고정순서
+          format: int32
+        title:
+          type: string
+          description: 제목
+          example: 제목
+        content:
+          type: string
+          description: 본문
+          example: 본문
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          example: 첨부파일
+          items:
+            type: string
+            format: binary
+        inlineImages:
+          type: array
+          description: 이미지
+          example: 이미지
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+        inlineImagesSizeValid:
+          type: boolean
+      description: 게시글 생성 커맨드
+    UpdateArticleRequest:
+      required:
+      - categoryId
+      - content
+      - title
+      - type
+      type: object
+      properties:
+        categoryId:
+          type: string
+          description: 카테고리 식별자
+          example: 카테고리 식별자
+        type:
+          type: string
+          description: 타입
+          example: 타입
+          enum:
+          - MAP
+          - HTML
+          - CAROUSEL
+          - BUTTON_GROUP
+          - IMAGE
+          - TABLE
+          - VIDEO
+        fixed:
+          type: boolean
+          description: 고정여부
+          example: false
+        fixedOrder:
+          type: integer
+          description: 고정순서
+          format: int32
+        title:
+          type: string
+          description: 제목
+          example: 제목
+        content:
+          type: string
+          description: 본문
+          example: 본문
+        multipartFiles:
+          type: array
+          description: 첨부파일
+          example: 첨부파일
+          items:
+            type: string
+            format: binary
+        inlineImages:
+          type: array
+          description: 이미지
+          example: 이미지
+          items:
+            type: string
+            format: binary
+        multipartFilesSizeValid:
+          type: boolean
+        inlineImagesSizeValid:
+          type: boolean
+      description: 게시글 수정 커맨드
+    RoleResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        name:
+          type: string
+          description: 역할명
+          example: ROLE_USER
+        alias:
+          type: string
+          description: 역할 별칭
+          example: 일반 사용자
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 역할 모델
+    SearchEventsRequest:
+      required:
+      - categoryId
+      type: object
+      properties:
+        categoryId:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+          description: 카테고리 식별자
+        start:
+          type: string
+          description: 검색 시작 일시
+          format: date-time
+        end:
+          type: string
+          description: 검색 종료 일시
+          format: date-time
+        query:
+          type: string
+          description: 검색어 (제목/본문)
+      description: 일정 목록 검색 요청
+    CodeResponse:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 식별자(UUID)
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        createdBy:
+          type: string
+          description: 생성자 계정명
+          example: admin
+        createdIp:
+          type: string
+          description: 생성 IP
+          example: 192.168.0.10
+        createdDate:
+          type: string
+          description: 생성 일시
+          format: date-time
+        lastModifiedBy:
+          type: string
+          description: 최종 수정자 계정명
+          example: editor
+        lastModifiedIp:
+          type: string
+          description: 최종 수정 IP
+          example: 192.168.0.11
+        lastModifiedDate:
+          type: string
+          description: 최종 수정 일시
+          format: date-time
+        parentId:
+          type: string
+          description: 부모 식별자
+          example: c1e2d3f4-0000-0000-0000-000000000001
+        parent:
+          $ref: "#/components/schemas/CodeResponse"
+        children:
+          type: array
+          description: 자식 모델 목록
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/CodeResponse"
+        name:
+          type: string
+          description: 코드 이름
+        description:
+          type: string
+          description: 코드 설명
+        sequence:
+          type: integer
+          description: 정렬 순서
+          format: int32
+        root:
+          type: boolean
+        baseModel:
+          $ref: "#/components/schemas/BaseEntity"
+      description: 코드 모델
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    SearchArticlesRequest:
+      required:
+      - categoryId
+      type: object
+      properties:
+        categoryId:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+        categoryType:
+          type: string
+          enum:
+          - NONE
+          - STATIC_CONTENT
+          - BOARD
+          - QNA
+          - SCHEDULE
+          - STORE
+          - BUSINESS
+        viewType:
+          type: string
+          enum:
+          - TABLE
+          - CARD
+        keyField:
+          type: string
+        keyWord:
+          type: string
+        uriComponentsBuilder:
+          $ref: "#/components/schemas/UriComponentsBuilder"
+    UriComponentsBuilder:
+      type: object
+    PageMetadata:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int64
+        number:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+    PagedModelArticleResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleResponse"
+        page:
+          $ref: "#/components/schemas/PageMetadata"
+  securitySchemes:
+    Bearer Authentication:
+      type: http
+      description: JWT 토큰을 입력하세요. 'Bearer ' 접두사는 자동으로 추가됩니다.
+      scheme: bearer
+      bearerFormat: JWT
