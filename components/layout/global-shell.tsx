@@ -526,7 +526,7 @@ export function GlobalShell({
         )}
       </header>
 
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain">
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain scroll-smooth">
         {children}
       </main>
     </div>

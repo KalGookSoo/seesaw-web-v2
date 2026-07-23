@@ -17,6 +17,7 @@ import {
   fetchRecentArticles,
   toAttachmentUrl
 } from '@/lib/home-summary';
+import { HorizontalCarousel } from '@/components/home/horizontal-carousel';
 
 type LoadState<T> =
   | Readonly<{
@@ -139,39 +140,39 @@ function FeaturedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
   return (
     <Link
       href={toArticleHref(article)}
-      className="group border-default-separator bg-default-surface hover:border-default-blue-muted grid min-h-72 overflow-hidden rounded-lg border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md lg:grid-cols-[minmax(0,1fr)_13rem]"
+      className="group border-default-separator relative flex min-h-80 flex-col justify-end overflow-hidden rounded-lg border bg-cover bg-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:min-h-96"
+      style={
+        thumbnail
+          ? { backgroundImage: `url(${toAttachmentUrl(thumbnail.id)})` }
+          : undefined
+      }
     >
-      <div className="flex flex-col justify-between p-5 sm:p-6">
-        <div>
-          <p className="text-default-blue text-sm font-semibold">새 글</p>
-          <h3 className="text-default-label group-hover:text-default-blue mt-3 line-clamp-3 text-2xl font-semibold text-balance">
-            {article.title}
-          </h3>
-          <p className="text-default-secondary-label mt-4 line-clamp-4 text-sm leading-7">
-            {plainContent || '본문 미리보기가 없습니다.'}
-          </p>
-        </div>
-        <div className="text-default-tertiary-label mt-8 flex items-center justify-between gap-3 text-xs">
+      {!thumbnail ? (
+        <div className="from-default-blue-muted to-default-mint-soft absolute inset-0 bg-gradient-to-br" />
+      ) : null}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgb(0_0_0/0.15)_45%,rgb(0_0_0/0.82))]" />
+      <div className="relative p-6 text-white sm:p-8">
+        <p className="text-xs font-semibold tracking-[0.25em] text-white/75 uppercase">
+          새 글
+        </p>
+        <h3 className="mt-3 line-clamp-3 text-2xl font-semibold text-balance sm:text-3xl">
+          {article.title}
+        </h3>
+        <p className="mt-4 line-clamp-2 max-w-2xl text-sm leading-7 text-white/85 sm:text-base">
+          {plainContent || '본문 미리보기가 없습니다.'}
+        </p>
+        <div className="mt-6 flex items-center justify-between gap-3 text-xs text-white/70">
           <span className="truncate">
             {article.maskedAuthor ?? article.createdBy ?? '익명'}
           </span>
           <span className="shrink-0">{formatDate(article.createdDate)}</span>
         </div>
       </div>
-      {thumbnail ? (
-        <img
-          src={toAttachmentUrl(thumbnail.id)}
-          alt={thumbnail.originalName ?? article.title}
-          className="h-48 w-full object-cover lg:h-full"
-        />
-      ) : (
-        <div className="from-default-blue-muted to-default-mint-soft hidden bg-gradient-to-br lg:block" />
-      )}
     </Link>
   );
 }
 
-function ArticleListItem({
+function ArticleCarouselCard({
   article,
   index
 }: Readonly<{ article: ArticleResponse; index: number }>) {
@@ -181,20 +182,20 @@ function ArticleListItem({
   return (
     <Link
       href={toArticleHref(article)}
-      className="group border-default-separator hover:border-default-blue-muted grid gap-4 rounded-lg border bg-white/35 p-4 transition hover:bg-white/55 sm:grid-cols-[4.5rem_1fr]"
+      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-64 flex-col overflow-hidden rounded-lg border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-72"
     >
       {thumbnail ? (
         <img
           src={toAttachmentUrl(thumbnail.id)}
           alt={thumbnail.originalName ?? article.title}
-          className="size-[4.5rem] rounded-md object-cover"
+          className="h-36 w-full object-cover"
         />
       ) : (
-        <div className="bg-default-fill text-default-secondary-label flex size-[4.5rem] items-center justify-center rounded-md text-sm font-semibold">
-          {String(index + 1).padStart(2, '0')}
+        <div className="from-default-blue-muted to-default-mint-soft text-default-tertiary-label flex h-36 items-center justify-center bg-gradient-to-br text-sm font-semibold">
+          {String(index).padStart(2, '0')}
         </div>
       )}
-      <div className="min-w-0">
+      <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-default-label group-hover:text-default-blue line-clamp-2 text-base font-semibold">
             {article.title}
@@ -206,7 +207,7 @@ function ArticleListItem({
             </span>
           ) : null}
         </div>
-        <p className="text-default-secondary-label mt-2 line-clamp-2 text-sm leading-6">
+        <p className="text-default-secondary-label mt-2 line-clamp-2 flex-1 text-sm leading-6">
           {plainContent || '본문 미리보기가 없습니다.'}
         </p>
         <div className="text-default-tertiary-label mt-3 flex items-center justify-between text-xs">
@@ -226,18 +227,18 @@ function ArticleStoryStack({
   const [featuredArticle, ...otherArticles] = articles;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(16rem,0.65fr)]">
+    <div className="space-y-4">
       <FeaturedArticle article={featuredArticle} />
       {otherArticles.length > 0 ? (
-        <div className="flex flex-col gap-4 xl:pt-10">
+        <HorizontalCarousel>
           {otherArticles.map((article, index) => (
-            <ArticleListItem
+            <ArticleCarouselCard
               key={article.id}
               article={article}
               index={index + 1}
             />
           ))}
-        </div>
+        </HorizontalCarousel>
       ) : null}
     </div>
   );
@@ -275,7 +276,10 @@ function BoardCategorySection({
   }, [category.id]);
 
   return (
-    <section className="border-default-separator bg-default-surface/58 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6">
+    <section
+      id={category.id}
+      className="border-default-separator bg-default-surface/58 scroll-mt-20 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6"
+    >
       <SectionHeader
         category={category}
         icon={<Newspaper className="size-5" />}
@@ -334,7 +338,10 @@ function ScheduleCategorySection({
   }, [category.id, monthRange.end, monthRange.start]);
 
   return (
-    <section className="border-default-separator bg-default-surface/58 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6">
+    <section
+      id={category.id}
+      className="border-default-separator bg-default-surface/58 scroll-mt-20 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6"
+    >
       <SectionHeader
         category={category}
         icon={<CalendarDays className="size-5" />}
@@ -356,41 +363,53 @@ function ScheduleCategorySection({
   );
 }
 
+function EventTicketCard({ event }: Readonly<{ event: VEventResponse }>) {
+  const start = event.dtStart ? new Date(event.dtStart) : null;
+  const day = start ? String(start.getDate()) : '--';
+  const month = start
+    ? new Intl.DateTimeFormat('ko-KR', { month: 'short' }).format(start)
+    : '';
+
+  return (
+    <Link
+      href={
+        event.articleId
+          ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}`
+          : '#'
+      }
+      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-56 flex-col overflow-hidden rounded-lg border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <div className="bg-default-blue-soft text-default-blue-contrast flex items-baseline gap-1 px-4 py-3">
+        <span className="text-sm font-semibold">{month}</span>
+        <span className="text-2xl leading-none font-bold">{day}</span>
+        <span className="text-sm font-semibold">일</span>
+      </div>
+      <div className="flex-1 space-y-2 p-4">
+        <p className="text-default-tertiary-label text-xs font-semibold">
+          {formatDateTime(event.dtStart)}
+        </p>
+        <p className="text-default-label group-hover:text-default-blue line-clamp-2 text-sm font-semibold">
+          {event.title}
+        </p>
+        {event.location ? (
+          <p className="text-default-secondary-label truncate text-xs">
+            {event.location}
+          </p>
+        ) : null}
+      </div>
+    </Link>
+  );
+}
+
 function MonthlyEventList({
   events
 }: Readonly<{ events: readonly VEventResponse[] }>) {
   return (
-    <div className="border-default-separator bg-default-surface overflow-hidden rounded-lg border shadow-sm">
-      <ul className="divide-default-separator divide-y">
-        {events.map((event) => (
-          <li
-            key={event.id}
-            className="grid gap-3 px-4 py-4 sm:grid-cols-[8.5rem_1fr]"
-          >
-            <time className="text-default-blue text-sm font-semibold">
-              {formatDateTime(event.dtStart)}
-            </time>
-            <div className="min-w-0 space-y-1">
-              <Link
-                href={
-                  event.articleId
-                    ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}`
-                    : '#'
-                }
-                className="text-default-label hover:text-default-blue block truncate text-base font-semibold"
-              >
-                {event.title}
-              </Link>
-              {event.location ? (
-                <p className="text-default-secondary-label truncate text-sm">
-                  {event.location}
-                </p>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <HorizontalCarousel>
+      {events.map((event) => (
+        <EventTicketCard key={event.id} event={event} />
+      ))}
+    </HorizontalCarousel>
   );
 }
 
