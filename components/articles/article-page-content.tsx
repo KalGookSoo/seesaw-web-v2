@@ -13,11 +13,9 @@ import {
   UserRound
 } from 'lucide-react';
 
-import type {
-  ArticleResponse,
-  CategoryResponse,
-  PagedModel
-} from '@/types/site';
+import type { ArticleResponse } from '@/types/article';
+import type { CategoryResponse } from '@/types/category';
+import type { PagedModel } from '@/types/common';
 import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';

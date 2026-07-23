@@ -1,17 +1,27 @@
 import { notFound } from 'next/navigation';
 
-import type { CategoryResponse } from '@/types/site';
+import type { CategoryResponse } from '@/types/category';
 import { APPLICATION_NAME } from '@/lib/application-constants';
-import { fetchArticles, fetchFixedArticles, fetchStaticContentArticles } from '@/lib/articles';
+import {
+  fetchArticles,
+  fetchFixedArticles,
+  fetchStaticContentArticles
+} from '@/lib/articles';
 import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
 import { getSiteContext } from '@/lib/site';
-import { ArticlePageContent, StaticContentPage } from '@/components/articles/article-page-content';
+import {
+  ArticlePageContent,
+  StaticContentPage
+} from '@/components/articles/article-page-content';
 
 type ArticlesPageProps = Readonly<{
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }>;
 
-function getSearchParam(searchParams: Record<string, string | string[] | undefined>, key: string): string | undefined {
+function getSearchParam(
+  searchParams: Record<string, string | string[] | undefined>,
+  key: string
+): string | undefined {
   const value = searchParams[key];
   return Array.isArray(value) ? value[0] : value;
 }
@@ -25,7 +35,10 @@ function toViewType(value: string | undefined): ArticleViewType {
   return value === 'CARD' ? 'CARD' : 'TABLE';
 }
 
-function findCategory(categories: readonly CategoryResponse[], categoryId: string): CategoryResponse | null {
+function findCategory(
+  categories: readonly CategoryResponse[],
+  categoryId: string
+): CategoryResponse | null {
   for (const category of categories) {
     if (category.id === categoryId) {
       return category;
@@ -42,7 +55,9 @@ function findCategory(categories: readonly CategoryResponse[], categoryId: strin
 
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
 
-export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+export default async function ArticlesPage({
+  searchParams
+}: ArticlesPageProps) {
   const resolvedSearchParams = await searchParams;
   const categoryId = getSearchParam(resolvedSearchParams, 'categoryId');
 
@@ -57,7 +72,10 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     notFound();
   }
 
-  const categoryType = getSearchParam(resolvedSearchParams, 'categoryType') ?? category.type ?? 'BOARD';
+  const categoryType =
+    getSearchParam(resolvedSearchParams, 'categoryType') ??
+    category.type ??
+    'BOARD';
 
   if (categoryType === 'STATIC_CONTENT') {
     const articles = await fetchStaticContentArticles(categoryId);
@@ -79,5 +97,13 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     viewType === 'TABLE' ? fetchFixedArticles(categoryId) : Promise.resolve([])
   ]);
 
-  return <ArticlePageContent category={category} fixedArticles={fixedArticles} page={page} search={search} viewType={viewType} />;
+  return (
+    <ArticlePageContent
+      category={category}
+      fixedArticles={fixedArticles}
+      page={page}
+      search={search}
+      viewType={viewType}
+    />
+  );
 }

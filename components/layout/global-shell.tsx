@@ -22,7 +22,7 @@ import {
   UserRound
 } from 'lucide-react';
 
-import type { CategoryResponse } from '@/types/site';
+import type { CategoryResponse } from '@/types/category';
 import type { NavigationPosition } from '@/lib/navigation-preferences';
 import {
   NAVIGATION_COLLAPSED_COOKIE_KEY,

@@ -1,4 +1,5 @@
-import type { CategoryResponse, SiteResponse } from '@/types/site';
+import type { CategoryResponse } from '@/types/category';
+import type { SiteResponse } from '@/types/site';
 
 export type SiteContextModel = Readonly<{
   SITE_CONTEXT: SiteResponse;
