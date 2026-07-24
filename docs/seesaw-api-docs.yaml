@@ -557,21 +557,18 @@ paths:
         schema:
           pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
           type: string
-      - name: categoryId
+      - name: request
         in: query
         required: true
         schema:
-          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
-          type: string
+          $ref: "#/components/schemas/SearchArticleDetailRequest"
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: object
-                additionalProperties:
-                  $ref: "#/components/schemas/ArticleResponse"
+                $ref: "#/components/schemas/ArticleDetailResponse"
     post:
       tags:
       - article-api-controller
@@ -898,6 +895,36 @@ paths:
       responses:
         "200":
           description: OK
+  /api/attachments/{id}/download:
+    get:
+      tags:
+      - attachment-api-controller
+      operationId: downloadAttachment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/attachments/download-zip:
+    get:
+      tags:
+      - attachment-api-controller
+      operationId: downloadAttachments
+      parameters:
+      - name: articleId
+        in: query
+        required: true
+        schema:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+      responses:
+        "200":
+          description: OK
   /api/articles/static-content:
     get:
       tags:
@@ -1080,18 +1107,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VoteResponse"
-        url:
+        maskedAuthor:
           type: string
+        recentlyGenerated:
+          type: boolean
         inlineImages:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
         plainContent:
           type: string
-        maskedAuthor:
+        url:
           type: string
-        recentlyGenerated:
-          type: boolean
         root:
           type: boolean
         baseModel:
@@ -1145,16 +1172,16 @@ components:
         size:
           type: integer
           format: int64
-        previewable:
-          type: boolean
-        attachment:
-          type: boolean
-        inlineImage:
-          type: boolean
         iconClass:
           type: string
         formattedSize:
           type: string
+        inlineImage:
+          type: boolean
+        attachment:
+          type: boolean
+        previewable:
+          type: boolean
         baseModel:
           $ref: "#/components/schemas/BaseEntity"
       description: 첨부파일 모델
@@ -1280,12 +1307,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VoteResponse"
+        maskedAuthor:
+          type: string
         inlineImages:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
-        maskedAuthor:
-          type: string
         root:
           type: boolean
         baseModel:
@@ -1819,9 +1846,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
-        profileImage:
-          $ref: "#/components/schemas/AttachmentResponse"
         backgroundImage:
+          $ref: "#/components/schemas/AttachmentResponse"
+        profileImage:
           $ref: "#/components/schemas/AttachmentResponse"
         root:
           type: boolean
@@ -2374,6 +2401,48 @@ components:
             $ref: "#/components/schemas/ArticleResponse"
         page:
           $ref: "#/components/schemas/PageMetadata"
+    SearchArticleDetailRequest:
+      type: object
+      properties:
+        categoryId:
+          pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+          type: string
+          description: 목록 카테고리 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        categoryType:
+          type: string
+          description: 카테고리 유형
+          enum:
+          - NONE
+          - STATIC_CONTENT
+          - BOARD
+          - QNA
+          - SCHEDULE
+          - STORE
+          - BUSINESS
+        keyField:
+          type: string
+          description: 검색 대상 필드
+          example: title
+        keyWord:
+          type: string
+          description: 검색어
+          example: 공지
+      description: 게시글 상세 검색 조건
+    ArticleDetailResponse:
+      type: object
+      properties:
+        article:
+          $ref: "#/components/schemas/ArticleResponse"
+        previousArticleId:
+          type: string
+          description: 이전 게시글 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+        nextArticleId:
+          type: string
+          description: 다음 게시글 식별자
+          example: 8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001
+      description: 게시글 상세 조회 응답
   securitySchemes:
     Bearer Authentication:
       type: http
