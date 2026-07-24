@@ -1,0 +1,131 @@
+.viewer {
+  color: var(--default-label);
+  font-size: 1rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.viewer > :first-child {
+  margin-top: 0;
+}
+
+.viewer > :last-child {
+  margin-bottom: 0;
+}
+
+.viewer p {
+  margin: 1em 0;
+  white-space: pre-wrap;
+}
+
+.viewer h1,
+.viewer h2,
+.viewer h3,
+.viewer h4,
+.viewer h5,
+.viewer h6 {
+  color: var(--default-label);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.5em 0 0.65em;
+}
+
+.viewer h1 {
+  font-size: 2rem;
+}
+
+.viewer h2 {
+  font-size: 1.625rem;
+}
+
+.viewer h3 {
+  font-size: 1.375rem;
+}
+
+.viewer h4 {
+  font-size: 1.125rem;
+}
+
+.viewer ul,
+.viewer ol {
+  margin: 1em 0;
+  padding-left: 1.75rem;
+}
+
+.viewer ul {
+  list-style: disc;
+}
+
+.viewer ol {
+  list-style: decimal;
+}
+
+.viewer blockquote {
+  border-left: 3px solid var(--default-blue-muted);
+  color: var(--default-secondary-label);
+  margin: 1.25em 0;
+  padding: 0.25em 0 0.25em 1rem;
+}
+
+.viewer a {
+  color: var(--default-blue);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.viewer img,
+.viewer video {
+  border-radius: 0.625rem;
+  height: auto;
+  margin: 1.5em auto;
+  max-width: 100%;
+}
+
+.viewer pre {
+  background: var(--default-fill);
+  border: 1px solid var(--default-separator);
+  border-radius: 0.625rem;
+  margin: 1.25em 0;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.viewer code {
+  background: var(--default-fill);
+  border-radius: 0.25rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.9em;
+  padding: 0.15em 0.35em;
+}
+
+.viewer pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.viewer table {
+  border-collapse: collapse;
+  display: block;
+  margin: 1.25em 0;
+  max-width: 100%;
+  overflow-x: auto;
+  width: max-content;
+}
+
+.viewer th,
+.viewer td {
+  border: 1px solid var(--default-separator);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+}
+
+.viewer th {
+  background: var(--default-fill);
+  font-weight: 650;
+}
+
+.viewer hr {
+  border: 0;
+  border-top: 1px solid var(--default-separator);
+  margin: 2rem 0;
+}

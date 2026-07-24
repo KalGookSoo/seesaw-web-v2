@@ -53,6 +53,19 @@ export type SearchArticlesRequest = Readonly<{
   keyWord?: string | null;
 }>;
 
+export type SearchArticleDetailRequest = Readonly<{
+  categoryId?: string | null;
+  categoryType?: SearchArticlesRequest['categoryType'];
+  keyField?: string | null;
+  keyWord?: string | null;
+}>;
+
+export type ArticleDetailResponse = Readonly<{
+  article?: ArticleResponse | null;
+  previousArticleId?: string | null;
+  nextArticleId?: string | null;
+}>;
+
 export type ArticleResponse = Readonly<{
   id: string;
   createdBy?: string | null;

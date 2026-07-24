@@ -1,4 +1,8 @@
-import type { ArticleResponse } from '@/types/article';
+import type {
+  ArticleDetailResponse,
+  ArticleResponse,
+  SearchArticleDetailRequest
+} from '@/types/article';
 import type { PagedModel } from '@/types/common';
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 
@@ -13,6 +17,18 @@ export type SearchArticlesParams = Readonly<{
   page?: number;
   size?: number;
 }>;
+
+export type ArticleDetailFetchResult =
+  | Readonly<{
+      ok: true;
+      status: 200;
+      data: ArticleDetailResponse;
+    }>
+  | Readonly<{
+      ok: false;
+      status: number;
+      message: string;
+    }>;
 
 function appendOptional(
   params: URLSearchParams,
@@ -100,6 +116,66 @@ export async function fetchStaticContentArticles(
 
   assertOk(response, '정적 콘텐츠를 조회할 수 없습니다.');
   return response.json();
+}
+
+export async function fetchArticleDetail(
+  id: string,
+  search: SearchArticleDetailRequest
+): Promise<ArticleDetailFetchResult> {
+  const params = new URLSearchParams();
+  appendOptional(params, 'categoryId', search.categoryId);
+  appendOptional(params, 'categoryType', search.categoryType);
+  appendOptional(params, 'keyField', search.keyField);
+  appendOptional(params, 'keyWord', search.keyWord);
+
+  const response = await fetch(
+    `${APPLICATION_API_BASE_URL}/articles/${encodeURIComponent(id)}?${params.toString()}`,
+    {
+      headers: {
+        Accept: 'application/json'
+      },
+      cache: 'no-store'
+    }
+  );
+
+  if (!response.ok) {
+    let message = '';
+
+    try {
+      const body = (await response.json()) as { message?: unknown };
+      if (typeof body.message === 'string') {
+        message = body.message;
+      }
+    } catch {
+      message = '';
+    }
+
+    return {
+      ok: false,
+      status: response.status,
+      message: message || '게시글 상세 정보를 조회할 수 없습니다.'
+    };
+  }
+
+  return {
+    ok: true,
+    status: 200,
+    data: await response.json()
+  };
+}
+
+export function toArticleDetailHref(
+  id: string,
+  search: SearchArticleDetailRequest
+): string {
+  const params = new URLSearchParams();
+  appendOptional(params, 'categoryId', search.categoryId);
+  appendOptional(params, 'categoryType', search.categoryType);
+  appendOptional(params, 'keyField', search.keyField);
+  appendOptional(params, 'keyWord', search.keyWord);
+  const query = params.toString();
+
+  return `/articles/${encodeURIComponent(id)}${query ? `?${query}` : ''}`;
 }
 
 export function toArticleHref(article: ArticleResponse): string {
