@@ -38,6 +38,8 @@
     "types/**/*.ts",
     "services/**/*.ts",
     "lib/**/*.ts",
+    "hooks/**/*.ts",
+    "stores/**/*.ts",
     "settings/**/*.ts",
     "utils/**/*.ts",
     "public/sw.ts",

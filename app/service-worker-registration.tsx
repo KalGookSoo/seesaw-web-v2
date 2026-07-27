@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Bell, Download, Smartphone, X } from 'lucide-react';
 
+import { useAuth } from '@/hooks/use-auth';
+
 type ServiceWorkerRegistrationProps = Readonly<{
   siteId: string;
   siteName: string;
   themeColor: string;
-  authenticated: boolean;
 }>;
 
 type BeforeInstallPromptEvent = Event &
@@ -141,7 +142,8 @@ async function subscribePushNotification(
   return subscription;
 }
 
-export function ServiceWorkerRegistration({ siteId, siteName, themeColor, authenticated }: ServiceWorkerRegistrationProps) {
+export function ServiceWorkerRegistration({ siteId, siteName, themeColor }: ServiceWorkerRegistrationProps) {
+  const { isAuthenticated: authenticated } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installPromptVisible, setInstallPromptVisible] = useState(false);
   const [installing, setInstalling] = useState(false);

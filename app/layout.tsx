@@ -58,7 +58,7 @@ export default async function RootLayout({
             {children}
           </GlobalShell>
         </SiteContextProvider>
-        <ServiceWorkerRegistration authenticated={false} siteId={site.id} siteName={site.name} themeColor={site.themeColor} />
+        <ServiceWorkerRegistration siteId={site.id} siteName={site.name} themeColor={site.themeColor} />
       </body>
     </html>
   );

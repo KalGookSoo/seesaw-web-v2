@@ -3,6 +3,12 @@ export type SignInRequest = Readonly<{
   password: string;
 }>;
 
+export type AuthenticatedUser = Readonly<{
+  userId: string;
+  username: string;
+  authorities: readonly string[];
+}>;
+
 export type TokenRefreshRequest = Readonly<{
   refreshToken: string;
 }>;

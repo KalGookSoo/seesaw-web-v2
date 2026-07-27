@@ -30,6 +30,7 @@ import {
 } from '@/lib/navigation-preferences';
 import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
+import { useAuth } from '@/hooks/use-auth';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -393,6 +394,8 @@ export function GlobalShell({
   const [policyOpen, setPolicyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginPending, setLoginPending] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const [navigationPosition, setNavigationPosition] =
     useState<NavigationPosition>(initialNavigationPosition);
@@ -401,14 +404,12 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
+  const { isAuthenticated, logout } = useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
   );
 
-  const isAuthenticated = false;
-  const signInHref = '/oauth2/authorization/naver';
-  const signOutHref = '/sign-out';
   const myPageHref = '/my-page';
 
   useEffect(() => {
@@ -422,6 +423,49 @@ export function GlobalShell({
       setLocale(savedLocale);
     }
   }, []);
+
+  useEffect(() => {
+    const oauthError = new URLSearchParams(window.location.search).get(
+      'oauthError'
+    );
+    if (oauthError) {
+      window.alert(oauthError);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('oauthError');
+      window.history.replaceState(null, '', url);
+    }
+  }, []);
+
+  const startNaverLogin = async () => {
+    setLoginPending(true);
+    try {
+      const response = await fetch(
+        `/api/oauth2/authorization/naver?siteId=${encodeURIComponent(SITE_CONTEXT.id)}&returnUrl=${encodeURIComponent(window.location.href)}`,
+        { credentials: 'include' }
+      );
+      if (!response.ok) {
+        throw new Error('네이버 로그인 준비에 실패했습니다.');
+      }
+      const body = (await response.json()) as { authorizationUrl?: string };
+      if (!body.authorizationUrl) {
+        throw new Error('네이버 인증 주소를 받지 못했습니다.');
+      }
+      window.location.assign(body.authorizationUrl);
+    } catch (error) {
+      window.alert(
+        error instanceof Error ? error.message : '로그인을 시작하지 못했습니다.'
+      );
+      setLoginPending(false);
+    }
+  };
+
+  const signOut = async () => {
+    await fetch('/api/sign-out', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    logout();
+  };
 
   const changeTheme = (nextTheme: ThemeMode) => {
     setTheme(nextTheme);
@@ -507,22 +551,24 @@ export function GlobalShell({
               <UserRound size={15} aria-hidden />
               마이페이지
             </Link>
-            <Link
+            <button
               className="bg-default-fill text-default-label hover:bg-default-gray-5 inline-flex h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition"
-              href={signOutHref}
+              type="button"
+              onClick={signOut}
             >
               <LogOut size={15} aria-hidden />
               로그아웃
-            </Link>
+            </button>
           </>
         ) : (
-          <Link
+          <button
             className="bg-default-blue hover:bg-default-blue/90 inline-flex h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-white transition"
-            href={signInHref}
+            type="button"
+            onClick={() => setLoginOpen(true)}
           >
             <LogIn size={15} aria-hidden />
             로그인
-          </Link>
+          </button>
         )}
       </header>
 
@@ -580,6 +626,37 @@ export function GlobalShell({
           )}
         </button>
       ) : null}
+
+      <Modal
+        open={loginOpen}
+        title="네이버로 로그인"
+        description="네이버 계정 인증 후 현재 페이지로 돌아옵니다."
+        size="sm"
+        onClose={() => setLoginOpen(false)}
+        footer={
+          <>
+            <button
+              className="border-default-separator bg-default-surface text-default-secondary-label rounded-md border px-4 py-2 text-sm font-semibold"
+              type="button"
+              onClick={() => setLoginOpen(false)}
+            >
+              취소
+            </button>
+            <button
+              className="rounded-md bg-[#03c75a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              disabled={loginPending}
+              type="button"
+              onClick={startNaverLogin}
+            >
+              {loginPending ? '이동 중…' : '네이버 로그인'}
+            </button>
+          </>
+        }
+      >
+        <p className="text-default-secondary-label text-sm leading-6">
+          인증이 완료되면 이 페이지로 자동으로 돌아옵니다.
+        </p>
+      </Modal>
 
       {mobileNavigationOpen ? (
         <div
