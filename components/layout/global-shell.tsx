@@ -31,6 +31,7 @@ import {
 import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
+import { openNaverOAuth2Popup } from '@/lib/naver-oauth2-popup';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -404,7 +405,7 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, login, logout } = useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
@@ -424,23 +425,11 @@ export function GlobalShell({
     }
   }, []);
 
-  useEffect(() => {
-    const oauthError = new URLSearchParams(window.location.search).get(
-      'oauthError'
-    );
-    if (oauthError) {
-      window.alert(oauthError);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('oauthError');
-      window.history.replaceState(null, '', url);
-    }
-  }, []);
-
   const startNaverLogin = async () => {
     setLoginPending(true);
     try {
       const response = await fetch(
-        `/api/oauth2/authorization/naver?siteId=${encodeURIComponent(SITE_CONTEXT.id)}&returnUrl=${encodeURIComponent(window.location.href)}`,
+        `/api/oauth2/authorization/naver?siteId=${encodeURIComponent(SITE_CONTEXT.id)}`,
         { credentials: 'include' }
       );
       if (!response.ok) {
@@ -450,11 +439,14 @@ export function GlobalShell({
       if (!body.authorizationUrl) {
         throw new Error('네이버 인증 주소를 받지 못했습니다.');
       }
-      window.location.assign(body.authorizationUrl);
+      const tokens = await openNaverOAuth2Popup(body.authorizationUrl);
+      login(tokens);
+      setLoginOpen(false);
     } catch (error) {
       window.alert(
         error instanceof Error ? error.message : '로그인을 시작하지 못했습니다.'
       );
+    } finally {
       setLoginPending(false);
     }
   };
