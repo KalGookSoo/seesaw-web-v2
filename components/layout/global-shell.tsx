@@ -432,18 +432,7 @@ export function GlobalShell({
   const startNaverLogin = async () => {
     setLoginPending(true);
     try {
-      const response = await fetch(
-        `/api/oauth2/authorization/naver?siteId=${encodeURIComponent(SITE_CONTEXT.id)}`,
-        { credentials: 'include' }
-      );
-      if (!response.ok) {
-        throw new Error('네이버 로그인 준비에 실패했습니다.');
-      }
-      const body = (await response.json()) as { authorizationUrl?: string };
-      if (!body.authorizationUrl) {
-        throw new Error('네이버 인증 주소를 받지 못했습니다.');
-      }
-      const tokens = await openNaverOAuth2Popup(body.authorizationUrl);
+      const tokens = await openNaverOAuth2Popup();
       login(tokens);
       setLoginOpen(false);
     } catch (error) {

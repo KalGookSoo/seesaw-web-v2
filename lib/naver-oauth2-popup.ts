@@ -1,4 +1,5 @@
 import type { JsonWebToken } from '@/types/auth';
+import { NAVER_AUTHORIZATION_URI, NAVER_OAUTH2_STATE_STORAGE_KEY, getNaverClientId, getNaverRedirectUri } from '@/lib/naver-oauth2-config';
 
 export const NAVER_OAUTH2_MESSAGE_TYPE = 'seesaw:naver-oauth2';
 const POPUP_CLOSED_POLL_INTERVAL_MS = 500;
@@ -11,10 +12,23 @@ function isNaverOAuth2Message(data: unknown): data is NaverOAuth2Message {
   return typeof data === 'object' && data !== null && (data as { type?: unknown }).type === NAVER_OAUTH2_MESSAGE_TYPE;
 }
 
-export function openNaverOAuth2Popup(authorizationUrl: string): Promise<JsonWebToken> {
+function buildAuthorizationUrl(state: string): string {
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: getNaverClientId(),
+    redirect_uri: getNaverRedirectUri(),
+    state
+  });
+  return `${NAVER_AUTHORIZATION_URI}?${params.toString()}`;
+}
+
+export function openNaverOAuth2Popup(): Promise<JsonWebToken> {
   return new Promise((resolve, reject) => {
+    const state = window.crypto.randomUUID();
+    window.sessionStorage.setItem(NAVER_OAUTH2_STATE_STORAGE_KEY, state);
+
     const popup = window.open(
-      authorizationUrl,
+      buildAuthorizationUrl(state),
       'seesaw-naver-oauth2',
       'width=480,height=640,menubar=no,toolbar=no,location=no,status=no'
     );
