@@ -32,12 +32,14 @@ import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
 import { openNaverOAuth2Popup } from '@/lib/naver-oauth2-popup';
+import type { JsonWebToken } from '@/types/auth';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
 
 const LOCALE_STORAGE_KEY = 'seesaw-locale';
 const THEME_STORAGE_KEY = 'seesaw-theme';
+const IS_DEVELOPMENT_LOGIN = process.env.NODE_ENV === 'development';
 
 type GlobalShellProps = Readonly<{
   children: ReactNode;
@@ -397,6 +399,8 @@ export function GlobalShell({
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
+  const [devUsername, setDevUsername] = useState('');
+  const [devPassword, setDevPassword] = useState('');
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const [navigationPosition, setNavigationPosition] =
     useState<NavigationPosition>(initialNavigationPosition);
@@ -442,6 +446,30 @@ export function GlobalShell({
       const tokens = await openNaverOAuth2Popup(body.authorizationUrl);
       login(tokens);
       setLoginOpen(false);
+    } catch (error) {
+      window.alert(
+        error instanceof Error ? error.message : '로그인을 시작하지 못했습니다.'
+      );
+    } finally {
+      setLoginPending(false);
+    }
+  };
+
+  const devSignIn = async () => {
+    setLoginPending(true);
+    try {
+      const response = await fetch('/api/sign-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: devUsername, password: devPassword })
+      });
+      if (!response.ok) {
+        throw new Error('로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.');
+      }
+      const tokens = (await response.json()) as JsonWebToken;
+      login(tokens);
+      setLoginOpen(false);
+      setDevPassword('');
     } catch (error) {
       window.alert(
         error instanceof Error ? error.message : '로그인을 시작하지 못했습니다.'
@@ -621,8 +649,12 @@ export function GlobalShell({
 
       <Modal
         open={loginOpen}
-        title="네이버로 로그인"
-        description="네이버 계정 인증 후 현재 페이지로 돌아옵니다."
+        title={IS_DEVELOPMENT_LOGIN ? '테스트 로그인' : '네이버로 로그인'}
+        description={
+          IS_DEVELOPMENT_LOGIN
+            ? '개발 환경 전용 로그인입니다. 아이디/비밀번호가 설정된 테스트 계정을 사용하세요.'
+            : '네이버 계정 인증 후 현재 페이지로 돌아옵니다.'
+        }
         size="sm"
         onClose={() => setLoginOpen(false)}
         footer={
@@ -634,20 +666,57 @@ export function GlobalShell({
             >
               취소
             </button>
-            <button
-              className="rounded-md bg-[#03c75a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              disabled={loginPending}
-              type="button"
-              onClick={startNaverLogin}
-            >
-              {loginPending ? '이동 중…' : '네이버 로그인'}
-            </button>
+            {IS_DEVELOPMENT_LOGIN ? (
+              <button
+                className="bg-default-blue hover:bg-default-blue/90 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                disabled={loginPending}
+                type="button"
+                onClick={devSignIn}
+              >
+                {loginPending ? '로그인 중…' : '로그인'}
+              </button>
+            ) : (
+              <button
+                className="rounded-md bg-[#03c75a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                disabled={loginPending}
+                type="button"
+                onClick={startNaverLogin}
+              >
+                {loginPending ? '이동 중…' : '네이버 로그인'}
+              </button>
+            )}
           </>
         }
       >
-        <p className="text-default-secondary-label text-sm leading-6">
-          인증이 완료되면 이 페이지로 자동으로 돌아옵니다.
-        </p>
+        {IS_DEVELOPMENT_LOGIN ? (
+          <div className="space-y-3">
+            <label className="block space-y-1">
+              <span className="text-default-label text-sm font-medium">
+                아이디
+              </span>
+              <input
+                className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-10 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
+                value={devUsername}
+                onChange={(event) => setDevUsername(event.target.value)}
+              />
+            </label>
+            <label className="block space-y-1">
+              <span className="text-default-label text-sm font-medium">
+                비밀번호
+              </span>
+              <input
+                type="password"
+                className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-10 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
+                value={devPassword}
+                onChange={(event) => setDevPassword(event.target.value)}
+              />
+            </label>
+          </div>
+        ) : (
+          <p className="text-default-secondary-label text-sm leading-6">
+            인증이 완료되면 이 페이지로 자동으로 돌아옵니다.
+          </p>
+        )}
       </Modal>
 
       {mobileNavigationOpen ? (
