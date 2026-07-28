@@ -1,14 +1,14 @@
 import type { JsonWebToken } from '@/types/auth';
 
-const MESSAGE_TYPE = 'seesaw:naver-oauth2';
+export const NAVER_OAUTH2_MESSAGE_TYPE = 'seesaw:naver-oauth2';
 const POPUP_CLOSED_POLL_INTERVAL_MS = 500;
 
-type NaverOAuth2Message =
-  | Readonly<{ type: typeof MESSAGE_TYPE; status: 'success'; accessToken: string; refreshToken: string; expiresIn: number }>
-  | Readonly<{ type: typeof MESSAGE_TYPE; status: 'error'; message: string }>;
+export type NaverOAuth2Message =
+  | Readonly<{ type: typeof NAVER_OAUTH2_MESSAGE_TYPE; status: 'success'; accessToken: string; refreshToken: string; expiresIn: number }>
+  | Readonly<{ type: typeof NAVER_OAUTH2_MESSAGE_TYPE; status: 'error'; message: string }>;
 
 function isNaverOAuth2Message(data: unknown): data is NaverOAuth2Message {
-  return typeof data === 'object' && data !== null && (data as { type?: unknown }).type === MESSAGE_TYPE;
+  return typeof data === 'object' && data !== null && (data as { type?: unknown }).type === NAVER_OAUTH2_MESSAGE_TYPE;
 }
 
 export function openNaverOAuth2Popup(authorizationUrl: string): Promise<JsonWebToken> {
