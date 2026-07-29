@@ -1,5 +1,8 @@
 import type { CategoryResponse } from '@/types/category';
-import { APPLICATION_NAME } from '@/lib/application-constants';
+import {
+  APPLICATION_API_BASE_URL,
+  APPLICATION_NAME
+} from '@/lib/application-constants';
 import { toAttachmentUrl } from '@/lib/home-summary';
 import { getSiteContext } from '@/lib/site';
 import { CategoryAnchorLink } from '@/components/home/category-anchor-link';
@@ -22,7 +25,7 @@ function bySiteExposedOrder(
 }
 
 function toCategoryHref(category: CategoryResponse): string {
-  return `/articles?categoryId=${encodeURIComponent(category.id)}&categoryType=${encodeURIComponent(category.type ?? 'BOARD')}`;
+  return `${APPLICATION_API_BASE_URL}/articles?categoryId=${encodeURIComponent(category.id)}&categoryType=${encodeURIComponent(category.type ?? 'BOARD')}`;
 }
 
 export default async function Home() {
