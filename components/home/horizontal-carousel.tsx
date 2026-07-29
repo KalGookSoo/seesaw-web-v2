@@ -29,7 +29,7 @@ export function HorizontalCarousel({
     <div className={`group/carousel relative ${className ?? ''}`}>
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory [scrollbar-width:none] gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0 [&>*]:snap-start"
+        className="flex snap-x snap-mandatory scrollbar-none gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden *:shrink-0 *:snap-start"
       >
         {children}
       </div>

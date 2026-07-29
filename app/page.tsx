@@ -1,8 +1,5 @@
 import type { CategoryResponse } from '@/types/category';
-import {
-  APPLICATION_API_BASE_URL,
-  APPLICATION_NAME
-} from '@/lib/application-constants';
+import { APPLICATION_NAME } from '@/lib/application-constants';
 import { toAttachmentUrl } from '@/lib/home-summary';
 import { getSiteContext } from '@/lib/site';
 import { CategoryAnchorLink } from '@/components/home/category-anchor-link';
@@ -25,7 +22,7 @@ function bySiteExposedOrder(
 }
 
 function toCategoryHref(category: CategoryResponse): string {
-  return `${APPLICATION_API_BASE_URL}/articles?categoryId=${encodeURIComponent(category.id)}&categoryType=${encodeURIComponent(category.type ?? 'BOARD')}`;
+  return `/articles?categoryId=${encodeURIComponent(category.id)}&categoryType=${encodeURIComponent(category.type ?? 'BOARD')}`;
 }
 
 export default async function Home() {
@@ -54,7 +51,7 @@ export default async function Home() {
         {/* Masthead */}
         <section className="relative">
           <div
-            className="relative min-h-[26rem] bg-cover bg-center sm:min-h-[32rem]"
+            className="relative min-h-104 bg-cover bg-center sm:min-h-128"
             style={heroStyle}
           >
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(0_0_0/0.12),rgb(0_0_0/0.58)_60%,rgb(0_0_0/0.86))]" />
