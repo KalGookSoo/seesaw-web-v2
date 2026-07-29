@@ -1,7 +1,9 @@
 import type {
   ArticleDetailResponse,
   ArticleResponse,
-  SearchArticleDetailRequest
+  CreateArticleRequest,
+  SearchArticleDetailRequest,
+  UpdateArticleRequest
 } from '@/types/article';
 import type { PagedModel } from '@/types/common';
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
@@ -180,4 +182,102 @@ export function toArticleDetailHref(
 
 export function toArticleHref(article: ArticleResponse): string {
   return `/articles/${article.id}?categoryId=${encodeURIComponent(article.categoryId)}`;
+}
+
+export type ArticleFieldError = Readonly<{
+  field: string;
+  message: string;
+}>;
+
+export type ArticleMutationSuccess = Readonly<{ ok: true }>;
+
+export type ArticleMutationFailure = Readonly<{
+  ok: false;
+  status: number;
+  message: string;
+  errors: ArticleFieldError[];
+}>;
+
+export type ArticleMutationResult =
+  | ArticleMutationSuccess
+  | ArticleMutationFailure;
+
+function buildArticleFormData(
+  command: CreateArticleRequest | UpdateArticleRequest
+): FormData {
+  const formData = new FormData();
+  formData.set('categoryId', command.categoryId);
+  formData.set('type', command.type);
+  formData.set('title', command.title);
+  formData.set('content', command.content);
+  formData.set('fixed', String(command.fixed ?? false));
+  (command.multipartFiles ?? []).forEach((file) =>
+    formData.append('multipartFiles', file)
+  );
+  (command.inlineImages ?? []).forEach((file) =>
+    formData.append('inlineImages', file)
+  );
+  return formData;
+}
+
+async function toMutationResult(
+  response: Response
+): Promise<ArticleMutationResult> {
+  if (response.ok) {
+    return { ok: true };
+  }
+
+  if (response.status === 422) {
+    const body = (await response.json().catch(() => null)) as {
+      errors?: ArticleFieldError[];
+    } | null;
+    return {
+      ok: false,
+      status: 422,
+      message: '입력값을 확인해주세요.',
+      errors: body?.errors ?? []
+    };
+  }
+
+  const text = await response.text().catch(() => '');
+  return {
+    ok: false,
+    status: response.status,
+    message: text || '요청을 처리할 수 없습니다.',
+    errors: []
+  };
+}
+
+export async function createArticle(
+  command: CreateArticleRequest,
+  accessToken: string
+): Promise<ArticleMutationResult> {
+  const response = await fetch(`${APPLICATION_API_BASE_URL}/articles`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    },
+    body: buildArticleFormData(command)
+  });
+
+  return toMutationResult(response);
+}
+
+export async function updateArticle(
+  id: string,
+  command: UpdateArticleRequest,
+  accessToken: string
+): Promise<ArticleMutationResult> {
+  const response = await fetch(
+    `${APPLICATION_API_BASE_URL}/articles/${encodeURIComponent(id)}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: buildArticleFormData(command)
+    }
+  );
+
+  return toMutationResult(response);
 }
