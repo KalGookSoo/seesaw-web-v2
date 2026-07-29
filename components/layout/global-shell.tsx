@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -11,6 +12,7 @@ import {
   Languages,
   LogIn,
   LogOut,
+  Mail,
   Menu,
   MessageCircleQuestion,
   Moon,
@@ -18,6 +20,7 @@ import {
   PanelRight,
   Send,
   Settings,
+  ShieldCheck,
   Sun,
   UserRound
 } from 'lucide-react';
@@ -66,6 +69,10 @@ function applyTheme(theme: ThemeMode) {
 function setPreferenceCookie(name: string, value: string) {
   const maxAge = 60 * 60 * 24 * 365;
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
+}
+
+function toRoleLabel(authority: string): string {
+  return authority.replace(/^ROLE_/, '');
 }
 
 function getCategoryHref(category: CategoryResponse): string | null {
@@ -392,6 +399,8 @@ export function GlobalShell({
   const [locale, setLocale] = useState<Locale>('ko');
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [myPageOpen, setMyPageOpen] = useState(false);
+  const [receiveEmail, setReceiveEmail] = useState(false);
   const [policyOpen, setPolicyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -405,13 +414,11 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, login, logout, user } = useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
   );
-
-  const myPageHref = '/my-page';
 
   useEffect(() => {
     const savedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
@@ -462,6 +469,11 @@ export function GlobalShell({
   const changeNavigationPosition = (nextPosition: NavigationPosition) => {
     setNavigationPosition(nextPosition);
     setPreferenceCookie(NAVIGATION_POSITION_COOKIE_KEY, nextPosition);
+  };
+
+  const handleMyPageSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // API가 아직 없어 실제 저장은 이후 연동 시 채운다.
+    event.preventDefault();
   };
 
   const toggleNavigationCollapsed = () => {
@@ -525,13 +537,14 @@ export function GlobalShell({
         </button>
         {isAuthenticated ? (
           <>
-            <Link
+            <button
               className="bg-default-fill text-default-label hover:bg-default-gray-5 hidden h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition sm:inline-flex"
-              href={myPageHref}
+              type="button"
+              onClick={() => setMyPageOpen(true)}
             >
               <UserRound size={15} aria-hidden />
               마이페이지
-            </Link>
+            </button>
             <button
               className="bg-default-fill text-default-label hover:bg-default-gray-5 inline-flex h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition"
               type="button"
@@ -756,6 +769,98 @@ export function GlobalShell({
             </div>
           </section>
         </div>
+      </Modal>
+
+      <Modal
+        open={myPageOpen}
+        title="마이페이지"
+        description="계정 정보와 알림 수신 설정을 확인합니다."
+        size="md"
+        onClose={() => setMyPageOpen(false)}
+        footer={
+          <>
+            <button
+              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill rounded-md border px-4 py-2 text-sm font-semibold transition"
+              type="button"
+              onClick={() => setMyPageOpen(false)}
+            >
+              닫기
+            </button>
+            <button
+              className="bg-default-blue inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white transition"
+              form="my-page-form"
+              type="submit"
+            >
+              <Check size={15} aria-hidden />
+              저장
+            </button>
+          </>
+        }
+      >
+        {user ? (
+          <div className="space-y-6">
+            <section className="space-y-3">
+              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+                <UserRound size={16} aria-hidden />
+                계정 정보
+              </div>
+              <div className="border-default-separator divide-default-separator divide-y rounded-lg border">
+                <div className="flex items-center justify-between gap-4 px-4 py-3">
+                  <span className="text-default-secondary-label text-sm">
+                    아이디
+                  </span>
+                  <span className="text-default-label text-sm font-medium">
+                    {user.username}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-4 px-4 py-3">
+                  <span className="text-default-secondary-label text-sm">
+                    권한
+                  </span>
+                  <div className="flex flex-wrap justify-end gap-1.5">
+                    {user.authorities.length > 0 ? (
+                      user.authorities.map((authority) => (
+                        <span
+                          className="bg-default-blue-soft text-default-blue-contrast rounded-full px-2.5 py-1 text-xs font-semibold"
+                          key={authority}
+                        >
+                          {toRoleLabel(authority)}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-default-tertiary-label text-sm">
+                        없음
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <form
+              className="space-y-3"
+              id="my-page-form"
+              onSubmit={handleMyPageSubmit}
+            >
+              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+                <ShieldCheck size={16} aria-hidden />
+                알림 설정
+              </div>
+              <label className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+                <span className="flex items-center gap-2 text-sm">
+                  <Mail aria-hidden className="text-default-secondary-label size-4" />
+                  이메일 수신
+                </span>
+                <input
+                  checked={receiveEmail}
+                  className="accent-default-blue size-4"
+                  type="checkbox"
+                  onChange={(event) => setReceiveEmail(event.target.checked)}
+                />
+              </label>
+            </form>
+          </div>
+        ) : null}
       </Modal>
 
       <Modal
