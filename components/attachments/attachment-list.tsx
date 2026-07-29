@@ -101,6 +101,30 @@ function AttachmentPreview({
     );
   }
 
+  if (attachment.mimeType?.startsWith('video/')) {
+    return (
+      <div className="bg-default-fill flex min-h-64 items-center justify-center rounded-lg p-3">
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video
+          aria-label={name}
+          className="max-h-[70vh] max-w-full rounded-md"
+          controls
+          preload="metadata"
+          src={previewUrl}
+        />
+      </div>
+    );
+  }
+
+  if (attachment.mimeType?.startsWith('audio/')) {
+    return (
+      <div className="bg-default-fill flex min-h-24 items-center justify-center rounded-lg p-6">
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <audio aria-label={name} className="w-full" controls src={previewUrl} />
+      </div>
+    );
+  }
+
   return (
     <iframe
       className="border-default-separator h-[70vh] w-full rounded-lg border bg-white"
