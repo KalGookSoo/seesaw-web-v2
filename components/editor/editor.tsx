@@ -27,7 +27,8 @@ export function Editor({
   initialEditType = 'wysiwyg',
   height = '400px',
   hideModeSwitch = false,
-  onChange
+  onChange,
+  hooks
 }: EditorProps) {
   const [mode, setMode] = useState<EditorMode>(initialEditType);
   const wysiwygRef = useRef<HTMLDivElement>(null);
@@ -141,6 +142,84 @@ export function Editor({
       wysiwygRef.current.innerHTML = markdownToHtml(markdownRef.current?.value ?? '');
     }
     setMode(nextMode);
+    hooks?.onModeChange?.(nextMode);
+  };
+
+  const insertMediaElement = useCallback(
+    (tagName: 'img' | 'video', url: string, label: string) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+
+      const element = document.createElement(tagName);
+      element.setAttribute('src', url);
+      if (tagName === 'img') {
+        element.setAttribute('alt', label);
+      } else {
+        element.setAttribute('controls', '');
+        element.setAttribute('aria-label', label);
+      }
+
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0 && wysiwygRef.current.contains(selection.anchorNode)) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(element);
+        range.setStartAfter(element);
+        range.setEndAfter(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else {
+        wysiwygRef.current.appendChild(element);
+      }
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const handleMediaFile = useCallback(
+    (file: File) => {
+      const isVideo = file.type.startsWith('video/');
+      const tagName = isVideo ? 'video' : 'img';
+      const hook = isVideo ? hooks?.addVideoBlobHook : hooks?.addImageBlobHook;
+
+      if (hook) {
+        hook(file, (url, altText) => insertMediaElement(tagName, url, altText ?? file.name));
+        return;
+      }
+      insertMediaElement(tagName, URL.createObjectURL(file), file.name);
+    },
+    [hooks, insertMediaElement]
+  );
+
+  const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+    const items = event.clipboardData?.items;
+    if (!items) {
+      return;
+    }
+
+    const mediaFiles = Array.from(items)
+      .filter((item) => item.kind === 'file')
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => file !== null && (file.type.startsWith('image/') || file.type.startsWith('video/')));
+
+    if (mediaFiles.length === 0) {
+      return;
+    }
+    event.preventDefault();
+    mediaFiles.forEach(handleMediaFile);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    const mediaFiles = Array.from(event.dataTransfer?.files ?? []).filter(
+      (file) => file.type.startsWith('image/') || file.type.startsWith('video/')
+    );
+
+    if (mediaFiles.length === 0) {
+      return;
+    }
+    event.preventDefault();
+    mediaFiles.forEach(handleMediaFile);
   };
 
   return (
@@ -172,7 +251,10 @@ export function Editor({
           contentEditable
           ref={wysiwygRef}
           suppressContentEditableWarning
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={handleDrop}
           onInput={emitChange}
+          onPaste={handlePaste}
         />
         <textarea
           className={mode === 'markdown' ? styles.markdown : `${styles.markdown} ${styles.hidden}`}
