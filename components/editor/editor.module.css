@@ -91,6 +91,24 @@
   color: var(--editor-accent-contrast);
 }
 
+.headingSelect {
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--editor-border);
+  border-radius: 0.25rem;
+  background-color: var(--editor-surface);
+  color: var(--editor-label);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toolbarDivider {
+  width: 1px;
+  margin: 0.25rem 0.125rem;
+  background-color: var(--editor-border);
+}
+
 .body {
   position: relative;
 }
@@ -119,6 +137,54 @@
 .wysiwyg td {
   border: 1px solid var(--editor-border);
   padding: 0.5rem;
+}
+
+.wysiwyg h1,
+.wysiwyg h2,
+.wysiwyg h3 {
+  margin: 1em 0 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.wysiwyg h1 {
+  font-size: 1.5rem;
+}
+
+.wysiwyg h2 {
+  font-size: 1.25rem;
+}
+
+.wysiwyg h3 {
+  font-size: 1.125rem;
+}
+
+.wysiwyg blockquote {
+  margin: 1em 0;
+  padding: 0.25em 1rem;
+  border-left: 3px solid var(--editor-border);
+  color: var(--editor-secondary-label);
+}
+
+.wysiwyg pre {
+  margin: 1em 0;
+  padding: 0.75rem;
+  overflow-x: auto;
+  border-radius: 0.375rem;
+  background-color: var(--editor-fill);
+}
+
+.wysiwyg code {
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  background-color: var(--editor-fill);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.wysiwyg pre code {
+  padding: 0;
+  background: transparent;
 }
 
 .markdown {

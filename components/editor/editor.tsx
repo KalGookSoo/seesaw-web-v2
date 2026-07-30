@@ -225,10 +225,187 @@ export function Editor({
     mediaFiles.forEach((file) => handleMediaFile(file));
   };
 
+  const applyInlineCommand = useCallback(
+    (command: string) => {
+      wysiwygRef.current?.focus();
+      document.execCommand(command);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const applyFormatBlock = useCallback(
+    (tag: string) => {
+      wysiwygRef.current?.focus();
+      document.execCommand('formatBlock', false, tag);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const toggleFormatBlock = useCallback(
+    (tag: string) => {
+      wysiwygRef.current?.focus();
+      const current = document.queryCommandValue('formatBlock').toUpperCase();
+      document.execCommand('formatBlock', false, current === tag ? 'P' : tag);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const toggleInlineCode = useCallback(() => {
+    if (!wysiwygRef.current) {
+      return;
+    }
+    wysiwygRef.current.focus();
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !wysiwygRef.current.contains(selection.anchorNode)) {
+      return;
+    }
+    const range = selection.getRangeAt(0);
+    if (range.collapsed) {
+      return;
+    }
+
+    const startContainer =
+      range.commonAncestorContainer instanceof Element
+        ? range.commonAncestorContainer
+        : range.commonAncestorContainer.parentElement;
+    const existingCode = startContainer?.closest('code');
+
+    if (existingCode && wysiwygRef.current.contains(existingCode)) {
+      const text = document.createTextNode(existingCode.textContent ?? '');
+      existingCode.replaceWith(text);
+      const newRange = document.createRange();
+      newRange.selectNode(text);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+    } else {
+      const content = range.extractContents();
+      const code = document.createElement('code');
+      code.appendChild(content);
+      range.insertNode(code);
+      range.selectNode(code);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    emitChange();
+  }, [emitChange]);
+
+  const stopMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+  };
+
+  const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!(event.metaKey || event.ctrlKey)) {
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+    if (key === 'b') {
+      event.preventDefault();
+      applyInlineCommand('bold');
+    } else if (key === 'i') {
+      event.preventDefault();
+      applyInlineCommand('italic');
+    } else if (event.shiftKey && key === 'x') {
+      event.preventDefault();
+      applyInlineCommand('strikeThrough');
+    } else if (key === 'e') {
+      event.preventDefault();
+      toggleInlineCode();
+    } else if (event.shiftKey && event.key === '9') {
+      event.preventDefault();
+      toggleFormatBlock('BLOCKQUOTE');
+    } else if (event.shiftKey && key === 'c') {
+      event.preventDefault();
+      toggleFormatBlock('PRE');
+    } else if (event.altKey && ['1', '2', '3'].includes(event.key)) {
+      event.preventDefault();
+      applyFormatBlock(`H${event.key}`);
+    }
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.toolbar}>
         <div className={styles.toolbarGroup}>
+          <select
+            aria-label="제목 스타일"
+            className={styles.headingSelect}
+            defaultValue=""
+            onChange={(event) => {
+              const tag = event.target.value;
+              if (tag) {
+                applyFormatBlock(tag);
+              }
+              event.target.value = '';
+            }}
+          >
+            <option disabled value="">
+              제목
+            </option>
+            <option value="H1">제목 1</option>
+            <option value="H2">제목 2</option>
+            <option value="H3">제목 3</option>
+            <option value="P">본문</option>
+          </select>
+          <button
+            className={styles.toolbarButton}
+            title="굵게 (Ctrl+B)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyInlineCommand('bold')}
+          >
+            <strong>B</strong>
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="기울임 (Ctrl+I)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyInlineCommand('italic')}
+          >
+            <em>I</em>
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="취소선 (Ctrl+Shift+X)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyInlineCommand('strikeThrough')}
+          >
+            <span style={{ textDecoration: 'line-through' }}>S</span>
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="인라인 코드 (Ctrl+E)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={toggleInlineCode}
+          >
+            {'</>'}
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="인용구 (Ctrl+Shift+9)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => toggleFormatBlock('BLOCKQUOTE')}
+          >
+            “”
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="코드 블록 (Ctrl+Shift+C)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => toggleFormatBlock('PRE')}
+          >
+            {'{ }'}
+          </button>
+          <span aria-hidden="true" className={styles.toolbarDivider} />
           <button className={styles.toolbarButton} type="button" onClick={() => setImageDialogOpen(true)}>
             이미지
           </button>
@@ -265,6 +442,7 @@ export function Editor({
           onDragOver={(event) => event.preventDefault()}
           onDrop={handleDrop}
           onInput={emitChange}
+          onKeyDown={handleEditorKeyDown}
           onPaste={handlePaste}
         />
         <textarea
