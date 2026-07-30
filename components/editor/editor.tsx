@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import styles from '@/components/editor/editor.module.css';
+import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
 import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
 
@@ -17,8 +18,8 @@ type EditorProps = Readonly<{
   hooks?: EditorHooks;
 }>;
 
-function modeButtonClassName(active: boolean): string {
-  return active ? `${styles.modeButton} ${styles.modeButtonActive}` : styles.modeButton;
+function toolbarButtonClassName(active: boolean): string {
+  return active ? `${styles.toolbarButton} ${styles.toolbarButtonActive}` : styles.toolbarButton;
 }
 
 export function Editor({
@@ -31,6 +32,7 @@ export function Editor({
   hooks
 }: EditorProps) {
   const [mode, setMode] = useState<EditorMode>(initialEditType);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -178,16 +180,17 @@ export function Editor({
   );
 
   const handleMediaFile = useCallback(
-    (file: File) => {
+    (file: File, description?: string) => {
       const isVideo = file.type.startsWith('video/');
       const tagName = isVideo ? 'video' : 'img';
       const hook = isVideo ? hooks?.addVideoBlobHook : hooks?.addImageBlobHook;
+      const fallbackLabel = description || file.name;
 
       if (hook) {
-        hook(file, (url, altText) => insertMediaElement(tagName, url, altText ?? file.name));
+        hook(file, (url, altText) => insertMediaElement(tagName, url, altText ?? fallbackLabel));
         return;
       }
-      insertMediaElement(tagName, URL.createObjectURL(file), file.name);
+      insertMediaElement(tagName, URL.createObjectURL(file), fallbackLabel);
     },
     [hooks, insertMediaElement]
   );
@@ -207,7 +210,7 @@ export function Editor({
       return;
     }
     event.preventDefault();
-    mediaFiles.forEach(handleMediaFile);
+    mediaFiles.forEach((file) => handleMediaFile(file));
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -219,31 +222,39 @@ export function Editor({
       return;
     }
     event.preventDefault();
-    mediaFiles.forEach(handleMediaFile);
+    mediaFiles.forEach((file) => handleMediaFile(file));
   };
 
   return (
     <div className={styles.root}>
-      {!hideModeSwitch ? (
-        <div className={styles.toolbar}>
-          <button
-            aria-pressed={mode === 'wysiwyg'}
-            className={modeButtonClassName(mode === 'wysiwyg')}
-            type="button"
-            onClick={() => switchMode('wysiwyg')}
-          >
-            위지윅
-          </button>
-          <button
-            aria-pressed={mode === 'markdown'}
-            className={modeButtonClassName(mode === 'markdown')}
-            type="button"
-            onClick={() => switchMode('markdown')}
-          >
-            마크다운
+      <div className={styles.toolbar}>
+        <div className={styles.toolbarGroup}>
+          <button className={styles.toolbarButton} type="button" onClick={() => setImageDialogOpen(true)}>
+            이미지
           </button>
         </div>
-      ) : null}
+
+        {!hideModeSwitch ? (
+          <div className={styles.toolbarGroup}>
+            <button
+              aria-pressed={mode === 'wysiwyg'}
+              className={toolbarButtonClassName(mode === 'wysiwyg')}
+              type="button"
+              onClick={() => switchMode('wysiwyg')}
+            >
+              위지윅
+            </button>
+            <button
+              aria-pressed={mode === 'markdown'}
+              className={toolbarButtonClassName(mode === 'markdown')}
+              type="button"
+              onClick={() => switchMode('markdown')}
+            >
+              마크다운
+            </button>
+          </div>
+        ) : null}
+      </div>
 
       <div className={styles.body} style={{ height }}>
         <div
@@ -262,6 +273,13 @@ export function Editor({
           onChange={emitChange}
         />
       </div>
+
+      <ImageInsertDialog
+        open={imageDialogOpen}
+        onClose={() => setImageDialogOpen(false)}
+        onInsertFile={handleMediaFile}
+        onInsertUrl={(url, description) => insertMediaElement('img', url, description || url)}
+      />
     </div>
   );
 }
