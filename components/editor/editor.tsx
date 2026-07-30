@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+import styles from '@/components/editor/editor.module.css';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
 import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
 
@@ -16,10 +17,9 @@ type EditorProps = Readonly<{
   hooks?: EditorHooks;
 }>;
 
-const modeButtonClassName = (active: boolean) =>
-  `inline-flex h-8 items-center rounded px-3 text-xs font-semibold transition ${
-    active ? 'bg-default-label text-default-background' : 'text-default-secondary-label hover:bg-default-fill'
-  }`;
+function modeButtonClassName(active: boolean): string {
+  return active ? `${styles.modeButton} ${styles.modeButtonActive}` : styles.modeButton;
+}
 
 export function Editor({
   ref,
@@ -144,9 +144,9 @@ export function Editor({
   };
 
   return (
-    <div className="border-default-separator bg-default-surface flex flex-col overflow-hidden rounded-lg border">
+    <div className={styles.root}>
       {!hideModeSwitch ? (
-        <div className="border-default-separator flex gap-1 border-b p-1.5">
+        <div className={styles.toolbar}>
           <button
             aria-pressed={mode === 'wysiwyg'}
             className={modeButtonClassName(mode === 'wysiwyg')}
@@ -166,18 +166,16 @@ export function Editor({
         </div>
       ) : null}
 
-      <div className="relative" style={{ height }}>
+      <div className={styles.body} style={{ height }}>
         <div
-          className="h-full overflow-y-auto p-4 text-sm leading-7 outline-none [&_img]:max-w-full [&_img]:rounded-md [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-current/20 [&_td]:p-2 [&_th]:border [&_th]:border-current/20 [&_th]:p-2"
+          className={mode === 'wysiwyg' ? styles.wysiwyg : `${styles.wysiwyg} ${styles.hidden}`}
           contentEditable
-          hidden={mode !== 'wysiwyg'}
           ref={wysiwygRef}
           suppressContentEditableWarning
           onInput={emitChange}
         />
         <textarea
-          className="h-full w-full resize-none p-4 font-mono text-sm outline-none"
-          hidden={mode !== 'markdown'}
+          className={mode === 'markdown' ? styles.markdown : `${styles.markdown} ${styles.hidden}`}
           ref={markdownRef}
           onChange={emitChange}
         />
