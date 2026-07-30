@@ -7,9 +7,11 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Clock,
   FileText,
   Flag,
   Languages,
+  Loader2,
   LogIn,
   LogOut,
   Mail,
@@ -18,6 +20,7 @@ import {
   Moon,
   PanelLeft,
   PanelRight,
+  RefreshCw,
   Send,
   Settings,
   ShieldCheck,
@@ -73,6 +76,15 @@ function setPreferenceCookie(name: string, value: string) {
 
 function toRoleLabel(authority: string): string {
   return authority.replace(/^ROLE_/, '');
+}
+
+function formatExpiresAt(expiresAt: number): string {
+  return new Intl.DateTimeFormat('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(expiresAt));
 }
 
 function getCategoryHref(category: CategoryResponse): string | null {
@@ -406,6 +418,7 @@ export function GlobalShell({
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
+  const [extendSessionPending, setExtendSessionPending] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const [navigationPosition, setNavigationPosition] =
     useState<NavigationPosition>(initialNavigationPosition);
@@ -414,7 +427,8 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, login, logout, user } = useAuth();
+  const { isAuthenticated, login, logout, user, expiresAt, refresh } =
+    useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
@@ -431,6 +445,12 @@ export function GlobalShell({
       setLocale(savedLocale);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setMyPageOpen(false);
+    }
+  }, [isAuthenticated]);
 
   const startNaverLogin = async () => {
     setLoginPending(true);
@@ -474,6 +494,18 @@ export function GlobalShell({
   const handleMyPageSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // API가 아직 없어 실제 저장은 이후 연동 시 채운다.
     event.preventDefault();
+  };
+
+  const handleExtendSession = async () => {
+    setExtendSessionPending(true);
+    try {
+      const success = await refresh();
+      window.alert(
+        success ? '로그인이 연장되었습니다.' : '로그인 연장에 실패했습니다. 다시 로그인해주세요.'
+      );
+    } finally {
+      setExtendSessionPending(false);
+    }
   };
 
   const toggleNavigationCollapsed = () => {
@@ -834,6 +866,35 @@ export function GlobalShell({
                     )}
                   </div>
                 </div>
+              </div>
+            </section>
+
+            <section className="space-y-3">
+              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+                <Clock size={16} aria-hidden />
+                로그인 세션
+              </div>
+              <div className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+                <span className="text-default-secondary-label text-sm">
+                  {expiresAt === null
+                    ? '로그인 정보를 확인할 수 없습니다.'
+                    : expiresAt <= Date.now()
+                      ? '로그인이 만료되었습니다. 연장해주세요.'
+                      : `${formatExpiresAt(expiresAt)}까지 로그인이 유지됩니다.`}
+                </span>
+                <button
+                  className="border-default-blue-muted text-default-blue hover:bg-default-blue-soft inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:opacity-50"
+                  disabled={extendSessionPending}
+                  type="button"
+                  onClick={handleExtendSession}
+                >
+                  {extendSessionPending ? (
+                    <Loader2 size={14} aria-hidden className="animate-spin" />
+                  ) : (
+                    <RefreshCw size={14} aria-hidden />
+                  )}
+                  로그인 연장
+                </button>
               </div>
             </section>
 
