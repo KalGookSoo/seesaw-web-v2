@@ -187,6 +187,35 @@
   background: transparent;
 }
 
+.wysiwyg ul,
+.wysiwyg ol {
+  margin: 1em 0;
+  padding-left: 1.75rem;
+}
+
+.wysiwyg ul {
+  list-style: disc;
+}
+
+.wysiwyg ol {
+  list-style: decimal;
+}
+
+.wysiwyg li {
+  margin: 0.25em 0;
+}
+
+.wysiwyg li:has(> input[type='checkbox']) {
+  list-style: none;
+  margin-left: -1.25rem;
+}
+
+.wysiwyg hr {
+  margin: 1.5em 0;
+  border: none;
+  border-top: 1px solid var(--editor-border);
+}
+
 .markdown {
   height: 100%;
   width: 100%;

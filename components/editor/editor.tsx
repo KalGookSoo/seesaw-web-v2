@@ -293,11 +293,148 @@ export function Editor({
     emitChange();
   }, [emitChange]);
 
+  const toggleList = useCallback(
+    (ordered: boolean) => {
+      wysiwygRef.current?.focus();
+      document.execCommand(ordered ? 'insertOrderedList' : 'insertUnorderedList');
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const closestListItem = (node: Node | null | undefined): HTMLLIElement | null => {
+    const el = node instanceof Element ? node : (node?.parentElement ?? null);
+    return el?.closest('li') ?? null;
+  };
+
+  const toggleTaskList = useCallback(() => {
+    if (!wysiwygRef.current) {
+      return;
+    }
+    wysiwygRef.current.focus();
+
+    let selection = window.getSelection();
+    let li = closestListItem(selection?.anchorNode);
+    if (!li) {
+      document.execCommand('insertUnorderedList');
+      selection = window.getSelection();
+      li = closestListItem(selection?.anchorNode);
+    }
+    if (!li || !wysiwygRef.current.contains(li)) {
+      return;
+    }
+
+    const existingCheckbox = li.querySelector(':scope > input[type="checkbox"]');
+    if (existingCheckbox) {
+      existingCheckbox.remove();
+    } else {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      li.insertBefore(checkbox, li.firstChild);
+    }
+    emitChange();
+  }, [emitChange]);
+
+  const normalizeListNesting = (root: HTMLElement) => {
+    // execCommand('indent')는 목록을 <li> 안이 아니라 형제로 겹쳐 쌓을 때가 있어(ul > ul),
+    // 마크다운 변환기가 li의 자식만 순회하다 내용을 잃어버린다. 항상 이전 <li> 안으로 옮겨 정규화한다.
+    root.querySelectorAll('ul, ol').forEach((list) => {
+      const parent = list.parentElement;
+      if (!parent || (parent.tagName !== 'UL' && parent.tagName !== 'OL')) {
+        return;
+      }
+      const previousLi = list.previousElementSibling;
+      if (previousLi && previousLi.tagName === 'LI') {
+        previousLi.appendChild(list);
+      } else {
+        list.replaceWith(...Array.from(list.children));
+      }
+    });
+
+    // execCommand('outdent')는 하위 항목을 새 <ul>로 감싸지 않고 <li> 안에 <li>를 그대로 남길 때가 있어,
+    // 마크다운 변환기가 이를 하나의 항목 텍스트로 이어붙여 버린다. 상위 <li>의 다음 형제로 꺼내 정규화한다.
+    root.querySelectorAll('li').forEach((li) => {
+      const parent = li.parentElement;
+      if (parent && parent.tagName === 'LI') {
+        parent.insertAdjacentElement('afterend', li);
+      }
+    });
+  };
+
+  const applyIndent = useCallback(
+    (outdent: boolean) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+      document.execCommand(outdent ? 'outdent' : 'indent');
+      normalizeListNesting(wysiwygRef.current);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const insertHorizontalRule = useCallback(() => {
+    if (!wysiwygRef.current) {
+      return;
+    }
+    wysiwygRef.current.focus();
+
+    const hr = document.createElement('hr');
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0 && wysiwygRef.current.contains(selection.anchorNode)) {
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(hr);
+      range.setStartAfter(hr);
+      range.setEndAfter(hr);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      wysiwygRef.current.appendChild(hr);
+    }
+    emitChange();
+  }, [emitChange]);
+
   const stopMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
   };
 
+  useEffect(() => {
+    const container = wysiwygRef.current;
+    if (!container) {
+      return;
+    }
+
+    // 할 일 목록 체크박스는 DOM에 직접 삽입되어 React onChange 델리게이션(체크박스 value tracking)을 타지 않으므로
+    // 네이티브 리스너로 잡아 checked 속성을 동기화해야 직렬화된 HTML/마크다운에 상태가 반영된다.
+    const handleCheckboxChange = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement) || target.type !== 'checkbox') {
+        return;
+      }
+      if (target.checked) {
+        target.setAttribute('checked', '');
+      } else {
+        target.removeAttribute('checked');
+      }
+      emitChange();
+    };
+
+    container.addEventListener('change', handleCheckboxChange);
+    return () => container.removeEventListener('change', handleCheckboxChange);
+  }, [emitChange]);
+
   const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Tab') {
+      const selection = window.getSelection();
+      if (closestListItem(selection?.anchorNode)) {
+        event.preventDefault();
+        applyIndent(event.shiftKey);
+      }
+      return;
+    }
+
     if (!(event.metaKey || event.ctrlKey)) {
       return;
     }
@@ -321,6 +458,15 @@ export function Editor({
     } else if (event.shiftKey && key === 'c') {
       event.preventDefault();
       toggleFormatBlock('PRE');
+    } else if (event.shiftKey && event.key === '8') {
+      event.preventDefault();
+      toggleList(false);
+    } else if (event.shiftKey && event.key === '7') {
+      event.preventDefault();
+      toggleList(true);
+    } else if (event.shiftKey && event.key === '0') {
+      event.preventDefault();
+      toggleTaskList();
     } else if (event.altKey && ['1', '2', '3'].includes(event.key)) {
       event.preventDefault();
       applyFormatBlock(`H${event.key}`);
@@ -404,6 +550,61 @@ export function Editor({
             onClick={() => toggleFormatBlock('PRE')}
           >
             {'{ }'}
+          </button>
+          <span aria-hidden="true" className={styles.toolbarDivider} />
+          <button
+            className={styles.toolbarButton}
+            title="글머리 기호 목록 (Ctrl+Shift+8)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => toggleList(false)}
+          >
+            •
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="번호 매기기 목록 (Ctrl+Shift+7)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => toggleList(true)}
+          >
+            1.
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="할 일 목록 (Ctrl+Shift+0)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={toggleTaskList}
+          >
+            ☑
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="내어쓰기 (Shift+Tab)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyIndent(true)}
+          >
+            ←
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="들여쓰기 (Tab)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyIndent(false)}
+          >
+            →
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="구분선"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={insertHorizontalRule}
+          >
+            ―
           </button>
           <span aria-hidden="true" className={styles.toolbarDivider} />
           <button className={styles.toolbarButton} type="button" onClick={() => setImageDialogOpen(true)}>
