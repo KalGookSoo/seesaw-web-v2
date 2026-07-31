@@ -135,8 +135,15 @@
 
 .wysiwyg th,
 .wysiwyg td {
+  min-width: 3rem;
   border: 1px solid var(--editor-border);
   padding: 0.5rem;
+}
+
+.wysiwyg th {
+  background-color: var(--editor-fill);
+  font-weight: 600;
+  text-align: left;
 }
 
 .wysiwyg h1,

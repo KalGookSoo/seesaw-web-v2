@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } 
 import styles from '@/components/editor/editor.module.css';
 import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
+import { TableInsertDialog } from '@/components/editor/table-insert-dialog';
 import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
 
 type EditorProps = Readonly<{
@@ -33,6 +34,7 @@ export function Editor({
 }: EditorProps) {
   const [mode, setMode] = useState<EditorMode>(initialEditType);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [tableDialogOpen, setTableDialogOpen] = useState(false);
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -396,6 +398,150 @@ export function Editor({
     emitChange();
   }, [emitChange]);
 
+  const closestCell = (node: Node | null | undefined): HTMLTableCellElement | null => {
+    const el = node instanceof Element ? node : (node?.parentElement ?? null);
+    return el?.closest('td, th') ?? null;
+  };
+
+  const insertTable = useCallback(
+    (rows: number, columns: number) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const headerRow = `<tr>${'<th></th>'.repeat(columns)}</tr>`;
+      const bodyRow = `<tr>${'<td></td>'.repeat(columns)}</tr>`;
+      const table = document.createElement('table');
+      table.innerHTML = `<thead>${headerRow}</thead><tbody>${bodyRow.repeat(Math.max(rows - 1, 0))}</tbody>`;
+
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0 && wysiwygRef.current.contains(selection.anchorNode)) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(table);
+        range.setStartAfter(table);
+        range.setEndAfter(table);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else {
+        wysiwygRef.current.appendChild(table);
+      }
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const currentTableCell = (): {
+    cell: HTMLTableCellElement;
+    row: HTMLTableRowElement;
+    table: HTMLTableElement;
+  } | null => {
+    if (!wysiwygRef.current) {
+      return null;
+    }
+    const selection = window.getSelection();
+    const cell = closestCell(selection?.anchorNode);
+    const row = cell?.closest('tr');
+    const table = row?.closest('table');
+    if (!cell || !row || !table || !wysiwygRef.current.contains(table)) {
+      return null;
+    }
+    return { cell, row, table };
+  };
+
+  const addTableRow = useCallback(() => {
+    const context = currentTableCell();
+    if (!context) {
+      return;
+    }
+    const { row } = context;
+    const columnCount = row.children.length;
+    const newRow = document.createElement('tr');
+    for (let i = 0; i < columnCount; i += 1) {
+      newRow.appendChild(document.createElement('td'));
+    }
+    row.insertAdjacentElement('afterend', newRow);
+    emitChange();
+  }, [emitChange]);
+
+  const removeTableRow = useCallback(() => {
+    const context = currentTableCell();
+    if (!context) {
+      return;
+    }
+    const { row, table } = context;
+    if (table.querySelectorAll('tr').length <= 1) {
+      table.remove();
+    } else {
+      row.remove();
+    }
+    emitChange();
+  }, [emitChange]);
+
+  const addTableColumn = useCallback(() => {
+    const context = currentTableCell();
+    if (!context) {
+      return;
+    }
+    const { cell, row, table } = context;
+    const columnIndex = Array.from(row.children).indexOf(cell);
+    table.querySelectorAll('tr').forEach((tr) => {
+      const referenceCell = tr.children[columnIndex];
+      const newCell = document.createElement(referenceCell?.tagName === 'TH' ? 'th' : 'td');
+      if (referenceCell) {
+        referenceCell.insertAdjacentElement('afterend', newCell);
+      } else {
+        tr.appendChild(newCell);
+      }
+    });
+    emitChange();
+  }, [emitChange]);
+
+  const removeTableColumn = useCallback(() => {
+    const context = currentTableCell();
+    if (!context) {
+      return;
+    }
+    const { cell, row, table } = context;
+    const columnIndex = Array.from(row.children).indexOf(cell);
+    if (row.children.length <= 1) {
+      table.remove();
+    } else {
+      table.querySelectorAll('tr').forEach((tr) => {
+        tr.children[columnIndex]?.remove();
+      });
+    }
+    emitChange();
+  }, [emitChange]);
+
+  const moveToAdjacentCell = (cell: HTMLTableCellElement, backward: boolean) => {
+    const row = cell.closest('tr');
+    const table = row?.closest('table');
+    if (!row || !table) {
+      return;
+    }
+
+    const cellsInRow = Array.from(row.children) as HTMLTableCellElement[];
+    const cellIndex = cellsInRow.indexOf(cell);
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const rowIndex = rows.indexOf(row);
+
+    const targetCell = backward
+      ? (cellsInRow[cellIndex - 1] ?? (rows[rowIndex - 1]?.lastElementChild as HTMLTableCellElement | null))
+      : (cellsInRow[cellIndex + 1] ?? (rows[rowIndex + 1]?.firstElementChild as HTMLTableCellElement | null));
+    if (!targetCell) {
+      return;
+    }
+
+    const range = document.createRange();
+    range.selectNodeContents(targetCell);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  };
+
   const stopMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
   };
@@ -428,6 +574,12 @@ export function Editor({
   const handleEditorKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Tab') {
       const selection = window.getSelection();
+      const cell = closestCell(selection?.anchorNode);
+      if (cell) {
+        event.preventDefault();
+        moveToAdjacentCell(cell, event.shiftKey);
+        return;
+      }
       if (closestListItem(selection?.anchorNode)) {
         event.preventDefault();
         applyIndent(event.shiftKey);
@@ -607,6 +759,51 @@ export function Editor({
             ―
           </button>
           <span aria-hidden="true" className={styles.toolbarDivider} />
+          <button
+            className={styles.toolbarButton}
+            title="표 삽입"
+            type="button"
+            onClick={() => setTableDialogOpen(true)}
+          >
+            표
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="행 추가"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={addTableRow}
+          >
+            행+
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="행 삭제"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={removeTableRow}
+          >
+            행-
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="열 추가"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={addTableColumn}
+          >
+            열+
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="열 삭제"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={removeTableColumn}
+          >
+            열-
+          </button>
+          <span aria-hidden="true" className={styles.toolbarDivider} />
           <button className={styles.toolbarButton} type="button" onClick={() => setImageDialogOpen(true)}>
             이미지
           </button>
@@ -659,6 +856,8 @@ export function Editor({
         onInsertFile={handleMediaFile}
         onInsertUrl={(url, description) => insertMediaElement('img', url, description || url)}
       />
+
+      <TableInsertDialog open={tableDialogOpen} onClose={() => setTableDialogOpen(false)} onInsert={insertTable} />
     </div>
   );
 }
