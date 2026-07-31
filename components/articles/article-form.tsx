@@ -13,11 +13,17 @@ import {
 import { deleteAttachment } from '@/lib/attachments';
 import { useAuth } from '@/hooks/use-auth';
 import { AttachmentUpload } from '@/components/articles/attachment-upload';
-import {
-  ContentEditableEditor,
-  type ContentEditableEditorHandle
-} from '@/components/articles/content-editable-editor';
 import { Confirm } from '@/components/ui/confirm';
+import { Editor, type EditorHandle } from '@/components/editor';
+
+function collectInlineImageFiles(html: string, blobFiles: Map<string, File>): File[] {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const blobUrls = Array.from(doc.querySelectorAll('img[src^="blob:"]')).map(
+    (image) => image.getAttribute('src') ?? ''
+  );
+
+  return blobUrls.filter((url) => blobFiles.has(url)).map((url) => blobFiles.get(url)!);
+}
 
 type ArticleFormMode = 'create' | 'edit';
 
@@ -50,7 +56,8 @@ export function ArticleForm({
 }: ArticleFormProps) {
   const router = useRouter();
   const { user, accessToken } = useAuth();
-  const editorRef = useRef<ContentEditableEditorHandle>(null);
+  const editorRef = useRef<EditorHandle>(null);
+  const blobFilesRef = useRef<Map<string, File>>(new Map());
 
   const [title, setTitle] = useState(initialTitle);
   const [fixed, setFixed] = useState(initialFixed);
@@ -80,8 +87,8 @@ export function ArticleForm({
     setSubmitting(true);
     setFieldErrors({});
 
-    const content = editorRef.current?.getHtml() ?? '';
-    const inlineImages = editorRef.current?.getInlineImageFiles() ?? [];
+    const content = editorRef.current?.getHTML() ?? '';
+    const inlineImages = collectInlineImageFiles(content, blobFilesRef.current);
 
     const command = {
       categoryId,
@@ -198,7 +205,21 @@ export function ArticleForm({
 
           <div className="space-y-1.5">
             <span className="text-default-label text-sm font-medium">내용</span>
-            <ContentEditableEditor ref={editorRef} initialHtml={initialContent} />
+            <Editor
+              ref={editorRef}
+              height="20rem"
+              hooks={{
+                addImageBlobHook: (file, callback) => {
+                  const url = URL.createObjectURL(file);
+                  blobFilesRef.current.set(url, file);
+                  callback(url, file.name);
+                },
+                addVideoBlobHook: () => {
+                  // 동영상 첨부 업로드는 아직 지원하지 않는다(#87 예정) - 삽입하지 않고 무시한다.
+                }
+              }}
+              initialValue={initialContent}
+            />
             {fieldErrors.content ? (
               <p className="text-default-red text-xs">{fieldErrors.content}</p>
             ) : null}
