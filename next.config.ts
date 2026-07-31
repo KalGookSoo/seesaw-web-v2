@@ -4,7 +4,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 const applicationApiBaseUrl = (
-  process.env.SEESAW_APPLICATION_API_BASE_URL ??
+  process.env.NEXT_PUBLIC_SEESAW_APPLICATION_API_BASE_URL ??
   'http://localhost:9000/seesaw-api/api'
 ).replace(/\/+$/, '');
 
