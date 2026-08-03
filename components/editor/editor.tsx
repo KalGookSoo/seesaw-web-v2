@@ -8,7 +8,7 @@ import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
 import { LinkInsertDialog } from '@/components/editor/link-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
 import { TableInsertDialog } from '@/components/editor/table-insert-dialog';
-import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
+import type { EditorActiveFormats, EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
 import { VideoInsertDialog } from '@/components/editor/video-insert-dialog';
 
 type EditorProps = Readonly<{
@@ -26,6 +26,22 @@ function toolbarButtonClassName(active: boolean): string {
   return active ? `${styles.toolbarButton} ${styles.toolbarButtonActive}` : styles.toolbarButton;
 }
 
+const DEFAULT_ACTIVE_FORMATS: EditorActiveFormats = {
+  bold: false,
+  italic: false,
+  strikethrough: false,
+  inlineCode: false,
+  blockTag: 'P',
+  unorderedList: false,
+  orderedList: false,
+  taskList: false,
+  fontSize: null,
+  color: null,
+  backgroundColor: null,
+  textAlign: null,
+  lineHeight: null
+};
+
 export function Editor({
   ref,
   initialValue = '',
@@ -42,6 +58,7 @@ export function Editor({
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkInitialText, setLinkInitialText] = useState('');
   const [colorDialogTarget, setColorDialogTarget] = useState<'color' | 'backgroundColor' | null>(null);
+  const [activeFormats, setActiveFormats] = useState<EditorActiveFormats>(DEFAULT_ACTIVE_FORMATS);
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -135,13 +152,6 @@ export function Editor({
     },
     [mode, emitChange]
   );
-
-  useImperativeHandle(ref, () => ({ getHTML, getMarkdown, setHTML, insertText }), [
-    getHTML,
-    getMarkdown,
-    setHTML,
-    insertText
-  ]);
 
   const switchMode = (nextMode: EditorMode) => {
     if (nextMode === mode) {
@@ -719,7 +729,7 @@ export function Editor({
 
   const closestStyledElement = (
     node: Node | null | undefined,
-    property: 'color' | 'backgroundColor'
+    property: 'color' | 'backgroundColor' | 'fontSize'
   ): HTMLElement | null => {
     let current: Element | null = node instanceof Element ? node : (node?.parentElement ?? null);
     while (current) {
@@ -793,6 +803,77 @@ export function Editor({
     },
     [emitChange]
   );
+
+  const computeActiveFormats = useCallback((): EditorActiveFormats => {
+    if (!wysiwygRef.current) {
+      return DEFAULT_ACTIVE_FORMATS;
+    }
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !wysiwygRef.current.contains(selection.anchorNode)) {
+      return DEFAULT_ACTIVE_FORMATS;
+    }
+
+    const anchorNode = selection.anchorNode;
+    const anchorElement = anchorNode instanceof Element ? anchorNode : (anchorNode?.parentElement ?? null);
+
+    // execCommand/queryCommandState는 deprecated이므로 쓰지 않고, 실제로 적용된 태그/인라인 style을
+    // 커서 위치에서 직접 거슬러 올라가며 읾어(closest) 현재 서식 상태를 판단한다.
+    const bold = !!anchorElement?.closest('b, strong');
+    const italic = !!anchorElement?.closest('i, em');
+    const strikethrough = !!anchorElement?.closest('s, del, strike');
+    const inlineCode = !!anchorElement?.closest('code');
+
+    const blockElement = anchorElement?.closest('p, div, h1, h2, h3, blockquote, pre') as HTMLElement | null;
+    const effectiveBlockElement = blockElement && blockElement !== wysiwygRef.current ? blockElement : null;
+    const blockTag = effectiveBlockElement
+      ? effectiveBlockElement.tagName === 'DIV'
+        ? 'P'
+        : effectiveBlockElement.tagName
+      : 'P';
+
+    const li = closestListItem(anchorNode);
+    const hasCheckbox = !!li?.querySelector(':scope > input[type="checkbox"]');
+    const listParentTag = li?.parentElement?.tagName;
+
+    const fontSizeElement = closestStyledElement(anchorNode, 'fontSize');
+    const colorElement = closestStyledElement(anchorNode, 'color');
+    const backgroundColorElement = closestStyledElement(anchorNode, 'backgroundColor');
+
+    return {
+      bold,
+      italic,
+      strikethrough,
+      inlineCode,
+      blockTag,
+      unorderedList: listParentTag === 'UL' && !hasCheckbox,
+      orderedList: listParentTag === 'OL',
+      taskList: hasCheckbox,
+      fontSize: fontSizeElement?.style.fontSize || null,
+      color: colorElement?.style.color || null,
+      backgroundColor: backgroundColorElement?.style.backgroundColor || null,
+      textAlign: (effectiveBlockElement?.style.textAlign as EditorActiveFormats['textAlign']) || null,
+      lineHeight: effectiveBlockElement?.style.lineHeight || null
+    };
+  }, []);
+
+  useImperativeHandle(ref, () => ({ getHTML, getMarkdown, setHTML, insertText, getActiveFormats: computeActiveFormats }), [
+    getHTML,
+    getMarkdown,
+    setHTML,
+    insertText,
+    computeActiveFormats
+  ]);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const formats = computeActiveFormats();
+      setActiveFormats(formats);
+      hooks?.onFormatChange?.(formats);
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+  }, [computeActiveFormats, hooks]);
 
   const stopMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -887,13 +968,12 @@ export function Editor({
           <select
             aria-label="제목 스타일"
             className={styles.headingSelect}
-            defaultValue=""
+            value={['H1', 'H2', 'H3', 'P'].includes(activeFormats.blockTag) ? activeFormats.blockTag : ''}
             onChange={(event) => {
               const tag = event.target.value;
               if (tag) {
                 applyFormatBlock(tag);
               }
-              event.target.value = '';
             }}
           >
             <option disabled value="">
@@ -905,7 +985,7 @@ export function Editor({
             <option value="P">본문</option>
           </select>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.bold)}
             title="굵게 (Ctrl+B)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -914,7 +994,7 @@ export function Editor({
             <strong>B</strong>
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.italic)}
             title="기울임 (Ctrl+I)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -923,7 +1003,7 @@ export function Editor({
             <em>I</em>
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.strikethrough)}
             title="취소선 (Ctrl+Shift+X)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -932,7 +1012,7 @@ export function Editor({
             <span style={{ textDecoration: 'line-through' }}>S</span>
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.inlineCode)}
             title="인라인 코드 (Ctrl+E)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -950,7 +1030,7 @@ export function Editor({
             🔗
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.blockTag === 'BLOCKQUOTE')}
             title="인용구 (Ctrl+Shift+9)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -959,7 +1039,7 @@ export function Editor({
             “”
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.blockTag === 'PRE')}
             title="코드 블록 (Ctrl+Shift+C)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -971,13 +1051,12 @@ export function Editor({
           <select
             aria-label="글자 크기"
             className={styles.headingSelect}
-            defaultValue=""
+            value={['0.75em', '1em', '1.25em', '1.5em'].includes(activeFormats.fontSize ?? '') ? activeFormats.fontSize! : ''}
             onChange={(event) => {
               const size = event.target.value;
               if (size) {
                 applyFontSize(size);
               }
-              event.target.value = '';
             }}
           >
             <option disabled value="">
@@ -989,7 +1068,7 @@ export function Editor({
             <option value="1.5em">아주 크게</option>
           </select>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(!!activeFormats.color)}
             title="텍스트 색상"
             type="button"
             onMouseDown={stopMouseDown}
@@ -998,7 +1077,7 @@ export function Editor({
             <span style={{ borderBottom: '3px solid currentColor' }}>A</span>
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(!!activeFormats.backgroundColor)}
             title="배경색(강조)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1009,13 +1088,12 @@ export function Editor({
           <select
             aria-label="줄 간격"
             className={styles.headingSelect}
-            defaultValue=""
+            value={['1', '1.15', '1.5', '2'].includes(activeFormats.lineHeight ?? '') ? activeFormats.lineHeight! : ''}
             onChange={(event) => {
               const value = event.target.value;
               if (value) {
                 applyLineHeight(value);
               }
-              event.target.value = '';
             }}
           >
             <option disabled value="">
@@ -1027,7 +1105,7 @@ export function Editor({
             <option value="2">2.0</option>
           </select>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.textAlign === 'left')}
             title="왼쪽 정렬"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1036,7 +1114,7 @@ export function Editor({
             ←≡
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.textAlign === 'center')}
             title="가운데 정렬"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1045,7 +1123,7 @@ export function Editor({
             ≡
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.textAlign === 'right')}
             title="오른쪽 정렬"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1054,7 +1132,7 @@ export function Editor({
             ≡→
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.textAlign === 'justify')}
             title="양쪽 정렬"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1064,7 +1142,7 @@ export function Editor({
           </button>
           <span aria-hidden="true" className={styles.toolbarDivider} />
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.unorderedList)}
             title="글머리 기호 목록 (Ctrl+Shift+8)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1073,7 +1151,7 @@ export function Editor({
             •
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.orderedList)}
             title="번호 매기기 목록 (Ctrl+Shift+7)"
             type="button"
             onMouseDown={stopMouseDown}
@@ -1082,7 +1160,7 @@ export function Editor({
             1.
           </button>
           <button
-            className={styles.toolbarButton}
+            className={toolbarButtonClassName(activeFormats.taskList)}
             title="할 일 목록 (Ctrl+Shift+0)"
             type="button"
             onMouseDown={stopMouseDown}
