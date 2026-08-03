@@ -8,6 +8,7 @@ import { LinkInsertDialog } from '@/components/editor/link-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
 import { TableInsertDialog } from '@/components/editor/table-insert-dialog';
 import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
+import { VideoInsertDialog } from '@/components/editor/video-insert-dialog';
 
 type EditorProps = Readonly<{
   ref?: React.Ref<EditorHandle>;
@@ -35,6 +36,7 @@ export function Editor({
 }: EditorProps) {
   const [mode, setMode] = useState<EditorMode>(initialEditType);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   const [tableDialogOpen, setTableDialogOpen] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkInitialText, setLinkInitialText] = useState('');
@@ -185,20 +187,69 @@ export function Editor({
     [emitChange]
   );
 
-  const handleMediaFile = useCallback(
+  const handleVideoFile = useCallback(
     (file: File, description?: string) => {
-      const isVideo = file.type.startsWith('video/');
-      const tagName = isVideo ? 'video' : 'img';
-      const hook = isVideo ? hooks?.addVideoBlobHook : hooks?.addImageBlobHook;
-      const fallbackLabel = description || file.name;
-
-      if (hook) {
-        hook(file, (url, altText) => insertMediaElement(tagName, url, altText ?? fallbackLabel));
+      if (!wysiwygRef.current) {
         return;
       }
-      insertMediaElement(tagName, URL.createObjectURL(file), fallbackLabel);
+      const fallbackLabel = description || file.name;
+
+      // 동영상은 용량이 커서 업로드(hook)가 끝날 때까지 시간이 걸릴 수 있다. 콜백이 호출되는 시점의
+      // "현재 커서 위치"에 삽입하면 그 사이 사용자가 계속 편집했을 때 엉뚱한 곳에 삽입되므로,
+      // 파일을 선택한 시점의 위치에 placeholder를 먼저 넣어두고 나중에 그 placeholder 자체를 교체한다.
+      const placeholder = document.createElement('div');
+      placeholder.className = styles.videoUploadPlaceholder;
+      placeholder.contentEditable = 'false';
+      placeholder.textContent = `${fallbackLabel} 업로드 중…`;
+
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0 && wysiwygRef.current.contains(selection.anchorNode)) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(placeholder);
+        range.setStartAfter(placeholder);
+        range.setEndAfter(placeholder);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else {
+        wysiwygRef.current.appendChild(placeholder);
+      }
+      emitChange();
+
+      const replacePlaceholder = (url: string, altText?: string) => {
+        const video = document.createElement('video');
+        video.setAttribute('src', url);
+        video.setAttribute('controls', '');
+        video.setAttribute('aria-label', altText ?? fallbackLabel);
+        placeholder.replaceWith(video);
+        emitChange();
+      };
+
+      const hook = hooks?.addVideoBlobHook;
+      if (hook) {
+        hook(file, replacePlaceholder);
+      } else {
+        replacePlaceholder(URL.createObjectURL(file), fallbackLabel);
+      }
     },
-    [hooks, insertMediaElement]
+    [hooks, emitChange]
+  );
+
+  const handleMediaFile = useCallback(
+    (file: File, description?: string) => {
+      if (file.type.startsWith('video/')) {
+        handleVideoFile(file, description);
+        return;
+      }
+      const fallbackLabel = description || file.name;
+      const hook = hooks?.addImageBlobHook;
+      if (hook) {
+        hook(file, (url, altText) => insertMediaElement('img', url, altText ?? fallbackLabel));
+        return;
+      }
+      insertMediaElement('img', URL.createObjectURL(file), fallbackLabel);
+    },
+    [hooks, insertMediaElement, handleVideoFile]
   );
 
   const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
@@ -876,6 +927,9 @@ export function Editor({
           <button className={styles.toolbarButton} type="button" onClick={() => setImageDialogOpen(true)}>
             이미지
           </button>
+          <button className={styles.toolbarButton} type="button" onClick={() => setVideoDialogOpen(true)}>
+            동영상
+          </button>
         </div>
 
         {!hideModeSwitch ? (
@@ -924,6 +978,13 @@ export function Editor({
         onClose={() => setImageDialogOpen(false)}
         onInsertFile={handleMediaFile}
         onInsertUrl={(url, description) => insertMediaElement('img', url, description || url)}
+      />
+
+      <VideoInsertDialog
+        open={videoDialogOpen}
+        onClose={() => setVideoDialogOpen(false)}
+        onInsertFile={handleMediaFile}
+        onInsertUrl={(url, description) => insertMediaElement('video', url, description || url)}
       />
 
       <TableInsertDialog open={tableDialogOpen} onClose={() => setTableDialogOpen(false)} onInsert={insertTable} />

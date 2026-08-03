@@ -47,6 +47,8 @@ function inline(node: Node): string {
       return `[${children()}](${node.getAttribute('href') ?? ''})`;
     case 'IMG':
       return `![${node.getAttribute('alt') ?? ''}](${node.getAttribute('src') ?? ''})`;
+    case 'VIDEO':
+      return `!video[${node.getAttribute('aria-label') ?? ''}](${node.getAttribute('src') ?? ''})`;
     case 'BR':
       return '  \n';
     default:
@@ -187,6 +189,7 @@ function inlineToHtml(text: string): string {
 
   result = escapeHtml(result);
   result = result.replace(/!\[([^\]]*)\]\(([^)]*)\)/g, '<img src="$2" alt="$1">');
+  result = result.replace(/!video\[([^\]]*)\]\(([^)]*)\)/g, '<video src="$2" controls aria-label="$1"></video>');
   result = result.replace(/\[([^\]]*)\]\(([^)]*)\)/g, '<a href="$2">$1</a>');
   result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   result = result.replace(/~~([^~]+)~~/g, '<del>$1</del>');
