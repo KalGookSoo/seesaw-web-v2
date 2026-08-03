@@ -52,6 +52,7 @@ export function Editor({
   initialEditType = 'wysiwyg',
   height = '400px',
   hideModeSwitch = false,
+  previewStyle = 'tab',
   onChange,
   hooks
 }: EditorProps) {
@@ -63,6 +64,8 @@ export function Editor({
   const [linkInitialText, setLinkInitialText] = useState('');
   const [colorDialogTarget, setColorDialogTarget] = useState<'color' | 'backgroundColor' | null>(null);
   const [activeFormats, setActiveFormats] = useState<EditorActiveFormats>(DEFAULT_ACTIVE_FORMATS);
+  const [markdownView, setMarkdownView] = useState<'source' | 'preview'>('source');
+  const [previewHtml, setPreviewHtml] = useState('');
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -82,6 +85,7 @@ export function Editor({
       if (wysiwygRef.current) {
         wysiwygRef.current.innerHTML = initialValue;
       }
+      setPreviewHtml(markdownToHtml(markdownRef.current?.value ?? ''));
       return;
     }
 
@@ -91,8 +95,13 @@ export function Editor({
     if (markdownRef.current) {
       markdownRef.current.value = htmlToMarkdown(initialValue);
     }
+    setPreviewHtml(markdownToHtml(markdownRef.current?.value ?? ''));
     // 최초 마운트에서만 초기값을 채운다 - 이후 initialValue 변경은 무시한다(입력 중 커서 튐 방지).
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updatePreview = useCallback(() => {
+    setPreviewHtml(markdownToHtml(markdownRef.current?.value ?? ''));
   }, []);
 
   const readWysiwygHTML = (): string => {
@@ -182,6 +191,7 @@ export function Editor({
 
     if (nextMode === 'markdown' && markdownRef.current) {
       markdownRef.current.value = htmlToMarkdown(readWysiwygHTML());
+      updatePreview();
     } else if (nextMode === 'wysiwyg' && wysiwygRef.current) {
       wysiwygRef.current.innerHTML = markdownToHtml(markdownRef.current?.value ?? '');
     }
@@ -1404,11 +1414,46 @@ export function Editor({
           onKeyDown={handleEditorKeyDown}
           onPaste={handlePaste}
         />
-        <textarea
-          className={mode === 'markdown' ? styles.markdown : `${styles.markdown} ${styles.hidden}`}
-          ref={markdownRef}
-          onChange={emitChange}
-        />
+        <div className={mode === 'markdown' ? styles.markdownPane : `${styles.markdownPane} ${styles.hidden}`}>
+          {previewStyle === 'tab' ? (
+            <div className={styles.markdownSubTabs}>
+              <button
+                aria-pressed={markdownView === 'source'}
+                className={toolbarButtonClassName(markdownView === 'source')}
+                type="button"
+                onClick={() => setMarkdownView('source')}
+              >
+                원문
+              </button>
+              <button
+                aria-pressed={markdownView === 'preview'}
+                className={toolbarButtonClassName(markdownView === 'preview')}
+                type="button"
+                onClick={() => setMarkdownView('preview')}
+              >
+                미리보기
+              </button>
+            </div>
+          ) : null}
+          <div className={previewStyle === 'vertical' ? styles.markdownSplit : styles.markdownContent}>
+            <textarea
+              className={
+                previewStyle === 'tab' && markdownView === 'preview' ? `${styles.markdown} ${styles.hidden}` : styles.markdown
+              }
+              ref={markdownRef}
+              onChange={() => {
+                emitChange();
+                updatePreview();
+              }}
+            />
+            {previewStyle === 'vertical' || (previewStyle === 'tab' && markdownView === 'preview') ? (
+              <div
+                className={`${styles.wysiwyg} ${styles.markdownPreview}`}
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            ) : null}
+          </div>
+        </div>
       </div>
 
       <ImageInsertDialog

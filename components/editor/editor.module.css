@@ -255,3 +255,46 @@
 .hidden {
   display: none;
 }
+
+.markdownPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.markdownSubTabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.375rem;
+  border-bottom: 1px solid var(--editor-border);
+}
+
+.markdownContent {
+  flex: 1;
+  min-height: 0;
+}
+
+.markdownContent > * {
+  height: 100%;
+}
+
+.markdownSplit {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.markdownSplit > * {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.markdownSplit > *:first-child {
+  border-right: 1px solid var(--editor-border);
+}
+
+.markdownPreview {
+  overflow-y: auto;
+}
