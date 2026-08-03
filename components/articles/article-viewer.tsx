@@ -1,4 +1,5 @@
 import styles from '@/components/articles/article-viewer.module.css';
+import { sanitizeArticleHtml } from '@/lib/sanitize-article-html';
 
 export function ArticleViewer({
   content
@@ -9,7 +10,7 @@ export function ArticleViewer({
     <div
       className={styles.viewer}
       data-article-viewer
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(content) }}
     />
   );
 }

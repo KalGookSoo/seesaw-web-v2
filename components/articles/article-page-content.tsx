@@ -19,6 +19,7 @@ import type { PagedModel } from '@/types/common';
 import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
+import { ArticleViewer } from '@/components/articles/article-viewer';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -446,9 +447,10 @@ export function StaticContentPage({
           articles.map((article) => (
             <article
               key={article.id}
-              className={`${mattePanelClassName} text-default-label max-w-none p-5`}
-              dangerouslySetInnerHTML={{ __html: article.content ?? '' }}
-            />
+              className={`${mattePanelClassName} max-w-none p-5`}
+            >
+              <ArticleViewer content={article.content ?? ''} />
+            </article>
           ))
         ) : (
           <EmptyState />

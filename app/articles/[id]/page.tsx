@@ -139,6 +139,33 @@ function toDescription(article: ArticleResponse): string {
   ).slice(0, 160);
 }
 
+function toArticleJsonLd(
+  article: ArticleResponse,
+  canonicalUrl: string
+): string {
+  const image = article.inlineImages?.[0];
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title ?? undefined,
+    description: toDescription(article) || undefined,
+    image: image
+      ? `${APPLICATION_API_BASE_URL}/attachments/${image.id}`
+      : undefined,
+    datePublished: article.createdDate ?? undefined,
+    dateModified: article.lastModifiedDate ?? article.createdDate ?? undefined,
+    author: {
+      '@type': 'Person',
+      name: article.maskedAuthor ?? article.createdBy ?? '익명'
+    },
+    mainEntityOfPage: canonicalUrl
+  };
+
+  // </script>로 마크업이 끊기지 않도록 <를 유니코드 이스케이프로 치환한다.
+  return JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+}
+
 function ArticleDetailError({
   listHref,
   message,
@@ -258,6 +285,9 @@ export async function generateMetadata({
       title: article.title ?? '게시글 상세',
       description,
       keywords: firstValue(resolvedSearchParams.categoryType),
+      alternates: {
+        canonical: `https://${domainName}/articles/${id}`
+      },
       openGraph: {
         type: 'article',
         title: article.title ?? '게시글 상세',
@@ -327,9 +357,16 @@ export default async function ArticleDetailPage({
   const attachments = (article.attachments ?? []).filter(
     (attachment) => attachment.attachment !== false
   );
+  const canonicalUrl = `https://${domainName}/articles/${article.id}`;
 
   return (
     <main className="bg-default-surface-grouped text-default-label min-h-full">
+      <script
+        dangerouslySetInnerHTML={{
+          __html: toArticleJsonLd(article, canonicalUrl)
+        }}
+        type="application/ld+json"
+      />
       <div className="mx-auto max-w-5xl space-y-5 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         <nav
           aria-label="현재 위치"
