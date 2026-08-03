@@ -27,10 +27,15 @@ export function openNaverOAuth2Popup(): Promise<JsonWebToken> {
     const state = window.crypto.randomUUID();
     window.sessionStorage.setItem(NAVER_OAUTH2_STATE_STORAGE_KEY, state);
 
+    const width = Math.min(480, window.innerWidth);
+    const height = Math.min(640, window.innerHeight);
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
     const popup = window.open(
       buildAuthorizationUrl(state),
       'seesaw-naver-oauth2',
-      'width=480,height=640,menubar=no,toolbar=no,location=no,status=no'
+      `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
     );
 
     if (!popup) {
