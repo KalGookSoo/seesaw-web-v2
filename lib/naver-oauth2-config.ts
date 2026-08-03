@@ -4,6 +4,8 @@ export const NAVER_TOKEN_URI = 'https://nid.naver.com/oauth2.0/token';
 
 export const NAVER_OAUTH2_STATE_STORAGE_KEY = 'seesaw:naver-oauth2-state';
 
+export const NAVER_OAUTH2_PURPOSE_STORAGE_KEY = 'seesaw:naver-oauth2-purpose';
+
 export function getNaverClientId(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
   if (!clientId) {

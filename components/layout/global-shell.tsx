@@ -25,7 +25,8 @@ import {
   Settings,
   ShieldCheck,
   Sun,
-  UserRound
+  UserRound,
+  UserX
 } from 'lucide-react';
 
 import type { CategoryResponse } from '@/types/category';
@@ -34,10 +35,12 @@ import {
   NAVIGATION_COLLAPSED_COOKIE_KEY,
   NAVIGATION_POSITION_COOKIE_KEY
 } from '@/lib/navigation-preferences';
+import { Confirm } from '@/components/ui/confirm';
 import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
-import { openNaverOAuth2Popup } from '@/lib/naver-oauth2-popup';
+import { openNaverOAuth2Popup, openNaverOAuth2UnlinkPopup } from '@/lib/naver-oauth2-popup';
+import { removeMyRoleMapping } from '@/lib/role-mappings';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -419,6 +422,8 @@ export function GlobalShell({
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
   const [extendSessionPending, setExtendSessionPending] = useState(false);
+  const [withdrawConfirmOpen, setWithdrawConfirmOpen] = useState(false);
+  const [withdrawPending, setWithdrawPending] = useState(false);
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
   const [navigationPosition, setNavigationPosition] =
     useState<NavigationPosition>(initialNavigationPosition);
@@ -427,7 +432,7 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, login, logout, user, expiresAt, refresh } =
+  const { isAuthenticated, login, logout, user, expiresAt, refresh, accessToken } =
     useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
@@ -467,12 +472,29 @@ export function GlobalShell({
     }
   };
 
-  const signOut = async () => {
-    await fetch('/api/sign-out', {
-      method: 'POST',
-      credentials: 'include'
-    });
+  const signOut = () => {
     logout();
+  };
+
+  const handleWithdraw = async () => {
+    setWithdrawConfirmOpen(false);
+    if (!accessToken) {
+      return;
+    }
+    setWithdrawPending(true);
+    try {
+      await openNaverOAuth2UnlinkPopup();
+      await removeMyRoleMapping(accessToken);
+      window.alert('네이버 연동이 해제되었습니다.');
+      setMyPageOpen(false);
+      logout();
+    } catch (error) {
+      window.alert(
+        error instanceof Error ? error.message : '연동 해제에 실패했습니다.'
+      );
+    } finally {
+      setWithdrawPending(false);
+    }
   };
 
   const changeTheme = (nextTheme: ThemeMode) => {
@@ -898,6 +920,31 @@ export function GlobalShell({
               </div>
             </section>
 
+            <section className="space-y-3">
+              <div className="text-default-red flex items-center gap-2 text-sm font-semibold">
+                <UserX size={16} aria-hidden />
+                회원탈퇴
+              </div>
+              <div className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+                <span className="text-default-secondary-label text-sm">
+                  네이버 연동을 해제하고 이 사이트의 권한을 제거합니다.
+                </span>
+                <button
+                  className="border-default-red-muted text-default-red hover:bg-default-red-soft inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:opacity-50"
+                  disabled={withdrawPending}
+                  type="button"
+                  onClick={() => setWithdrawConfirmOpen(true)}
+                >
+                  {withdrawPending ? (
+                    <Loader2 size={14} aria-hidden className="animate-spin" />
+                  ) : (
+                    <UserX size={14} aria-hidden />
+                  )}
+                  회원탈퇴
+                </button>
+              </div>
+            </section>
+
             <form
               className="space-y-3"
               id="my-page-form"
@@ -923,6 +970,18 @@ export function GlobalShell({
           </div>
         ) : null}
       </Modal>
+
+      <Confirm
+        confirmLabel="회원탈퇴"
+        onCancel={() => setWithdrawConfirmOpen(false)}
+        onConfirm={handleWithdraw}
+        open={withdrawConfirmOpen}
+        title="회원탈퇴 하시겠습니까?"
+        tone="danger"
+      >
+        네이버 재인증 후 이 사이트와의 네이버 연동이 해제되고 이 사이트에 대한 권한이 제거됩니다.
+        계정 자체와 다른 사이트의 정보는 그대로 유지됩니다.
+      </Confirm>
 
       <Modal
         open={policyOpen}
