@@ -1,90 +1,87 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { decodeJwt } from '@/lib/jwt';
+import { authorizedFetch } from '@/lib/api-fetch';
 import type { AuthenticatedUser, JsonWebToken } from '@/types/auth';
 
 const AUTH_STORAGE_KEY = 'seesaw-auth';
 
 type AuthState = Readonly<{
-  accessToken: string | null;
-  refreshToken: string | null;
   expiresAt: number | null;
   user: AuthenticatedUser | null;
   isAuthenticated: boolean;
-  login: (tokens: JsonWebToken) => void;
-  logout: () => void;
+  login: (tokens: JsonWebToken) => Promise<void>;
+  logout: () => Promise<void>;
   refresh: () => Promise<boolean>;
+  bootstrap: () => Promise<void>;
 }>;
 
-function toUser(accessToken: string): AuthenticatedUser | null {
-  const payload = decodeJwt(accessToken);
-  if (!payload?.sub || !payload.userId) {
+async function fetchCurrentUser(): Promise<AuthenticatedUser | null> {
+  const response = await authorizedFetch('/api/me');
+  if (!response.ok) {
     return null;
   }
-
-  return {
-    userId: payload.userId,
-    username: payload.sub,
-    authorities: payload.authorities ?? []
-  };
+  return (await response.json()) as AuthenticatedUser;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
       expiresAt: null,
       user: null,
       isAuthenticated: false,
-      login: (tokens) => {
-        if (!tokens.accessToken || !tokens.refreshToken || !tokens.expiresIn) {
-          return;
-        }
-
-        const user = toUser(tokens.accessToken);
+      // 로그인 성공 응답(토큰)은 이미 서버가 httpOnly 쿠키로 내려준 상태다. 여기서는 그 값을 저장하지
+      // 않고(JS가 토큰을 갖고 있지 않게 하는 것이 목적) /api/me로 본인 정보만 조회해 채운다.
+      login: async (tokens) => {
+        const user = await fetchCurrentUser();
         set({
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          expiresAt: Date.now() + tokens.expiresIn,
+          expiresAt: tokens.expiresIn ? Date.now() + tokens.expiresIn : null,
           user,
           isAuthenticated: user !== null
         });
       },
-      logout: () => {
-        set({ accessToken: null, refreshToken: null, expiresAt: null, user: null, isAuthenticated: false });
+      logout: async () => {
+        try {
+          await authorizedFetch('/api/sign-out', { method: 'POST' });
+        } catch (error) {
+          console.error('로그아웃 요청에 실패했습니다.', error);
+        } finally {
+          set({ expiresAt: null, user: null, isAuthenticated: false });
+        }
       },
       refresh: async () => {
-        const { refreshToken } = get();
-        if (!refreshToken) {
-          get().logout();
-          return false;
-        }
-
         try {
-          const response = await fetch('/api/token/refresh', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken })
-          });
-
+          const response = await authorizedFetch('/api/token/refresh', { method: 'POST' });
           if (!response.ok) {
             throw new Error(`토큰 갱신 실패: ${response.status}`);
           }
 
           const tokens = (await response.json()) as JsonWebToken;
-          get().login(tokens);
+          set({ expiresAt: tokens.expiresIn ? Date.now() + tokens.expiresIn : null });
           return true;
         } catch (error) {
           console.error('토큰 갱신에 실패했습니다.', error);
-          get().logout();
+          await get().logout();
           return false;
         }
+      },
+      // 새로고침 등으로 앱이 다시 시작될 때, 로컬에 남아있던(persist된) 로그인 상태가 실제로도
+      // 유효한지 서버에 다시 확인한다. persist된 값은 화면이 깜빡이지 않게 하는 낙관적 표시일 뿐이다.
+      bootstrap: async () => {
+        const user = await fetchCurrentUser();
+        set({ user, isAuthenticated: user !== null, expiresAt: user !== null ? get().expiresAt : null });
       }
     }),
     {
-      name: AUTH_STORAGE_KEY
+      name: AUTH_STORAGE_KEY,
+      // accessToken/refreshToken은 절대 저장하지 않는다(XSS로 탈취 가능한 localStorage에 두지 않는 것이
+      // 이 스토어를 httpOnly 쿠키 기반으로 바꾼 목적이다). user/expiresAt는 민감 정보가 아니라
+      // 새로고침 시 화면이 깜빡이지 않도록 낙관적으로만 사용하고, bootstrap()이 서버 상태로 재확인한다.
+      partialize: (state) => ({
+        user: state.user,
+        expiresAt: state.expiresAt,
+        isAuthenticated: state.isAuthenticated
+      })
     }
   )
 );

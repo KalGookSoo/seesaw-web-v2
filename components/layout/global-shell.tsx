@@ -432,7 +432,7 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, login, logout, user, expiresAt, refresh, accessToken } =
+  const { isAuthenticated, login, logout, user, expiresAt, refresh, bootstrap } =
     useAuth();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
@@ -452,6 +452,13 @@ export function GlobalShell({
   }, []);
 
   useEffect(() => {
+    // 로컬에 남아있던 로그인 상태는 새로고침 시 화면이 깜빡이지 않도록 하는 낙관적 표시일 뿐이라,
+    // 마운트 시 서버(httpOnly 쿠키)에 실제로도 유효한지 다시 확인한다.
+    void bootstrap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated) {
       setMyPageOpen(false);
     }
@@ -461,7 +468,7 @@ export function GlobalShell({
     setLoginPending(true);
     try {
       const tokens = await openNaverOAuth2Popup();
-      login(tokens);
+      await login(tokens);
       setLoginOpen(false);
     } catch (error) {
       window.alert(
@@ -473,21 +480,18 @@ export function GlobalShell({
   };
 
   const signOut = () => {
-    logout();
+    void logout();
   };
 
   const handleWithdraw = async () => {
     setWithdrawConfirmOpen(false);
-    if (!accessToken) {
-      return;
-    }
     setWithdrawPending(true);
     try {
       await openNaverOAuth2UnlinkPopup();
-      await removeMyRoleMapping(accessToken);
+      await removeMyRoleMapping();
       window.alert('네이버 연동이 해제되었습니다.');
       setMyPageOpen(false);
-      logout();
+      await logout();
     } catch (error) {
       window.alert(
         error instanceof Error ? error.message : '연동 해제에 실패했습니다.'

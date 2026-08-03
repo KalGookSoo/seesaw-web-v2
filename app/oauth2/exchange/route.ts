@@ -27,5 +27,13 @@ export async function POST(request: Request) {
   });
 
   const jwtBody = await jwtResponse.json();
-  return NextResponse.json(jwtBody, { status: jwtResponse.status });
+  const response = NextResponse.json(jwtBody, { status: jwtResponse.status });
+
+  // seesaw-api가 이 응답에 실어 보낸 인증 쿠키(Set-Cookie)를 그대로 전달해야 브라우저가 받는다.
+  // 이 fetch는 Next.js 서버가 대신 호출한 것이라, 그냥 두면 브라우저는 이 헤더를 볼 수 없다.
+  jwtResponse.headers.getSetCookie().forEach((cookie) => {
+    response.headers.append('Set-Cookie', cookie);
+  });
+
+  return response;
 }

@@ -1,18 +1,9 @@
-import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
+import { authorizedFetch } from '@/lib/api-fetch';
 
-export async function deleteAttachment(
-  id: string,
-  accessToken: string
-): Promise<void> {
-  const response = await fetch(
-    `${APPLICATION_API_BASE_URL}/attachments/${encodeURIComponent(id)}`,
-    {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    }
-  );
+export async function deleteAttachment(id: string): Promise<void> {
+  const response = await authorizedFetch(`/api/attachments/${encodeURIComponent(id)}`, {
+    method: 'DELETE'
+  });
 
   if (!response.ok) {
     throw new Error(`첨부파일을 삭제할 수 없습니다. status=${response.status}`);

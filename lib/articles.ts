@@ -6,6 +6,7 @@ import type {
   UpdateArticleRequest
 } from '@/types/article';
 import type { PagedModel } from '@/types/common';
+import { authorizedFetch } from '@/lib/api-fetch';
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 
 export type ArticleViewType = 'TABLE' | 'CARD';
@@ -252,14 +253,10 @@ async function toMutationResult(
 }
 
 export async function createArticle(
-  command: CreateArticleRequest,
-  accessToken: string
+  command: CreateArticleRequest
 ): Promise<ArticleMutationResult> {
-  const response = await fetch(`${APPLICATION_API_BASE_URL}/articles`, {
+  const response = await authorizedFetch(`/api/articles`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    },
     body: buildArticleFormData(command)
   });
 
@@ -268,16 +265,12 @@ export async function createArticle(
 
 export async function updateArticle(
   id: string,
-  command: UpdateArticleRequest,
-  accessToken: string
+  command: UpdateArticleRequest
 ): Promise<ArticleMutationResult> {
-  const response = await fetch(
-    `${APPLICATION_API_BASE_URL}/articles/${encodeURIComponent(id)}`,
+  const response = await authorizedFetch(
+    `/api/articles/${encodeURIComponent(id)}`,
     {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      },
       body: buildArticleFormData(command)
     }
   );

@@ -1,11 +1,8 @@
-import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
+import { authorizedFetch } from '@/lib/api-fetch';
 
-export async function removeMyRoleMapping(accessToken: string): Promise<void> {
-  const response = await fetch(`${APPLICATION_API_BASE_URL}/role-mappings/me`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
+export async function removeMyRoleMapping(): Promise<void> {
+  const response = await authorizedFetch('/api/role-mappings/me', {
+    method: 'DELETE'
   });
 
   if (!response.ok) {

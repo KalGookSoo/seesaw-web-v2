@@ -64,7 +64,7 @@ export function ArticleForm({
   initialAttachments = []
 }: ArticleFormProps) {
   const router = useRouter();
-  const { user, accessToken } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const editorRef = useRef<EditorHandle>(null);
   const blobFilesRef = useRef<Map<string, File>>(new Map());
 
@@ -88,7 +88,7 @@ export function ArticleForm({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!accessToken) {
+    if (!isAuthenticated) {
       window.alert('로그인이 필요합니다.');
       return;
     }
@@ -113,8 +113,8 @@ export function ArticleForm({
 
     const result =
       mode === 'create'
-        ? await createArticle(command, accessToken)
-        : await updateArticle(articleId ?? '', command, accessToken);
+        ? await createArticle(command)
+        : await updateArticle(articleId ?? '', command);
 
     setSubmitting(false);
 
@@ -146,12 +146,12 @@ export function ArticleForm({
   }
 
   async function handleDeleteAttachment() {
-    if (!attachmentToDelete || !accessToken) {
+    if (!attachmentToDelete || !isAuthenticated) {
       return;
     }
 
     try {
-      await deleteAttachment(attachmentToDelete.id, accessToken);
+      await deleteAttachment(attachmentToDelete.id);
       setAttachments((current) =>
         current.filter((attachment) => attachment.id !== attachmentToDelete.id)
       );
