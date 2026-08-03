@@ -173,12 +173,16 @@ function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// 유니코드 개인 사용 영역(Private Use Area) 문자로 자리표시자를 감싼다. 일반 텍스트(URL의 숫자, 날짜 등)와
+// 겹칠 일이 없어야, 아래 자리표시자 복원 정규식이 인라인 코드가 아닌 순수 숫자까지 잘못 집어삼키지 않는다.
+const CODE_PLACEHOLDER_MARK = '\uE000';
+
 function inlineToHtml(text: string): string {
   // 인라인 코드 구간은 안의 *_~ 같은 문자가 이후 규칙에 다시 걸리지 않도록 먼저 떼어내 자리표시자로 치환한다.
   const codeSpans: string[] = [];
   let result = text.replace(/`([^`]+)`/g, (_match, code: string) => {
     codeSpans.push(`<code>${escapeHtml(code)}</code>`);
-    return `${codeSpans.length - 1}`;
+    return `${CODE_PLACEHOLDER_MARK}${codeSpans.length - 1}${CODE_PLACEHOLDER_MARK}`;
   });
 
   result = escapeHtml(result);
@@ -187,7 +191,10 @@ function inlineToHtml(text: string): string {
   result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   result = result.replace(/~~([^~]+)~~/g, '<del>$1</del>');
   result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  result = result.replace(/(\d+)/g, (_match, index: string) => codeSpans[Number(index)]);
+  result = result.replace(
+    new RegExp(`${CODE_PLACEHOLDER_MARK}(\\d+)${CODE_PLACEHOLDER_MARK}`, 'g'),
+    (_match, index: string) => codeSpans[Number(index)]
+  );
 
   return result;
 }

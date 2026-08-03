@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } 
 
 import styles from '@/components/editor/editor.module.css';
 import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
+import { LinkInsertDialog } from '@/components/editor/link-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
 import { TableInsertDialog } from '@/components/editor/table-insert-dialog';
 import type { EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
@@ -35,9 +36,12 @@ export function Editor({
   const [mode, setMode] = useState<EditorMode>(initialEditType);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [tableDialogOpen, setTableDialogOpen] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkInitialText, setLinkInitialText] = useState('');
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
+  const savedRangeRef = useRef<Range | null>(null);
 
   useEffect(() => {
     if (initializedRef.current) {
@@ -542,6 +546,59 @@ export function Editor({
     selection?.addRange(range);
   };
 
+  const openLinkDialog = useCallback(() => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode) && !selection.isCollapsed) {
+      // 다이얼로그로 포커스가 넘어가면 이 selection은 사라지므로, 나중에 삽입할 때 쓸 수 있도록 미리 복제해 저장한다.
+      savedRangeRef.current = selection.getRangeAt(0).cloneRange();
+      setLinkInitialText(savedRangeRef.current.toString());
+    } else {
+      savedRangeRef.current = null;
+      setLinkInitialText('');
+    }
+    setLinkDialogOpen(true);
+  }, []);
+
+  const insertLink = useCallback(
+    (text: string, url: string) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const anchor = document.createElement('a');
+      anchor.setAttribute('href', url);
+      anchor.textContent = text;
+
+      const range = savedRangeRef.current;
+      const selection = window.getSelection();
+      if (range && wysiwygRef.current.contains(range.commonAncestorContainer)) {
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        range.deleteContents();
+        range.insertNode(anchor);
+        range.setStartAfter(anchor);
+        range.setEndAfter(anchor);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      } else if (selection && selection.rangeCount > 0 && wysiwygRef.current.contains(selection.anchorNode)) {
+        const currentRange = selection.getRangeAt(0);
+        currentRange.deleteContents();
+        currentRange.insertNode(anchor);
+        currentRange.setStartAfter(anchor);
+        currentRange.setEndAfter(anchor);
+        selection.removeAllRanges();
+        selection.addRange(currentRange);
+      } else {
+        wysiwygRef.current.appendChild(anchor);
+      }
+
+      savedRangeRef.current = null;
+      emitChange();
+    },
+    [emitChange]
+  );
+
   const stopMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
   };
@@ -604,6 +661,9 @@ export function Editor({
     } else if (key === 'e') {
       event.preventDefault();
       toggleInlineCode();
+    } else if (key === 'k') {
+      event.preventDefault();
+      openLinkDialog();
     } else if (event.shiftKey && event.key === '9') {
       event.preventDefault();
       toggleFormatBlock('BLOCKQUOTE');
@@ -684,6 +744,15 @@ export function Editor({
             onClick={toggleInlineCode}
           >
             {'</>'}
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="링크 삽입 (Ctrl+K)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={openLinkDialog}
+          >
+            🔗
           </button>
           <button
             className={styles.toolbarButton}
@@ -858,6 +927,13 @@ export function Editor({
       />
 
       <TableInsertDialog open={tableDialogOpen} onClose={() => setTableDialogOpen(false)} onInsert={insertTable} />
+
+      <LinkInsertDialog
+        initialText={linkInitialText}
+        open={linkDialogOpen}
+        onClose={() => setLinkDialogOpen(false)}
+        onInsert={insertLink}
+      />
     </div>
   );
 }
