@@ -662,6 +662,25 @@ export function Editor({
     [emitChange]
   );
 
+  const clampRangeToStartBlock = (range: Range) => {
+    if (!wysiwygRef.current) {
+      return;
+    }
+    const startNode = range.startContainer;
+    const startElement = startNode instanceof Element ? startNode : startNode.parentElement;
+    const block = startElement?.closest('p, div, h1, h2, h3, li, blockquote') as HTMLElement | null;
+    if (!block || block === wysiwygRef.current || !wysiwygRef.current.contains(block)) {
+      return;
+    }
+    // 트리플 클릭 등으로 만들어지는 selection은 현재 블록 끝이 아니라 다음 블록의 시작 지점까지
+    // 걸치는 경우가 있다. 그대로 extractContents()하면 다음 블록까지 통째로 뽑혀 인라인 span 안에
+    // <p> 같은 블록 요소가 중첩되면서 구조가 깨지고 빈 문단이 생겨 줄바꿈처럼 보이므로, selection의
+    // 끝을 시작 지점이 속한 블록의 끝으로 잘라낸다.
+    if (!block.contains(range.endContainer)) {
+      range.setEnd(block, block.childNodes.length);
+    }
+  };
+
   const applyFontSize = useCallback(
     (size: string) => {
       if (!wysiwygRef.current) {
@@ -678,6 +697,7 @@ export function Editor({
       }
 
       const range = selection.getRangeAt(0);
+      clampRangeToStartBlock(range);
       const span = document.createElement('span');
       span.style.fontSize = size;
       span.appendChild(range.extractContents());
@@ -764,6 +784,8 @@ export function Editor({
         savedRangeRef.current = null;
         return;
       }
+
+      clampRangeToStartBlock(range);
 
       const selection = window.getSelection();
       selection?.removeAllRanges();
