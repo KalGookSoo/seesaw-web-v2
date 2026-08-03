@@ -16,8 +16,10 @@ export type CreateArticleRequest = Readonly<{
   content: string;
   multipartFiles?: File[];
   inlineImages?: File[];
+  inlineVideos?: File[];
   multipartFilesSizeValid?: boolean | null;
   inlineImagesSizeValid?: boolean | null;
+  inlineVideosSizeValid?: boolean | null;
 }>;
 
 export type UpdateArticleRequest = Readonly<{
@@ -29,8 +31,10 @@ export type UpdateArticleRequest = Readonly<{
   content: string;
   multipartFiles?: File[];
   inlineImages?: File[];
+  inlineVideos?: File[];
   multipartFilesSizeValid?: boolean | null;
   inlineImagesSizeValid?: boolean | null;
+  inlineVideosSizeValid?: boolean | null;
 }>;
 
 export type MoveArticleRequest = Readonly<{

@@ -217,6 +217,9 @@ function buildArticleFormData(
   (command.inlineImages ?? []).forEach((file) =>
     formData.append('inlineImages', file)
   );
+  (command.inlineVideos ?? []).forEach((file) =>
+    formData.append('inlineVideos', file)
+  );
   return formData;
 }
 

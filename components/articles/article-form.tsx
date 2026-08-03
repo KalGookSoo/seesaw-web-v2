@@ -25,6 +25,15 @@ function collectInlineImageFiles(html: string, blobFiles: Map<string, File>): Fi
   return blobUrls.filter((url) => blobFiles.has(url)).map((url) => blobFiles.get(url)!);
 }
 
+function collectInlineVideoFiles(html: string, blobFiles: Map<string, File>): File[] {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const blobUrls = Array.from(doc.querySelectorAll('video[src^="blob:"]')).map(
+    (video) => video.getAttribute('src') ?? ''
+  );
+
+  return blobUrls.filter((url) => blobFiles.has(url)).map((url) => blobFiles.get(url)!);
+}
+
 type ArticleFormMode = 'create' | 'edit';
 
 type ArticleFormProps = Readonly<{
@@ -89,6 +98,7 @@ export function ArticleForm({
 
     const content = editorRef.current?.getHTML() ?? '';
     const inlineImages = collectInlineImageFiles(content, blobFilesRef.current);
+    const inlineVideos = collectInlineVideoFiles(content, blobFilesRef.current);
 
     const command = {
       categoryId,
@@ -97,7 +107,8 @@ export function ArticleForm({
       title,
       content,
       multipartFiles: files,
-      inlineImages
+      inlineImages,
+      inlineVideos
     };
 
     const result =
@@ -214,8 +225,10 @@ export function ArticleForm({
                   blobFilesRef.current.set(url, file);
                   callback(url, file.name);
                 },
-                addVideoBlobHook: () => {
-                  // 동영상 첨부 업로드는 아직 지원하지 않는다(#87 예정) - 삽입하지 않고 무시한다.
+                addVideoBlobHook: (file, callback) => {
+                  const url = URL.createObjectURL(file);
+                  blobFilesRef.current.set(url, file);
+                  callback(url, file.name);
                 }
               }}
               initialValue={initialContent}
