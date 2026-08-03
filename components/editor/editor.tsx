@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
+import { ColorPickerDialog } from '@/components/editor/color-picker-dialog';
 import styles from '@/components/editor/editor.module.css';
 import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
 import { LinkInsertDialog } from '@/components/editor/link-insert-dialog';
@@ -40,6 +41,7 @@ export function Editor({
   const [tableDialogOpen, setTableDialogOpen] = useState(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkInitialText, setLinkInitialText] = useState('');
+  const [colorDialogTarget, setColorDialogTarget] = useState<'color' | 'backgroundColor' | null>(null);
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -650,6 +652,148 @@ export function Editor({
     [emitChange]
   );
 
+  const applyFontSize = useCallback(
+    (size: string) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+        return;
+      }
+      if (!wysiwygRef.current.contains(selection.anchorNode)) {
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      const span = document.createElement('span');
+      span.style.fontSize = size;
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      range.selectNode(span);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const applyLineHeight = useCallback(
+    (value: string) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0 || !wysiwygRef.current.contains(selection.anchorNode)) {
+        return;
+      }
+      const node = selection.anchorNode;
+      const el = node instanceof Element ? node : node?.parentElement;
+      const block = el?.closest('p, div, h1, h2, h3, li, blockquote') as HTMLElement | null;
+      // 줄바꿈 없이 입력된 느슨한 텍스트는 감싸는 블록 요소가 없어 closest()가 에디터 루트 자체에
+      // 매칭될 수 있다. 그대로 적용하면 문서 전체에 줄 간격이 걸려버리므로 루트는 대상에서 제외한다.
+      if (!block || block === wysiwygRef.current || !wysiwygRef.current.contains(block)) {
+        return;
+      }
+      block.style.lineHeight = value;
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const applyTextAlign = useCallback(
+    (align: 'left' | 'center' | 'right' | 'justify') => {
+      wysiwygRef.current?.focus();
+      const command = { left: 'justifyLeft', center: 'justifyCenter', right: 'justifyRight', justify: 'justifyFull' }[
+        align
+      ];
+      document.execCommand(command);
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const closestStyledElement = (
+    node: Node | null | undefined,
+    property: 'color' | 'backgroundColor'
+  ): HTMLElement | null => {
+    let current: Element | null = node instanceof Element ? node : (node?.parentElement ?? null);
+    while (current) {
+      if (current instanceof HTMLElement && current.style[property]) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
+  };
+
+  const openColorDialog = useCallback((target: 'color' | 'backgroundColor') => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode) && !selection.isCollapsed) {
+      // 다이얼로그로 포커스가 넘어가면 이 selection은 사라지므로, 나중에 적용할 때 쓸 수 있도록 미리 복제해 저장한다.
+      savedRangeRef.current = selection.getRangeAt(0).cloneRange();
+    } else {
+      savedRangeRef.current = null;
+    }
+    setColorDialogTarget(target);
+  }, []);
+
+  const applyInlineColor = useCallback(
+    (property: 'color' | 'backgroundColor', value: string) => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const range = savedRangeRef.current;
+      if (!range || !wysiwygRef.current.contains(range.commonAncestorContainer) || range.collapsed) {
+        savedRangeRef.current = null;
+        return;
+      }
+
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+
+      const span = document.createElement('span');
+      span.style[property] = value;
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      range.selectNode(span);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+
+      savedRangeRef.current = null;
+      emitChange();
+    },
+    [emitChange]
+  );
+
+  const clearInlineColor = useCallback(
+    (property: 'color' | 'backgroundColor') => {
+      if (!wysiwygRef.current) {
+        return;
+      }
+      wysiwygRef.current.focus();
+
+      const range = savedRangeRef.current;
+      const styledElement = closestStyledElement(range?.commonAncestorContainer, property);
+      if (styledElement && wysiwygRef.current.contains(styledElement)) {
+        styledElement.style[property] = '';
+        if (styledElement.getAttribute('style') === '') {
+          styledElement.replaceWith(...Array.from(styledElement.childNodes));
+        }
+        emitChange();
+      }
+      savedRangeRef.current = null;
+    },
+    [emitChange]
+  );
+
   const stopMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
   };
@@ -824,6 +968,101 @@ export function Editor({
             {'{ }'}
           </button>
           <span aria-hidden="true" className={styles.toolbarDivider} />
+          <select
+            aria-label="글자 크기"
+            className={styles.headingSelect}
+            defaultValue=""
+            onChange={(event) => {
+              const size = event.target.value;
+              if (size) {
+                applyFontSize(size);
+              }
+              event.target.value = '';
+            }}
+          >
+            <option disabled value="">
+              글자 크기
+            </option>
+            <option value="0.75em">작게</option>
+            <option value="1em">보통</option>
+            <option value="1.25em">크게</option>
+            <option value="1.5em">아주 크게</option>
+          </select>
+          <button
+            className={styles.toolbarButton}
+            title="텍스트 색상"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => openColorDialog('color')}
+          >
+            <span style={{ borderBottom: '3px solid currentColor' }}>A</span>
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="배경색(강조)"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => openColorDialog('backgroundColor')}
+          >
+            <span style={{ backgroundColor: 'var(--editor-fill)', padding: '0 0.15em' }}>A</span>
+          </button>
+          <select
+            aria-label="줄 간격"
+            className={styles.headingSelect}
+            defaultValue=""
+            onChange={(event) => {
+              const value = event.target.value;
+              if (value) {
+                applyLineHeight(value);
+              }
+              event.target.value = '';
+            }}
+          >
+            <option disabled value="">
+              줄 간격
+            </option>
+            <option value="1">1.0</option>
+            <option value="1.15">1.15</option>
+            <option value="1.5">1.5</option>
+            <option value="2">2.0</option>
+          </select>
+          <button
+            className={styles.toolbarButton}
+            title="왼쪽 정렬"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyTextAlign('left')}
+          >
+            ←≡
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="가운데 정렬"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyTextAlign('center')}
+          >
+            ≡
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="오른쪽 정렬"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyTextAlign('right')}
+          >
+            ≡→
+          </button>
+          <button
+            className={styles.toolbarButton}
+            title="양쪽 정렬"
+            type="button"
+            onMouseDown={stopMouseDown}
+            onClick={() => applyTextAlign('justify')}
+          >
+            ☰
+          </button>
+          <span aria-hidden="true" className={styles.toolbarDivider} />
           <button
             className={styles.toolbarButton}
             title="글머리 기호 목록 (Ctrl+Shift+8)"
@@ -994,6 +1233,27 @@ export function Editor({
         open={linkDialogOpen}
         onClose={() => setLinkDialogOpen(false)}
         onInsert={insertLink}
+      />
+
+      <ColorPickerDialog
+        open={colorDialogTarget !== null}
+        title={colorDialogTarget === 'backgroundColor' ? '배경색(강조)' : '텍스트 색상'}
+        onClear={() => {
+          if (colorDialogTarget) {
+            clearInlineColor(colorDialogTarget);
+          }
+          setColorDialogTarget(null);
+        }}
+        onClose={() => {
+          savedRangeRef.current = null;
+          setColorDialogTarget(null);
+        }}
+        onSelect={(color) => {
+          if (colorDialogTarget) {
+            applyInlineColor(colorDialogTarget, color);
+          }
+          setColorDialogTarget(null);
+        }}
       />
     </div>
   );
