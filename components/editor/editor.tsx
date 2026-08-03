@@ -26,6 +26,10 @@ function toolbarButtonClassName(active: boolean): string {
   return active ? `${styles.toolbarButton} ${styles.toolbarButtonActive}` : styles.toolbarButton;
 }
 
+// 선택된 텍스트가 없는(collapsed) 상태에서 글자 크기/색상/배경색을 지정할 때 "지금부터 입력하는 글자에
+// 적용"되도록 커서 위치에 심어두는 폭 0 문자(zero-width space) 표시자. 상세 동작은 getOrCreateStickySpan 참고.
+const STICKY_SPAN_MARK = '\u200B';
+
 const DEFAULT_ACTIVE_FORMATS: EditorActiveFormats = {
   bold: false,
   italic: false,
@@ -63,6 +67,7 @@ export function Editor({
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
   const savedRangeRef = useRef<Range | null>(null);
+  const stickySpanRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
     if (initializedRef.current) {
@@ -90,16 +95,33 @@ export function Editor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const readWysiwygHTML = (): string => {
+    const container = wysiwygRef.current;
+    if (!container) {
+      return '';
+    }
+    // 아직 아무것도 입력하지 않은 sticky span(글자 크기/색상/배경색을 미리 지정해두고 타이핑을
+    // 시작하기 전 상태)이 남아있으면, 저장되는 내용에 눈에 안 보이는 zero-width space가 섞여 들어가지
+    // 않도록 읾어내기 전에 제거한다. selectionchange 시점의 정리(비동기)보다 먼저 값을 읾어갈 수 있는
+    // 지점(모드 전환, getHTML 등)에서 안전망 역할을 한다.
+    const stickySpan = stickySpanRef.current;
+    if (stickySpan && container.contains(stickySpan) && stickySpan.textContent === STICKY_SPAN_MARK) {
+      stickySpan.remove();
+      stickySpanRef.current = null;
+    }
+    return container.innerHTML;
+  };
+
   const getHTML = useCallback((): string => {
     if (mode === 'markdown') {
       return markdownToHtml(markdownRef.current?.value ?? '');
     }
-    return wysiwygRef.current?.innerHTML ?? '';
+    return readWysiwygHTML();
   }, [mode]);
 
   const getMarkdown = useCallback((): string => {
     if (mode === 'wysiwyg') {
-      return htmlToMarkdown(wysiwygRef.current?.innerHTML ?? '');
+      return htmlToMarkdown(readWysiwygHTML());
     }
     return markdownRef.current?.value ?? '';
   }, [mode]);
@@ -159,7 +181,7 @@ export function Editor({
     }
 
     if (nextMode === 'markdown' && markdownRef.current) {
-      markdownRef.current.value = htmlToMarkdown(wysiwygRef.current?.innerHTML ?? '');
+      markdownRef.current.value = htmlToMarkdown(readWysiwygHTML());
     } else if (nextMode === 'wysiwyg' && wysiwygRef.current) {
       wysiwygRef.current.innerHTML = markdownToHtml(markdownRef.current?.value ?? '');
     }
@@ -681,6 +703,45 @@ export function Editor({
     }
   };
 
+  // 선택된 텍스트가 없는(collapsed) 상태에서 글자 크기/색상/배경색을 지정하면, "지금부터 입력하는
+  // 글자에 이 스타일을 적용"하는 것을 기대하게 된다(굵게/기울임은 execCommand가 이 동작을 기본
+  // 지원하지만, 커스텀 인라인 style 기반인 이 서식들은 그렇지 않다). 커서 위치에 폭 0인 문자(zero-width
+  // space)만 담은 span을 만들어 그 안에 커서를 두면, 이어서 타이핑하는 내용이 자연스럽게 그 span
+  // 안에 들어가면서 스타일이 유지된다. 커서가 나중에 그 span 밖으로 벗어나면(selectionchange에서
+  // 정리) zero-width space는 제거되거나(입력한 내용이 있으면) span 자체가 제거된다(비어 있으면).
+  const getOrCreateStickySpan = (range: Range): HTMLSpanElement | null => {
+    if (!wysiwygRef.current) {
+      return null;
+    }
+
+    const existing = stickySpanRef.current;
+    const selection = window.getSelection();
+    if (
+      existing &&
+      wysiwygRef.current.contains(existing) &&
+      existing.textContent === STICKY_SPAN_MARK &&
+      selection?.isCollapsed &&
+      (selection.anchorNode === existing || existing.contains(selection.anchorNode))
+    ) {
+      // 아직 아무것도 입력하지 않은 채로 다른 서식을 연속으로 지정하는 경우, span을 새로 만들지 않고
+      // 기존 sticky span에 스타일만 덧붙인다(중첩 방지).
+      return existing;
+    }
+
+    const span = document.createElement('span');
+    span.appendChild(document.createTextNode(STICKY_SPAN_MARK));
+    range.insertNode(span);
+
+    const newRange = document.createRange();
+    newRange.setStart(span.firstChild!, 1);
+    newRange.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(newRange);
+
+    stickySpanRef.current = span;
+    return span;
+  };
+
   const applyFontSize = useCallback(
     (size: string) => {
       if (!wysiwygRef.current) {
@@ -689,10 +750,16 @@ export function Editor({
       wysiwygRef.current.focus();
 
       const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      if (!selection || selection.rangeCount === 0 || !wysiwygRef.current.contains(selection.anchorNode)) {
         return;
       }
-      if (!wysiwygRef.current.contains(selection.anchorNode)) {
+
+      if (selection.isCollapsed) {
+        const span = getOrCreateStickySpan(selection.getRangeAt(0));
+        if (span) {
+          span.style.fontSize = size;
+          emitChange();
+        }
         return;
       }
 
@@ -763,8 +830,9 @@ export function Editor({
 
   const openColorDialog = useCallback((target: 'color' | 'backgroundColor') => {
     const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode) && !selection.isCollapsed) {
+    if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode)) {
       // 다이얼로그로 포커스가 넘어가면 이 selection은 사라지므로, 나중에 적용할 때 쓸 수 있도록 미리 복제해 저장한다.
+      // 선택된 텍스트가 없는(collapsed) 경우도 저장해둬야 "지금부터 입력할 내용에 적용" 동작이 가능하다.
       savedRangeRef.current = selection.getRangeAt(0).cloneRange();
     } else {
       savedRangeRef.current = null;
@@ -780,16 +848,26 @@ export function Editor({
       wysiwygRef.current.focus();
 
       const range = savedRangeRef.current;
-      if (!range || !wysiwygRef.current.contains(range.commonAncestorContainer) || range.collapsed) {
+      if (!range || !wysiwygRef.current.contains(range.commonAncestorContainer)) {
+        savedRangeRef.current = null;
+        return;
+      }
+
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+
+      if (range.collapsed) {
+        const span = getOrCreateStickySpan(range);
+        if (span) {
+          span.style[property] = value;
+          emitChange();
+        }
         savedRangeRef.current = null;
         return;
       }
 
       clampRangeToStartBlock(range);
-
-      const selection = window.getSelection();
-      selection?.removeAllRanges();
-      selection?.addRange(range);
 
       const span = document.createElement('span');
       span.style[property] = value;
@@ -888,6 +966,27 @@ export function Editor({
 
   useEffect(() => {
     const handleSelectionChange = () => {
+      // 커서가 sticky span 밖으로 벗어났으면, 아무것도 입력하지 않았으면 span 자체를 지우고
+      // 실제로 입력한 내용이 있으면 zero-width space 표시만 벗겨낸다.
+      const stickySpan = stickySpanRef.current;
+      if (stickySpan && wysiwygRef.current?.contains(stickySpan)) {
+        const selection = window.getSelection();
+        const stillInside =
+          !!selection &&
+          selection.rangeCount > 0 &&
+          selection.isCollapsed &&
+          (selection.anchorNode === stickySpan || stickySpan.contains(selection.anchorNode));
+        if (!stillInside) {
+          const text = stickySpan.textContent ?? '';
+          if (text === STICKY_SPAN_MARK || text === '') {
+            stickySpan.remove();
+          } else if (text.startsWith(STICKY_SPAN_MARK)) {
+            stickySpan.textContent = text.slice(STICKY_SPAN_MARK.length);
+          }
+          stickySpanRef.current = null;
+        }
+      }
+
       const formats = computeActiveFormats();
       setActiveFormats(formats);
       hooks?.onFormatChange?.(formats);
