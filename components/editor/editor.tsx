@@ -7,6 +7,7 @@ import styles from '@/components/editor/editor.module.css';
 import { ImageInsertDialog } from '@/components/editor/image-insert-dialog';
 import { LinkInsertDialog } from '@/components/editor/link-insert-dialog';
 import { htmlToMarkdown, markdownToHtml } from '@/components/editor/markdown-conversion';
+import { SourceCodeDialog } from '@/components/editor/source-code-dialog';
 import { TableInsertDialog } from '@/components/editor/table-insert-dialog';
 import type { EditorActiveFormats, EditorHandle, EditorHooks, EditorMode } from '@/components/editor/types';
 import { VideoInsertDialog } from '@/components/editor/video-insert-dialog';
@@ -66,6 +67,9 @@ export function Editor({
   const [activeFormats, setActiveFormats] = useState<EditorActiveFormats>(DEFAULT_ACTIVE_FORMATS);
   const [markdownView, setMarkdownView] = useState<'source' | 'preview'>('source');
   const [previewHtml, setPreviewHtml] = useState('');
+  const [sourceDialogOpen, setSourceDialogOpen] = useState(false);
+  const [sourceInitialHtml, setSourceInitialHtml] = useState('');
+  const [sourceInitialMarkdown, setSourceInitialMarkdown] = useState('');
   const wysiwygRef = useRef<HTMLDivElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const initializedRef = useRef(false);
@@ -838,6 +842,20 @@ export function Editor({
     return null;
   };
 
+  const openSourceDialog = useCallback(() => {
+    setSourceInitialHtml(getHTML());
+    setSourceInitialMarkdown(getMarkdown());
+    setSourceDialogOpen(true);
+  }, [getHTML, getMarkdown]);
+
+  const applySourceCode = useCallback(
+    (tab: 'html' | 'markdown', value: string) => {
+      setHTML(tab === 'html' ? value : markdownToHtml(value));
+      updatePreview();
+    },
+    [setHTML, updatePreview]
+  );
+
   const openColorDialog = useCallback((target: 'color' | 'backgroundColor') => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode)) {
@@ -1378,6 +1396,10 @@ export function Editor({
           <button className={styles.toolbarButton} type="button" onClick={() => setVideoDialogOpen(true)}>
             동영상
           </button>
+          <span aria-hidden="true" className={styles.toolbarDivider} />
+          <button className={styles.toolbarButton} title="소스 코드 보기/편집" type="button" onClick={openSourceDialog}>
+            소스
+          </button>
         </div>
 
         {!hideModeSwitch ? (
@@ -1471,6 +1493,14 @@ export function Editor({
       />
 
       <TableInsertDialog open={tableDialogOpen} onClose={() => setTableDialogOpen(false)} onInsert={insertTable} />
+
+      <SourceCodeDialog
+        initialHtml={sourceInitialHtml}
+        initialMarkdown={sourceInitialMarkdown}
+        open={sourceDialogOpen}
+        onApply={applySourceCode}
+        onClose={() => setSourceDialogOpen(false)}
+      />
 
       <LinkInsertDialog
         initialText={linkInitialText}
