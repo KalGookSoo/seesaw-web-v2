@@ -14,25 +14,6 @@ import { deleteAttachment } from '@/lib/attachments';
 import { useAuth } from '@/hooks/use-auth';
 import { AttachmentUpload } from '@/components/articles/attachment-upload';
 import { Confirm } from '@/components/ui/confirm';
-import { Editor, type EditorHandle } from '@/components/editor';
-
-function collectInlineImageFiles(html: string, blobFiles: Map<string, File>): File[] {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const blobUrls = Array.from(doc.querySelectorAll('img[src^="blob:"]')).map(
-    (image) => image.getAttribute('src') ?? ''
-  );
-
-  return blobUrls.filter((url) => blobFiles.has(url)).map((url) => blobFiles.get(url)!);
-}
-
-function collectInlineVideoFiles(html: string, blobFiles: Map<string, File>): File[] {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const blobUrls = Array.from(doc.querySelectorAll('video[src^="blob:"]')).map(
-    (video) => video.getAttribute('src') ?? ''
-  );
-
-  return blobUrls.filter((url) => blobFiles.has(url)).map((url) => blobFiles.get(url)!);
-}
 
 type ArticleFormMode = 'create' | 'edit';
 
@@ -65,8 +46,7 @@ export function ArticleForm({
 }: ArticleFormProps) {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
-  const editorRef = useRef<EditorHandle>(null);
-  const blobFilesRef = useRef<Map<string, File>>(new Map());
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const [title, setTitle] = useState(initialTitle);
   const [fixed, setFixed] = useState(initialFixed);
@@ -96,9 +76,7 @@ export function ArticleForm({
     setSubmitting(true);
     setFieldErrors({});
 
-    const content = editorRef.current?.getHTML() ?? '';
-    const inlineImages = collectInlineImageFiles(content, blobFilesRef.current);
-    const inlineVideos = collectInlineVideoFiles(content, blobFilesRef.current);
+    const content = editorRef.current?.innerHTML ?? '';
 
     const command = {
       categoryId,
@@ -106,9 +84,7 @@ export function ArticleForm({
       fixed,
       title,
       content,
-      multipartFiles: files,
-      inlineImages,
-      inlineVideos
+      multipartFiles: files
     };
 
     const result =
@@ -216,22 +192,12 @@ export function ArticleForm({
 
           <div className="space-y-1.5">
             <span className="text-default-label text-sm font-medium">내용</span>
-            <Editor
+            <div
               ref={editorRef}
-              height="20rem"
-              hooks={{
-                addImageBlobHook: (file, callback) => {
-                  const url = URL.createObjectURL(file);
-                  blobFilesRef.current.set(url, file);
-                  callback(url, file.name);
-                },
-                addVideoBlobHook: (file, callback) => {
-                  const url = URL.createObjectURL(file);
-                  blobFilesRef.current.set(url, file);
-                  callback(url, file.name);
-                }
-              }}
-              initialValue={initialContent}
+              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue min-h-[20rem] w-full overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none"
+              contentEditable
+              suppressContentEditableWarning
+              dangerouslySetInnerHTML={{ __html: initialContent }}
             />
             {fieldErrors.content ? (
               <p className="text-default-red text-xs">{fieldErrors.content}</p>
