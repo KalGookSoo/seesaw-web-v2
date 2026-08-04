@@ -27,9 +27,23 @@ function toolbarButtonClassName(active: boolean): string {
   return active ? `${styles.toolbarButton} ${styles.toolbarButtonActive}` : styles.toolbarButton;
 }
 
+function buildMarkdownTable(rows: number, columns: number): string {
+  const headerRow = `| ${Array(columns).fill(' ').join(' | ')} |`;
+  const separatorRow = `| ${Array(columns).fill('---').join(' | ')} |`;
+  const bodyRow = `| ${Array(columns).fill(' ').join(' | ')} |`;
+  const bodyRows = Array.from({ length: Math.max(rows - 1, 0) }, () => bodyRow);
+  return ['', headerRow, separatorRow, ...bodyRows, ''].join('\n');
+}
+
 // 선택된 텍스트가 없는(collapsed) 상태에서 글자 크기/색상/배경색을 지정할 때 "지금부터 입력하는 글자에
 // 적용"되도록 커서 위치에 심어두는 폭 0 문자(zero-width space) 표시자. 상세 동작은 getOrCreateStickySpan 참고.
 const STICKY_SPAN_MARK = '\u200B';
+
+const MARKDOWN_INLINE_MARKERS: Record<string, string> = {
+  bold: '**',
+  italic: '*',
+  strikeThrough: '~~'
+};
 
 const DEFAULT_ACTIVE_FORMATS: EditorActiveFormats = {
   bold: false,
@@ -188,6 +202,161 @@ export function Editor({
     [mode, emitChange]
   );
 
+  // 마크다운 모드에서는 위지윅 DOM이 아니라 textarea의 선택 영역을 직접 조작해 문법 문자열을 끼워넣는다.
+  const wrapMarkdownSelection = useCallback(
+    (before: string, after: string = before) => {
+      const el = markdownRef.current;
+      if (!el) {
+        return;
+      }
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const value = el.value;
+      const selected = value.slice(start, end);
+      const alreadyWrapped =
+        selected.length >= before.length + after.length && selected.startsWith(before) && selected.endsWith(after);
+      const nextSelected = alreadyWrapped
+        ? selected.slice(before.length, selected.length - after.length)
+        : `${before}${selected}${after}`;
+
+      el.value = value.slice(0, start) + nextSelected + value.slice(end);
+      el.selectionStart = start;
+      el.selectionEnd = start + nextSelected.length;
+      el.focus();
+      emitChange();
+      updatePreview();
+    },
+    [emitChange, updatePreview]
+  );
+
+  // 선택 영역이 걸친 각 줄 앞에 접두사를 붙이거나(이미 붙어있으면) 뗀다. 헤딩처럼 레벨별로 접두사가
+  // 달라지는 경우는 applyMarkdownHeading에서 별도로 다룬다.
+  const prefixMarkdownLines = useCallback(
+    (linePrefix: (lineIndex: number) => string) => {
+      const el = markdownRef.current;
+      if (!el) {
+        return;
+      }
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const value = el.value;
+      const blockStart = value.lastIndexOf('\n', start - 1) + 1;
+      const nextNewline = value.indexOf('\n', end);
+      const blockEnd = nextNewline === -1 ? value.length : nextNewline;
+      const block = value.slice(blockStart, blockEnd);
+      const lines = block.length > 0 ? block.split('\n') : [''];
+      const alreadyPrefixed = lines.every((line, index) => line.startsWith(linePrefix(index)));
+      const nextLines = lines.map((line, index) => {
+        const prefix = linePrefix(index);
+        return alreadyPrefixed ? line.slice(prefix.length) : `${prefix}${line}`;
+      });
+      const nextBlock = nextLines.join('\n');
+
+      el.value = value.slice(0, blockStart) + nextBlock + value.slice(blockEnd);
+      el.selectionStart = blockStart;
+      el.selectionEnd = blockStart + nextBlock.length;
+      el.focus();
+      emitChange();
+      updatePreview();
+    },
+    [emitChange, updatePreview]
+  );
+
+  const applyMarkdownIndent = useCallback(
+    (outdent: boolean) => {
+      const el = markdownRef.current;
+      if (!el) {
+        return;
+      }
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const value = el.value;
+      const blockStart = value.lastIndexOf('\n', start - 1) + 1;
+      const nextNewline = value.indexOf('\n', end);
+      const blockEnd = nextNewline === -1 ? value.length : nextNewline;
+      const block = value.slice(blockStart, blockEnd);
+      const nextBlock = block
+        .split('\n')
+        .map((line) => (outdent ? line.replace(/^ {1,2}/, '') : `  ${line}`))
+        .join('\n');
+
+      el.value = value.slice(0, blockStart) + nextBlock + value.slice(blockEnd);
+      el.selectionStart = blockStart;
+      el.selectionEnd = blockStart + nextBlock.length;
+      el.focus();
+      emitChange();
+      updatePreview();
+    },
+    [emitChange, updatePreview]
+  );
+
+  const applyMarkdownHeading = useCallback(
+    (level: number) => {
+      const el = markdownRef.current;
+      if (!el) {
+        return;
+      }
+      const start = el.selectionStart;
+      const value = el.value;
+      const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+      let lineEnd = value.indexOf('\n', start);
+      if (lineEnd === -1) {
+        lineEnd = value.length;
+      }
+      const line = value.slice(lineStart, lineEnd);
+      const withoutHeading = line.replace(/^#{1,6}\s*/, '');
+      const nextLine = level > 0 ? `${'#'.repeat(level)} ${withoutHeading}` : withoutHeading;
+
+      el.value = value.slice(0, lineStart) + nextLine + value.slice(lineEnd);
+      el.selectionStart = lineStart;
+      el.selectionEnd = lineStart + nextLine.length;
+      el.focus();
+      emitChange();
+      updatePreview();
+    },
+    [emitChange, updatePreview]
+  );
+
+  const toggleMarkdownCodeFence = useCallback(() => {
+    const el = markdownRef.current;
+    if (!el) {
+      return;
+    }
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const value = el.value;
+    const blockStart = value.lastIndexOf('\n', start - 1) + 1;
+    const nextNewline = value.indexOf('\n', end);
+    const blockEnd = nextNewline === -1 ? value.length : nextNewline;
+    const block = value.slice(blockStart, blockEnd);
+    const fenced = block.startsWith('```') && block.endsWith('```');
+    const nextBlock = fenced ? block.slice(3, -3).replace(/^\n/, '').replace(/\n$/, '') : `\`\`\`\n${block}\n\`\`\``;
+
+    el.value = value.slice(0, blockStart) + nextBlock + value.slice(blockEnd);
+    el.selectionStart = blockStart;
+    el.selectionEnd = blockStart + nextBlock.length;
+    el.focus();
+    emitChange();
+    updatePreview();
+  }, [emitChange, updatePreview]);
+
+  const insertAtMarkdownCursor = useCallback(
+    (text: string) => {
+      const el = markdownRef.current;
+      if (!el) {
+        return;
+      }
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      el.value = el.value.slice(0, start) + text + el.value.slice(end);
+      el.selectionStart = el.selectionEnd = start + text.length;
+      el.focus();
+      emitChange();
+      updatePreview();
+    },
+    [emitChange, updatePreview]
+  );
+
   const switchMode = (nextMode: EditorMode) => {
     if (nextMode === mode) {
       return;
@@ -205,6 +374,11 @@ export function Editor({
 
   const insertMediaElement = useCallback(
     (tagName: 'img' | 'video', url: string, label: string) => {
+      if (mode === 'markdown') {
+        insertAtMarkdownCursor(tagName === 'img' ? `![${label}](${url})` : `!video[${label}](${url})`);
+        return;
+      }
+
       if (!wysiwygRef.current) {
         return;
       }
@@ -232,15 +406,49 @@ export function Editor({
       }
       emitChange();
     },
-    [emitChange]
+    [mode, insertAtMarkdownCursor, emitChange]
   );
 
   const handleVideoFile = useCallback(
     (file: File, description?: string) => {
+      const fallbackLabel = description || file.name;
+
+      if (mode === 'markdown') {
+        const el = markdownRef.current;
+        if (!el) {
+          return;
+        }
+        const placeholderText = `[${fallbackLabel} 업로드 중…]`;
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
+        el.value = el.value.slice(0, start) + placeholderText + el.value.slice(end);
+        el.selectionStart = el.selectionEnd = start + placeholderText.length;
+        el.focus();
+        emitChange();
+        updatePreview();
+
+        const replaceMarkdownPlaceholder = (url: string, altText?: string) => {
+          const textarea = markdownRef.current;
+          if (!textarea) {
+            return;
+          }
+          textarea.value = textarea.value.replace(placeholderText, `!video[${altText ?? fallbackLabel}](${url})`);
+          emitChange();
+          updatePreview();
+        };
+
+        const hook = hooks?.addVideoBlobHook;
+        if (hook) {
+          hook(file, replaceMarkdownPlaceholder);
+        } else {
+          replaceMarkdownPlaceholder(URL.createObjectURL(file), fallbackLabel);
+        }
+        return;
+      }
+
       if (!wysiwygRef.current) {
         return;
       }
-      const fallbackLabel = description || file.name;
 
       // 동영상은 용량이 커서 업로드(hook)가 끝날 때까지 시간이 걸릴 수 있다. 콜백이 호출되는 시점의
       // "현재 커서 위치"에 삽입하면 그 사이 사용자가 계속 편집했을 때 엉뚱한 곳에 삽입되므로,
@@ -280,7 +488,7 @@ export function Editor({
         replacePlaceholder(URL.createObjectURL(file), fallbackLabel);
       }
     },
-    [hooks, emitChange]
+    [mode, hooks, emitChange, updatePreview]
   );
 
   const handleMediaFile = useCallback(
@@ -332,33 +540,56 @@ export function Editor({
 
   const applyInlineCommand = useCallback(
     (command: string) => {
+      if (mode === 'markdown') {
+        const marker = MARKDOWN_INLINE_MARKERS[command];
+        if (marker) {
+          wrapMarkdownSelection(marker);
+        }
+        return;
+      }
       wysiwygRef.current?.focus();
       document.execCommand(command);
       emitChange();
     },
-    [emitChange]
+    [mode, wrapMarkdownSelection, emitChange]
   );
 
   const applyFormatBlock = useCallback(
     (tag: string) => {
+      if (mode === 'markdown') {
+        applyMarkdownHeading(tag.startsWith('H') ? Number(tag.slice(1)) : 0);
+        return;
+      }
       wysiwygRef.current?.focus();
       document.execCommand('formatBlock', false, tag);
       emitChange();
     },
-    [emitChange]
+    [mode, applyMarkdownHeading, emitChange]
   );
 
   const toggleFormatBlock = useCallback(
     (tag: string) => {
+      if (mode === 'markdown') {
+        if (tag === 'BLOCKQUOTE') {
+          prefixMarkdownLines(() => '> ');
+        } else if (tag === 'PRE') {
+          toggleMarkdownCodeFence();
+        }
+        return;
+      }
       wysiwygRef.current?.focus();
       const current = document.queryCommandValue('formatBlock').toUpperCase();
       document.execCommand('formatBlock', false, current === tag ? 'P' : tag);
       emitChange();
     },
-    [emitChange]
+    [mode, prefixMarkdownLines, toggleMarkdownCodeFence, emitChange]
   );
 
   const toggleInlineCode = useCallback(() => {
+    if (mode === 'markdown') {
+      wrapMarkdownSelection('`');
+      return;
+    }
     if (!wysiwygRef.current) {
       return;
     }
@@ -400,11 +631,15 @@ export function Editor({
 
   const toggleList = useCallback(
     (ordered: boolean) => {
+      if (mode === 'markdown') {
+        prefixMarkdownLines(ordered ? (index) => `${index + 1}. ` : () => '- ');
+        return;
+      }
       wysiwygRef.current?.focus();
       document.execCommand(ordered ? 'insertOrderedList' : 'insertUnorderedList');
       emitChange();
     },
-    [emitChange]
+    [mode, prefixMarkdownLines, emitChange]
   );
 
   const closestListItem = (node: Node | null | undefined): HTMLLIElement | null => {
@@ -413,6 +648,10 @@ export function Editor({
   };
 
   const toggleTaskList = useCallback(() => {
+    if (mode === 'markdown') {
+      prefixMarkdownLines(() => '- [ ] ');
+      return;
+    }
     if (!wysiwygRef.current) {
       return;
     }
@@ -438,7 +677,7 @@ export function Editor({
       li.insertBefore(checkbox, li.firstChild);
     }
     emitChange();
-  }, [emitChange]);
+  }, [mode, prefixMarkdownLines, emitChange]);
 
   const normalizeListNesting = (root: HTMLElement) => {
     // execCommand('indent')는 목록을 <li> 안이 아니라 형제로 겹쳐 쌓을 때가 있어(ul > ul),
@@ -468,6 +707,10 @@ export function Editor({
 
   const applyIndent = useCallback(
     (outdent: boolean) => {
+      if (mode === 'markdown') {
+        applyMarkdownIndent(outdent);
+        return;
+      }
       if (!wysiwygRef.current) {
         return;
       }
@@ -476,10 +719,14 @@ export function Editor({
       normalizeListNesting(wysiwygRef.current);
       emitChange();
     },
-    [emitChange]
+    [mode, applyMarkdownIndent, emitChange]
   );
 
   const insertHorizontalRule = useCallback(() => {
+    if (mode === 'markdown') {
+      insertAtMarkdownCursor('\n\n---\n\n');
+      return;
+    }
     if (!wysiwygRef.current) {
       return;
     }
@@ -499,7 +746,7 @@ export function Editor({
       wysiwygRef.current.appendChild(hr);
     }
     emitChange();
-  }, [emitChange]);
+  }, [mode, insertAtMarkdownCursor, emitChange]);
 
   const closestCell = (node: Node | null | undefined): HTMLTableCellElement | null => {
     const el = node instanceof Element ? node : (node?.parentElement ?? null);
@@ -508,6 +755,10 @@ export function Editor({
 
   const insertTable = useCallback(
     (rows: number, columns: number) => {
+      if (mode === 'markdown') {
+        insertAtMarkdownCursor(buildMarkdownTable(rows, columns));
+        return;
+      }
       if (!wysiwygRef.current) {
         return;
       }
@@ -532,7 +783,7 @@ export function Editor({
       }
       emitChange();
     },
-    [emitChange]
+    [mode, insertAtMarkdownCursor, emitChange]
   );
 
   const currentTableCell = (): {
@@ -646,6 +897,12 @@ export function Editor({
   };
 
   const openLinkDialog = useCallback(() => {
+    if (mode === 'markdown') {
+      const el = markdownRef.current;
+      setLinkInitialText(el ? el.value.slice(el.selectionStart, el.selectionEnd) : '');
+      setLinkDialogOpen(true);
+      return;
+    }
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0 && wysiwygRef.current?.contains(selection.anchorNode) && !selection.isCollapsed) {
       // 다이얼로그로 포커스가 넘어가면 이 selection은 사라지므로, 나중에 삽입할 때 쓸 수 있도록 미리 복제해 저장한다.
@@ -656,10 +913,14 @@ export function Editor({
       setLinkInitialText('');
     }
     setLinkDialogOpen(true);
-  }, []);
+  }, [mode]);
 
   const insertLink = useCallback(
     (text: string, url: string) => {
+      if (mode === 'markdown') {
+        insertAtMarkdownCursor(`[${text}](${url})`);
+        return;
+      }
       if (!wysiwygRef.current) {
         return;
       }
@@ -695,7 +956,7 @@ export function Editor({
       savedRangeRef.current = null;
       emitChange();
     },
-    [emitChange]
+    [mode, insertAtMarkdownCursor, emitChange]
   );
 
   const clampRangeToStartBlock = (range: Range) => {
@@ -1200,6 +1461,7 @@ export function Editor({
           <select
             aria-label="글자 크기"
             className={styles.headingSelect}
+            disabled={mode === 'markdown'}
             value={['0.75em', '1em', '1.25em', '1.5em'].includes(activeFormats.fontSize ?? '') ? activeFormats.fontSize! : ''}
             onChange={(event) => {
               const size = event.target.value;
@@ -1220,6 +1482,7 @@ export function Editor({
             className={toolbarButtonClassName(!!activeFormats.color)}
             title="텍스트 색상"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => openColorDialog('color')}
           >
@@ -1229,6 +1492,7 @@ export function Editor({
             className={toolbarButtonClassName(!!activeFormats.backgroundColor)}
             title="배경색(강조)"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => openColorDialog('backgroundColor')}
           >
@@ -1237,6 +1501,7 @@ export function Editor({
           <select
             aria-label="줄 간격"
             className={styles.headingSelect}
+            disabled={mode === 'markdown'}
             value={['1', '1.15', '1.5', '2'].includes(activeFormats.lineHeight ?? '') ? activeFormats.lineHeight! : ''}
             onChange={(event) => {
               const value = event.target.value;
@@ -1257,6 +1522,7 @@ export function Editor({
             className={toolbarButtonClassName(activeFormats.textAlign === 'left')}
             title="왼쪽 정렬"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => applyTextAlign('left')}
           >
@@ -1266,6 +1532,7 @@ export function Editor({
             className={toolbarButtonClassName(activeFormats.textAlign === 'center')}
             title="가운데 정렬"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => applyTextAlign('center')}
           >
@@ -1275,6 +1542,7 @@ export function Editor({
             className={toolbarButtonClassName(activeFormats.textAlign === 'right')}
             title="오른쪽 정렬"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => applyTextAlign('right')}
           >
@@ -1284,6 +1552,7 @@ export function Editor({
             className={toolbarButtonClassName(activeFormats.textAlign === 'justify')}
             title="양쪽 정렬"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={() => applyTextAlign('justify')}
           >
@@ -1357,6 +1626,7 @@ export function Editor({
             className={styles.toolbarButton}
             title="행 추가"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={addTableRow}
           >
@@ -1366,6 +1636,7 @@ export function Editor({
             className={styles.toolbarButton}
             title="행 삭제"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={removeTableRow}
           >
@@ -1375,6 +1646,7 @@ export function Editor({
             className={styles.toolbarButton}
             title="열 추가"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={addTableColumn}
           >
@@ -1384,6 +1656,7 @@ export function Editor({
             className={styles.toolbarButton}
             title="열 삭제"
             type="button"
+            disabled={mode === 'markdown'}
             onMouseDown={stopMouseDown}
             onClick={removeTableColumn}
           >
