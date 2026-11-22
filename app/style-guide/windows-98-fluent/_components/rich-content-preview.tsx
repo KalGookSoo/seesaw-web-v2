@@ -1,4 +1,5 @@
 import contentTheme from 'app/style-guide/windows-98-fluent/windows-98-fluent-content.module.css';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 export function RichContentPreview() {
   return (
@@ -97,8 +98,10 @@ renderViewer(theme);`}</code>
 
         <h6>Heading 6: Figure</h6>
         <figure>
-          <img
+          <MonochromeImage
             alt="Windows 98 style placeholder"
+            className="w-full"
+            imageClassName="w-full"
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='420' viewBox='0 0 960 420'%3E%3Crect width='960' height='420' fill='%23008080'/%3E%3Crect x='80' y='72' width='800' height='276' fill='%23c0c0c0' stroke='%23404040' stroke-width='4'/%3E%3Crect x='96' y='88' width='768' height='42' fill='%23000080'/%3E%3Ctext x='120' y='116' font-family='Arial' font-size='22' fill='white'%3ESEESAW VIEWER%3C/text%3E%3Ctext x='120' y='220' font-family='Arial' font-size='34' fill='%23000000'%3EWindows 98 Fluent Content%3C/text%3E%3C/svg%3E"
           />
           <figcaption>figure와 figcaption 스타일을 함께 확인합니다.</figcaption>

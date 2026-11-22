@@ -4,6 +4,7 @@ import { toAttachmentUrl } from '@/lib/home-summary';
 import { getSiteContext } from '@/lib/site';
 import { CategoryAnchorLink } from '@/components/home/category-anchor-link';
 import { HomeSummarySections } from '@/components/home/home-summary-sections';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,7 +54,7 @@ export default async function Home() {
             <header className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
                 {site.profileImage ? (
-                  <img className="size-11 shrink-0 border border-white/30 object-cover grayscale" src={toAttachmentUrl(site.profileImage.id)} alt="" />
+                  <MonochromeImage className="size-11 shrink-0 border border-white/30" imageClassName="object-cover grayscale" src={toAttachmentUrl(site.profileImage.id)} alt="" fallbackLabel="PROFILE / UNAVAILABLE" />
                 ) : (
                   <span className="flex size-11 shrink-0 items-center justify-center border border-white/30 text-lg font-semibold">{site.name?.slice(0, 1)}</span>
                 )}

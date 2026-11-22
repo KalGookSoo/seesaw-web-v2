@@ -81,6 +81,74 @@
   max-width: 100%;
 }
 
+.viewerImageFrame {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 8rem;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5em auto;
+  overflow: hidden;
+  background: var(--default-fill);
+  border: 1px solid var(--default-separator);
+}
+
+.viewerImageFrame > .viewerImage {
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.viewerImageSpinner {
+  position: absolute;
+  z-index: 1;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid var(--default-fill-strong);
+  border-top-color: var(--default-label);
+  border-radius: 999px;
+  animation: viewer-image-spin 700ms linear infinite;
+}
+
+.viewerImageFallback {
+  display: none;
+  min-height: 8rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  color: var(--default-tertiary-label);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.imageLoaded > .viewerImage {
+  opacity: 1;
+}
+
+.imageLoaded > .viewerImageSpinner,
+.imageFailed > .viewerImageSpinner {
+  display: none;
+}
+
+.imageFailed > .viewerImage {
+  display: none;
+}
+
+.imageFailed > .viewerImageFallback {
+  display: flex;
+}
+
+@keyframes viewer-image-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .viewer pre {
   background: var(--default-fill);
   border: 1px solid var(--default-separator);

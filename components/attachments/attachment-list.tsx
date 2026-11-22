@@ -18,6 +18,7 @@ import {
 
 import type { AttachmentResponse } from '@/types/attachment';
 import { Modal } from '@/components/ui/modal';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 const actionClassName =
   'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition';
@@ -92,9 +93,10 @@ function AttachmentPreview({
   if (attachment.mimeType?.startsWith('image/')) {
     return (
       <div className="bg-default-fill flex min-h-64 items-center justify-center rounded-lg p-3">
-        <img
+        <MonochromeImage
           alt={name}
-          className="max-h-[70vh] max-w-full rounded-md object-contain"
+          className="flex min-h-48 max-h-[70vh] max-w-full items-center justify-center rounded-md"
+          imageClassName="max-h-[70vh] max-w-full rounded-md object-contain"
           src={previewUrl}
         />
       </div>

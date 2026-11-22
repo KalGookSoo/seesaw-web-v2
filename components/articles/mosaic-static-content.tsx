@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 import styles from './mosaic-static-content.module.css';
 
 type BackgroundImage = Readonly<{
@@ -105,7 +106,9 @@ export function MosaicStaticContent({ articles }: MosaicStaticContentProps) {
     <div className={styles.experience} ref={experienceRef}>
       <div className={styles.background} aria-hidden="true">
         {displayedBackground ? (
-          <img
+          <MonochromeImage
+            className="size-full"
+            imageClassName="object-cover"
             key={displayedBackground.id}
             src={displayedBackground.src}
             alt=""
