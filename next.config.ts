@@ -3,24 +3,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin();
 
-const applicationApiBaseUrl = (
-  process.env.NEXT_PUBLIC_SEESAW_APPLICATION_API_BASE_URL ??
-  'http://localhost:9000/seesaw-api/api'
-).replace(/\/+$/, '');
-
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/api/:path*',
-          destination: `${applicationApiBaseUrl}/:path*`
-        }
-      ],
-      afterFiles: [],
-      fallback: []
-    };
-  }
+  // /api 요청은 app/api/[...path]/route.ts가 인증 쿠키를 Bearer 토큰으로 변환하여 전달한다.
 };
 
 export default withNextIntl(nextConfig);

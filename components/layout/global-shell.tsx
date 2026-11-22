@@ -761,33 +761,45 @@ export function GlobalShell({
 
       <Modal
         open={loginOpen}
-        title="네이버로 로그인"
-        description="네이버 계정 인증 후 현재 페이지로 돌아옵니다."
+        title="네이버 계정으로 계속하기"
+        description="로그인이 필요한 기능입니다."
         size="sm"
+        variant="monochrome"
         onClose={() => setLoginOpen(false)}
         footer={
           <>
             <button
-              className="border-default-separator bg-default-surface text-default-secondary-label rounded-md border px-4 py-2 text-sm font-semibold"
+              className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill inline-flex h-11 items-center justify-center border px-4 text-sm font-semibold transition"
               type="button"
               onClick={() => setLoginOpen(false)}
             >
               취소
             </button>
             <button
-              className="rounded-md bg-[#03c75a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="bg-default-label text-default-background hover:bg-default-secondary-label inline-flex h-11 items-center justify-center gap-2 px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
               disabled={loginPending}
               type="button"
               onClick={startNaverLogin}
             >
-              {loginPending ? '이동 중…' : '네이버 로그인'}
+              <span aria-hidden className="bg-default-background text-default-label inline-flex size-5 items-center justify-center text-xs font-black">N</span>
+              {loginPending ? '인증 준비 중…' : '네이버 인증 시작'}
             </button>
           </>
         }
       >
-        <p className="text-default-secondary-label text-sm leading-6">
-          인증이 완료되면 이 페이지로 자동으로 돌아옵니다.
-        </p>
+        <div className="space-y-5">
+          <p className="text-default-tertiary-label text-[0.65rem] font-semibold tracking-[0.2em] uppercase">
+            Account access
+          </p>
+          <p className="text-default-secondary-label text-sm leading-6">
+            네이버 계정 인증을 마치면 지금 보고 있는 페이지로 자동으로 돌아옵니다.
+          </p>
+          <div className="border-default-separator grid grid-cols-[1fr_auto_1fr] items-center border-y py-4 text-center text-xs">
+            <span className="text-default-label font-semibold">현재 페이지</span>
+            <span className="text-default-tertiary-label px-3" aria-hidden>→</span>
+            <span className="text-default-label font-semibold">네이버 인증</span>
+          </div>
+        </div>
       </Modal>
 
       {mobileNavigationOpen ? (
