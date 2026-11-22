@@ -95,13 +95,16 @@ const INLINE_IMAGE_TYPES = [
 const INLINE_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"]
 
 function getMediaType(file: File): string {
-  if (file.type) return file.type
+  const type = file.type.toLowerCase()
+  if (type === "video/quicktime" || type === "image/heic" || type === "image/heif") {
+    return type
+  }
 
   const extension = file.name.split(".").pop()?.toLowerCase()
   if (extension === "heic") return "image/heic"
   if (extension === "heif") return "image/heif"
   if (extension === "mov") return "video/quicktime"
-  return ""
+  return type
 }
 
 async function prepareImageFile(file: File): Promise<File> {
@@ -445,7 +448,7 @@ export function SimpleEditor({
         />
         <input
           ref={videoInputRef}
-          accept={INLINE_VIDEO_TYPES.join(",")}
+          accept={INLINE_VIDEO_TYPES.concat(".mov").join(",")}
           className="sr-only"
           type="file"
           onChange={(event) => {
