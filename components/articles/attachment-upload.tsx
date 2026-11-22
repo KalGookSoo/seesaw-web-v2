@@ -56,10 +56,16 @@ export function AttachmentUpload({
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 text-center transition ${
           dragging
             ? 'border-default-blue bg-default-blue-soft'
-            : 'border-default-separator bg-default-fill/40 hover:bg-default-fill'
+          : 'border-default-separator bg-default-fill/40 hover:bg-default-fill focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-2'
         }`}
         role="button"
         tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onClick={() => inputRef.current?.click()}
         onDragOver={(event) => {
           event.preventDefault();
@@ -98,7 +104,7 @@ export function AttachmentUpload({
       ) : null}
 
       {files.length > 0 ? (
-        <ul className="border-default-separator overflow-hidden rounded-lg border">
+        <ul className="border-default-separator overflow-hidden border">
           {files.map((file, index) => (
             <li
               className="border-default-separator flex items-center justify-between gap-3 border-b px-4 py-2.5 last:border-b-0"
@@ -120,7 +126,7 @@ export function AttachmentUpload({
               </div>
               <button
                 aria-label={`${file.name} 제거`}
-                className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red shrink-0 rounded-full p-1.5 transition"
+                className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red focus-visible:outline-default-label shrink-0 p-1.5 transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
                 type="button"
                 onClick={() => removeFile(index)}
               >
