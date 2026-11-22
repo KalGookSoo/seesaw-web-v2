@@ -5,6 +5,7 @@ import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 
 type FetchOptions = Readonly<{
   signal?: AbortSignal;
+  query?: string | null;
 }>;
 
 function toLocalDateTimeParameter(date: Date): string {
@@ -60,6 +61,9 @@ export async function fetchMonthlyEvents(
     start: toLocalDateTimeParameter(start),
     end: toLocalDateTimeParameter(end)
   });
+  if (options.query?.trim()) {
+    params.set('query', options.query.trim());
+  }
 
   const response = await fetch(
     `${APPLICATION_API_BASE_URL}/events?${params.toString()}`,

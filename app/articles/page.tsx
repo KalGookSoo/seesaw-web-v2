@@ -7,7 +7,11 @@ import {
   fetchFixedArticles,
   fetchStaticContentArticles
 } from '@/lib/articles';
-import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
+import type {
+  ArticleViewType,
+  ScheduleViewType,
+  SearchArticlesParams
+} from '@/lib/articles';
 import { getSiteContext } from '@/lib/site';
 import {
   ArticlePageContent,
@@ -33,6 +37,18 @@ function toPage(value: string | undefined): number {
 
 function toViewType(value: string | undefined): ArticleViewType {
   return value === 'CARD' ? 'CARD' : 'TABLE';
+}
+
+function toScheduleView(
+  view: string | undefined,
+  viewType: string | undefined
+): ScheduleViewType {
+  if (view === 'calendar') return 'CALENDAR';
+  if (view === 'list') return 'TABLE';
+  if (view === 'feed') return 'CARD';
+  if (viewType === 'TABLE') return 'TABLE';
+  if (viewType === 'CARD') return 'CARD';
+  return 'CALENDAR';
 }
 
 function findCategory(
@@ -82,7 +98,18 @@ export default async function ArticlesPage({
     return <StaticContentPage articles={articles} category={category} />;
   }
 
-  const viewType = toViewType(getSearchParam(resolvedSearchParams, 'viewType'));
+  const scheduleView =
+    categoryType === 'SCHEDULE'
+      ? toScheduleView(
+          getSearchParam(resolvedSearchParams, 'view'),
+          getSearchParam(resolvedSearchParams, 'viewType')
+        )
+      : undefined;
+  const viewType = scheduleView === 'CARD'
+    ? 'CARD'
+    : scheduleView === 'CALENDAR'
+      ? 'TABLE'
+      : toViewType(getSearchParam(resolvedSearchParams, 'viewType'));
   const search: SearchArticlesParams = {
     categoryId,
     categoryType,
@@ -90,7 +117,8 @@ export default async function ArticlesPage({
     keyWord: getSearchParam(resolvedSearchParams, 'keyWord'),
     page: toPage(getSearchParam(resolvedSearchParams, 'page')),
     size: viewType === 'CARD' ? 9 : 8,
-    viewType
+    viewType,
+    scheduleView
   };
   const [page, fixedArticles] = await Promise.all([
     fetchArticles(search),
@@ -103,6 +131,7 @@ export default async function ArticlesPage({
       fixedArticles={fixedArticles}
       page={page}
       search={search}
+      scheduleView={scheduleView}
       viewType={viewType}
     />
   );

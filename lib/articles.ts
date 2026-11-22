@@ -10,11 +10,13 @@ import { authorizedFetch } from '@/lib/api-fetch';
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 
 export type ArticleViewType = 'TABLE' | 'CARD';
+export type ScheduleViewType = 'CALENDAR' | 'TABLE' | 'CARD';
 
 export type SearchArticlesParams = Readonly<{
   categoryId: string;
   categoryType?: string;
   viewType?: ArticleViewType;
+  scheduleView?: ScheduleViewType;
   keyField?: string;
   keyWord?: string;
   page?: number;

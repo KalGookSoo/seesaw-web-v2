@@ -2,6 +2,7 @@ import Link from 'next/link';
 import {
   ChevronLeft,
   ChevronRight,
+  CalendarDays,
   Eye,
   Grid2X2,
   Inbox,
@@ -16,13 +17,18 @@ import {
 import type { ArticleResponse } from '@/types/article';
 import type { CategoryResponse } from '@/types/category';
 import type { PagedModel } from '@/types/common';
-import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
+import type {
+  ArticleViewType,
+  ScheduleViewType,
+  SearchArticlesParams
+} from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
 import { ArticleFeed } from '@/components/articles/article-feed';
 import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown';
 import { MosaicStaticContent } from '@/components/articles/mosaic-static-content';
 import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
+import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -30,6 +36,7 @@ type ArticlePageContentProps = Readonly<{
   page: PagedModel<ArticleResponse>;
   search: SearchArticlesParams;
   viewType: ArticleViewType;
+  scheduleView?: ScheduleViewType;
 }>;
 
 type StaticContentPageProps = Readonly<{
@@ -92,6 +99,16 @@ function buildArticlesHref(
   if (nextSearch.keyWord) {
     params.set('keyWord', nextSearch.keyWord);
   }
+  if (nextSearch.categoryType === 'SCHEDULE' && nextSearch.scheduleView) {
+    params.set(
+      'view',
+      nextSearch.scheduleView === 'CALENDAR'
+        ? 'calendar'
+        : nextSearch.scheduleView === 'TABLE'
+          ? 'list'
+          : 'feed'
+    );
+  }
   params.set('page', String(nextSearch.page ?? 0));
 
   return `/articles?${params.toString()}`;
@@ -129,8 +146,41 @@ function ArticleMeta({
 
 function ViewSwitcher({
   search,
-  viewType
-}: Readonly<{ search: SearchArticlesParams; viewType: ArticleViewType }>) {
+  viewType,
+  scheduleView
+}: Readonly<{
+  search: SearchArticlesParams;
+  viewType: ArticleViewType;
+  scheduleView?: ScheduleViewType;
+}>) {
+  if (search.categoryType === 'SCHEDULE') {
+    return (
+      <div className="bg-default-fill grid grid-cols-3 gap-1 border border-default-separator p-1">
+        <Link
+          className={`${controlClassName} ${scheduleView === 'CALENDAR' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          href={buildArticlesHref(search, { page: 0, scheduleView: 'CALENDAR', viewType: 'TABLE' })}
+        >
+          <CalendarDays className="size-4" />
+          캘린더
+        </Link>
+        <Link
+          className={`${controlClassName} ${scheduleView === 'TABLE' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          href={buildArticlesHref(search, { page: 0, scheduleView: 'TABLE', viewType: 'TABLE' })}
+        >
+          <List className="size-4" />
+          목록
+        </Link>
+        <Link
+          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          href={buildArticlesHref(search, { page: 0, scheduleView: 'CARD', viewType: 'CARD' })}
+        >
+          <Grid2X2 className="size-4" />
+          피드
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-default-fill grid grid-cols-2 gap-1 rounded-lg p-1 shadow-[inset_0_1px_2px_rgb(0_0_0_/_0.08)]">
       <Link
@@ -170,6 +220,13 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
         <input name="categoryType" type="hidden" value={search.categoryType} />
       ) : null}
       <input name="viewType" type="hidden" value={search.viewType ?? 'TABLE'} />
+      {search.categoryType === 'SCHEDULE' && search.scheduleView ? (
+        <input
+          name="view"
+          type="hidden"
+          value={search.scheduleView === 'CALENDAR' ? 'calendar' : search.scheduleView === 'TABLE' ? 'list' : 'feed'}
+        />
+      ) : null}
       <SearchFieldDropdown defaultValue={search.keyField ?? 'title'} />
       <input
         className="border-default-separator bg-default-surface text-default-label focus:border-default-label h-10 rounded-none border px-3 text-sm outline-none transition focus:ring-2 focus:ring-default-blue/15"
@@ -486,6 +543,7 @@ export function ArticlePageContent({
   fixedArticles,
   page,
   search,
+  scheduleView,
   viewType
 }: ArticlePageContentProps) {
   return (
@@ -506,7 +564,7 @@ export function ArticlePageContent({
                 </p>
               ) : null}
             </div>
-            <ViewSwitcher search={search} viewType={viewType} />
+            <ViewSwitcher search={search} scheduleView={scheduleView} viewType={viewType} />
           </div>
           <div className="border-default-separator/70 bg-default-fill/40 flex flex-col gap-3 border-t px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
@@ -534,7 +592,9 @@ export function ArticlePageContent({
 
         <SearchForm search={search} />
 
-        {viewType === 'CARD' ? (
+        {scheduleView === 'CALENDAR' ? (
+          <ScheduleCalendar categoryId={search.categoryId} query={search.keyWord} />
+        ) : viewType === 'CARD' ? (
           <ArticleFeed fixedArticles={fixedArticles} initialPage={page} search={search} />
         ) : (
           <ArticleTimeline fixedArticles={fixedArticles} page={page} viewType={viewType} />
