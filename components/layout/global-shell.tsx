@@ -40,6 +40,7 @@ import { Modal } from '@/components/ui/modal';
 import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
 import { openNaverOAuth2Popup, openNaverOAuth2UnlinkPopup } from '@/lib/naver-oauth2-popup';
+import { authorizedFetch } from '@/lib/api-fetch';
 import { removeMyRoleMapping } from '@/lib/role-mappings';
 
 type Locale = 'ko' | 'en';
@@ -419,6 +420,13 @@ export function GlobalShell({
   const [policyOpen, setPolicyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [reportEmail, setReportEmail] = useState('');
+  const [reportReason, setReportReason] = useState('');
+  const [reportContent, setReportContent] = useState('');
+  const [inquiryEmail, setInquiryEmail] = useState('');
+  const [inquiryTitle, setInquiryTitle] = useState('');
+  const [inquiryContent, setInquiryContent] = useState('');
+  const [feedbackPending, setFeedbackPending] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
   const [extendSessionPending, setExtendSessionPending] = useState(false);
@@ -476,6 +484,78 @@ export function GlobalShell({
       );
     } finally {
       setLoginPending(false);
+    }
+  };
+
+  const openReport = () => {
+    if (!isAuthenticated) {
+      void startNaverLogin();
+      return;
+    }
+    setReportEmail(user?.email ?? '');
+    setReportOpen(true);
+  };
+
+  const openInquiry = () => {
+    if (!isAuthenticated) {
+      void startNaverLogin();
+      return;
+    }
+    setInquiryEmail(user?.email ?? '');
+    setInquiryOpen(true);
+  };
+
+  const submitReport = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFeedbackPending(true);
+    try {
+      const response = await authorizedFetch('/api/mail/send-to-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          siteId: SITE_CONTEXT.id,
+          title: reportReason,
+          content: reportContent
+        })
+      });
+      if (!response.ok) {
+        throw new Error('신고 전송에 실패했습니다.');
+      }
+      window.alert(`신고가 성공적으로 전송되었습니다.\n회신은 ${reportEmail} 주소로 발송됩니다.`);
+      setReportReason('');
+      setReportContent('');
+      setReportOpen(false);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : '신고 전송에 실패했습니다.');
+    } finally {
+      setFeedbackPending(false);
+    }
+  };
+
+  const submitInquiry = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFeedbackPending(true);
+    try {
+      const response = await authorizedFetch('/api/mail/send-to-helpdesk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          siteId: SITE_CONTEXT.id,
+          title: inquiryTitle,
+          content: inquiryContent
+        })
+      });
+      if (!response.ok) {
+        throw new Error('문의 전송에 실패했습니다.');
+      }
+      window.alert(`문의가 성공적으로 전송되었습니다.\n회신은 ${inquiryEmail} 주소로 발송됩니다.`);
+      setInquiryTitle('');
+      setInquiryContent('');
+      setInquiryOpen(false);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : '문의 전송에 실패했습니다.');
+    } finally {
+      setFeedbackPending(false);
     }
   };
 
@@ -557,8 +637,8 @@ export function GlobalShell({
       siteName={SITE_CONTEXT.name}
       categories={categories}
       onOpenPolicy={() => setPolicyOpen(true)}
-      onOpenReport={() => setReportOpen(true)}
-      onOpenInquiry={() => setInquiryOpen(true)}
+      onOpenReport={openReport}
+      onOpenInquiry={openInquiry}
       onToggleCollapsed={toggleNavigationCollapsed}
     />
   );
@@ -735,8 +815,8 @@ export function GlobalShell({
               siteName={SITE_CONTEXT.name}
               categories={categories}
               onOpenPolicy={() => setPolicyOpen(true)}
-              onOpenReport={() => setReportOpen(true)}
-              onOpenInquiry={() => setInquiryOpen(true)}
+              onOpenReport={openReport}
+              onOpenInquiry={openInquiry}
               onToggleCollapsed={toggleNavigationCollapsed}
               onNavigate={() => setMobileNavigationOpen(false)}
             />
@@ -1047,9 +1127,10 @@ export function GlobalShell({
               닫기
             </button>
             <button
-              className="bg-default-blue inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-              type="button"
-              disabled={!isAuthenticated}
+              className="bg-default-label text-default-background inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+              form="reportForm"
+              type="submit"
+              disabled={feedbackPending}
             >
               <Send size={15} aria-hidden />
               보내기
@@ -1057,7 +1138,7 @@ export function GlobalShell({
           </>
         }
       >
-        <form className="space-y-4">
+        <form id="reportForm" className="space-y-4" onSubmit={submitReport}>
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">
               홈페이지명
@@ -1076,10 +1157,13 @@ export function GlobalShell({
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
               type="email"
               placeholder="name@example.com"
-              disabled={!isAuthenticated}
+              name="email"
+              value={reportEmail}
+              readOnly
+              required
             />
           </label>
-          <fieldset className="space-y-2" disabled={!isAuthenticated}>
+          <fieldset className="space-y-2" disabled={feedbackPending}>
             <legend className="text-default-label text-sm font-medium">
               신고사유
             </legend>
@@ -1096,6 +1180,10 @@ export function GlobalShell({
                   className="accent-default-blue size-4"
                   type="radio"
                   name="reportReason"
+                  value={reason}
+                  checked={reportReason === reason}
+                  onChange={(event) => setReportReason(event.target.value)}
+                  required
                 />
                 {reason}
               </label>
@@ -1107,7 +1195,10 @@ export function GlobalShell({
             </span>
             <textarea
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-28 w-full resize-none rounded-md border px-3 py-3 text-sm outline-none focus:ring-4"
-              disabled={!isAuthenticated}
+              name="content"
+              value={reportContent}
+              onChange={(event) => setReportContent(event.target.value)}
+              required
             />
           </label>
         </form>
@@ -1133,9 +1224,10 @@ export function GlobalShell({
               닫기
             </button>
             <button
-              className="bg-default-blue inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-              type="button"
-              disabled={!isAuthenticated}
+              className="bg-default-label text-default-background inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+              form="inquiryForm"
+              type="submit"
+              disabled={feedbackPending}
             >
               <Send size={15} aria-hidden />
               보내기
@@ -1143,7 +1235,7 @@ export function GlobalShell({
           </>
         }
       >
-        <form className="space-y-4">
+        <form id="inquiryForm" className="space-y-4" onSubmit={submitInquiry}>
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">
               이메일
@@ -1152,21 +1244,30 @@ export function GlobalShell({
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
               type="email"
               placeholder="name@example.com"
-              disabled={!isAuthenticated}
+              name="email"
+              value={inquiryEmail}
+              readOnly
+              required
             />
           </label>
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">제목</span>
             <input
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
-              disabled={!isAuthenticated}
+              name="title"
+              value={inquiryTitle}
+              onChange={(event) => setInquiryTitle(event.target.value)}
+              required
             />
           </label>
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">내용</span>
             <textarea
               className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-32 w-full resize-none rounded-md border px-3 py-3 text-sm outline-none focus:ring-4"
-              disabled={!isAuthenticated}
+              name="content"
+              value={inquiryContent}
+              onChange={(event) => setInquiryContent(event.target.value)}
+              required
             />
           </label>
         </form>

@@ -6,6 +6,7 @@ export type SignInRequest = Readonly<{
 export type AuthenticatedUser = Readonly<{
   userId: string;
   username: string;
+  email?: string | null;
   authorities: readonly string[];
 }>;
 
