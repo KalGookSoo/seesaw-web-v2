@@ -42,6 +42,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { openNaverOAuth2Popup, openNaverOAuth2UnlinkPopup } from '@/lib/naver-oauth2-popup';
 import { authorizedFetch } from '@/lib/api-fetch';
 import { removeMyRoleMapping } from '@/lib/role-mappings';
+import { useToast } from '@/components/ui/toast';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -78,8 +79,13 @@ function setPreferenceCookie(name: string, value: string) {
   document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
 }
 
-function toRoleLabel(authority: string): string {
-  return authority.replace(/^ROLE_/, '');
+function toRoleDescription(authority: string): string {
+  const descriptions: Record<string, string> = {
+    ROLE_USER: '일반사용자',
+    ROLE_MANAGER: '관리자',
+    ROLE_ADMIN: '최고관리자'
+  };
+  return descriptions[authority] ?? '사이트 이용자';
 }
 
 function formatExpiresAt(expiresAt: number): string {
@@ -442,6 +448,7 @@ export function GlobalShell({
     useSiteContext();
   const { isAuthenticated, login, logout, user, expiresAt, refresh, bootstrap } =
     useAuth();
+  const { showToast } = useToast();
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
@@ -479,8 +486,9 @@ export function GlobalShell({
       await login(tokens);
       setLoginOpen(false);
     } catch (error) {
-      window.alert(
+      showToast(
         error instanceof Error ? error.message : '로그인을 시작하지 못했습니다.'
+        , 'error'
       );
     } finally {
       setLoginPending(false);
@@ -521,12 +529,12 @@ export function GlobalShell({
       if (!response.ok) {
         throw new Error('신고 전송에 실패했습니다.');
       }
-      window.alert(`신고가 성공적으로 전송되었습니다.\n회신은 ${reportEmail} 주소로 발송됩니다.`);
+      showToast(`신고가 성공적으로 전송되었습니다.\n회신은 ${reportEmail} 주소로 발송됩니다.`, 'success');
       setReportReason('');
       setReportContent('');
       setReportOpen(false);
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : '신고 전송에 실패했습니다.');
+      showToast(error instanceof Error ? error.message : '신고 전송에 실패했습니다.', 'error');
     } finally {
       setFeedbackPending(false);
     }
@@ -548,12 +556,12 @@ export function GlobalShell({
       if (!response.ok) {
         throw new Error('문의 전송에 실패했습니다.');
       }
-      window.alert(`문의가 성공적으로 전송되었습니다.\n회신은 ${inquiryEmail} 주소로 발송됩니다.`);
+      showToast(`문의가 성공적으로 전송되었습니다.\n회신은 ${inquiryEmail} 주소로 발송됩니다.`, 'success');
       setInquiryTitle('');
       setInquiryContent('');
       setInquiryOpen(false);
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : '문의 전송에 실패했습니다.');
+      showToast(error instanceof Error ? error.message : '문의 전송에 실패했습니다.', 'error');
     } finally {
       setFeedbackPending(false);
     }
@@ -569,12 +577,13 @@ export function GlobalShell({
     try {
       await openNaverOAuth2UnlinkPopup();
       await removeMyRoleMapping();
-      window.alert('네이버 연동이 해제되었습니다.');
+      showToast('네이버 연동이 해제되었습니다.', 'success');
       setMyPageOpen(false);
       await logout();
     } catch (error) {
-      window.alert(
+      showToast(
         error instanceof Error ? error.message : '연동 해제에 실패했습니다.'
+        , 'error'
       );
     } finally {
       setWithdrawPending(false);
@@ -606,8 +615,9 @@ export function GlobalShell({
     setExtendSessionPending(true);
     try {
       const success = await refresh();
-      window.alert(
-        success ? '로그인이 연장되었습니다.' : '로그인 연장에 실패했습니다. 다시 로그인해주세요.'
+      showToast(
+        success ? '로그인이 연장되었습니다.' : '로그인 연장에 실패했습니다. 다시 로그인해주세요.',
+        success ? 'success' : 'error'
       );
     } finally {
       setExtendSessionPending(false);
@@ -976,7 +986,7 @@ export function GlobalShell({
                           className="bg-default-fill text-default-label border-default-separator rounded-none border px-2.5 py-1 text-xs font-semibold"
                           key={authority}
                         >
-                          {toRoleLabel(authority)}
+                          {toRoleDescription(authority)}
                         </span>
                       ))
                     ) : (

@@ -11,6 +11,7 @@ import { GlobalShell } from '@/components/layout/global-shell';
 import { ThemeScript } from '@/components/theme/theme-script';
 import { ServiceWorkerRegistration } from '@/app/service-worker-registration';
 import { SiteContextProvider } from '@/app/site-context-provider';
+import { ToastProvider } from '@/components/ui/toast';
 
 import './globals.css';
 
@@ -53,11 +54,13 @@ export default async function RootLayout({
         <title>{`홈 | ${site.name}`}</title>
       </head>
       <body className="flex min-h-full flex-col">
-        <SiteContextProvider siteContext={siteContext}>
-          <GlobalShell initialNavigationCollapsed={initialNavigationCollapsed} initialNavigationPosition={initialNavigationPosition}>
-            {children}
-          </GlobalShell>
-        </SiteContextProvider>
+        <ToastProvider>
+          <SiteContextProvider siteContext={siteContext}>
+            <GlobalShell initialNavigationCollapsed={initialNavigationCollapsed} initialNavigationPosition={initialNavigationPosition}>
+              {children}
+            </GlobalShell>
+          </SiteContextProvider>
+        </ToastProvider>
         <ServiceWorkerRegistration siteId={site.id} siteName={site.name} themeColor={site.themeColor} />
       </body>
     </html>

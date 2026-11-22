@@ -10,6 +10,7 @@ import type { ReplyResponse } from '@/types/reply';
 import { MOCK_AUTHENTICATION } from '@/lib/mock-auth';
 import { Confirm } from '@/components/ui/confirm';
 import { Modal } from '@/components/ui/modal';
+import { useToast } from '@/components/ui/toast';
 
 const buttonClassName =
   'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
@@ -43,6 +44,7 @@ export function ArticleReplies({
   article: ArticleResponse;
 }>) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
   const [deleteReplyId, setDeleteReplyId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -66,14 +68,12 @@ export function ArticleReplies({
           body,
           credentials: 'include'
         });
-        window.alert(await responseMessage(response, successMessage));
+        showToast(await responseMessage(response, successMessage), 'success');
         form.reset();
         setEditingReplyId(null);
         router.refresh();
       } catch (error) {
-        window.alert(
-          error instanceof Error ? error.message : '댓글을 저장하지 못했습니다.'
-        );
+        showToast(error instanceof Error ? error.message : '댓글을 저장하지 못했습니다.', 'error');
       }
     });
   }
@@ -92,13 +92,11 @@ export function ArticleReplies({
             credentials: 'include'
           }
         );
-        window.alert(await responseMessage(response, '댓글을 삭제했습니다.'));
+        showToast(await responseMessage(response, '댓글을 삭제했습니다.'), 'success');
         setDeleteReplyId(null);
         router.refresh();
       } catch (error) {
-        window.alert(
-          error instanceof Error ? error.message : '댓글을 삭제하지 못했습니다.'
-        );
+        showToast(error instanceof Error ? error.message : '댓글을 삭제하지 못했습니다.', 'error');
       }
     });
   }
@@ -275,6 +273,7 @@ export function ArticleManagementActions({
   listHref: string;
 }>) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -298,15 +297,11 @@ export function ArticleManagementActions({
             credentials: 'include'
           }
         );
-        window.alert(await responseMessage(response, '게시글을 삭제했습니다.'));
+        showToast(await responseMessage(response, '게시글을 삭제했습니다.'), 'success');
         router.push(listHref);
         router.refresh();
       } catch (error) {
-        window.alert(
-          error instanceof Error
-            ? error.message
-            : '게시글을 삭제하지 못했습니다.'
-        );
+        showToast(error instanceof Error ? error.message : '게시글을 삭제하지 못했습니다.', 'error');
       }
     });
   }
@@ -330,15 +325,11 @@ export function ArticleManagementActions({
             body: JSON.stringify({ categoryId })
           }
         );
-        window.alert(await responseMessage(response, '게시글을 이동했습니다.'));
+        showToast(await responseMessage(response, '게시글을 이동했습니다.'), 'success');
         setMoveOpen(false);
         router.refresh();
       } catch (error) {
-        window.alert(
-          error instanceof Error
-            ? error.message
-            : '게시글을 이동하지 못했습니다.'
-        );
+        showToast(error instanceof Error ? error.message : '게시글을 이동하지 못했습니다.', 'error');
       }
     });
   }

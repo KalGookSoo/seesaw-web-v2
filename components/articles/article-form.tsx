@@ -14,6 +14,7 @@ import { deleteAttachment } from '@/lib/attachments';
 import { useAuth } from '@/hooks/use-auth';
 import { AttachmentUpload } from '@/components/articles/attachment-upload';
 import { Confirm } from '@/components/ui/confirm';
+import { useToast } from '@/components/ui/toast';
 
 type ArticleFormMode = 'create' | 'edit';
 
@@ -45,6 +46,7 @@ export function ArticleForm({
   initialAttachments = []
 }: ArticleFormProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const { user, isAuthenticated } = useAuth();
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +71,7 @@ export function ArticleForm({
     event.preventDefault();
 
     if (!isAuthenticated) {
-      window.alert('로그인이 필요합니다.');
+      showToast('로그인이 필요합니다.', 'error');
       return;
     }
 
@@ -95,9 +97,7 @@ export function ArticleForm({
     setSubmitting(false);
 
     if (result.ok) {
-      window.alert(
-        mode === 'create' ? '게시글을 등록했습니다.' : '게시글을 수정했습니다.'
-      );
+      showToast(mode === 'create' ? '게시글을 등록했습니다.' : '게시글을 수정했습니다.', 'success');
       router.push(successHref);
       return;
     }
@@ -105,9 +105,9 @@ export function ArticleForm({
     const failure = result as ArticleMutationFailure;
 
     if (failure.status === 401) {
-      window.alert('로그인이 필요합니다.');
+      showToast('로그인이 필요합니다.', 'error');
     } else if (failure.status === 403) {
-      window.alert('권한이 없습니다.');
+      showToast('권한이 없습니다.', 'error');
     } else if (failure.status === 422) {
       const errors: Record<string, string> = {};
       failure.errors.forEach((error) => {
@@ -115,9 +115,7 @@ export function ArticleForm({
       });
       setFieldErrors(errors);
     } else {
-      window.alert(
-        mode === 'create' ? '게시글을 등록하지 못했습니다.' : '게시글을 수정하지 못했습니다.'
-      );
+      showToast(mode === 'create' ? '게시글을 등록하지 못했습니다.' : '게시글을 수정하지 못했습니다.', 'error');
     }
   }
 
@@ -131,9 +129,9 @@ export function ArticleForm({
       setAttachments((current) =>
         current.filter((attachment) => attachment.id !== attachmentToDelete.id)
       );
-      window.alert('삭제되었습니다.');
+      showToast('삭제되었습니다.', 'success');
     } catch {
-      window.alert('삭제에 실패했습니다.');
+      showToast('삭제에 실패했습니다.', 'error');
     } finally {
       setAttachmentToDelete(null);
     }
