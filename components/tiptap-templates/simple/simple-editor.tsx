@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 import { mergeAttributes, Node } from "@tiptap/core"
+import heic2any from "heic2any"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -73,14 +74,50 @@ import { useCursorVisibility } from "@/hooks/use-cursor-visibility"
 // --- Components ---
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle"
 
-// --- Lib ---
-import { MAX_FILE_SIZE } from "@/lib/tiptap-utils"
-
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: "center",
+}
+
+const INLINE_IMAGE_MAX_SIZE = 50 * 1024 * 1024
+const INLINE_VIDEO_MAX_SIZE = 200 * 1024 * 1024
+const INLINE_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/svg+xml",
+  "image/heic",
+  "image/heif",
+]
+const INLINE_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"]
+
+function getMediaType(file: File): string {
+  if (file.type) return file.type
+
+  const extension = file.name.split(".").pop()?.toLowerCase()
+  if (extension === "heic") return "image/heic"
+  if (extension === "heif") return "image/heif"
+  if (extension === "mov") return "video/quicktime"
+  return ""
+}
+
+async function prepareImageFile(file: File): Promise<File> {
+  const mediaType = getMediaType(file)
+  if (mediaType !== "image/heic" && mediaType !== "image/heif") {
+    return file
+  }
+
+  const converted = await heic2any({
+    blob: file,
+    toType: "image/jpeg",
+    quality: 0.92,
+  })
+  const blob = Array.isArray(converted) ? converted[0] : converted
+  const filename = file.name.replace(/\.(heic|heif)$/i, ".jpg")
+  return new File([blob], filename, { type: "image/jpeg" })
 }
 
 const InlineVideo = Node.create({
@@ -259,20 +296,22 @@ export function SimpleEditor({
 
   const uploadInlineImage = useCallback(
     async (file: File) => {
-      const supportedImageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-        "image/svg+xml",
-      ]
-      if (!supportedImageTypes.includes(file.type)) {
+      if (!INLINE_IMAGE_TYPES.includes(getMediaType(file))) {
         throw new Error(
-          "본문에 삽입할 수 없는 이미지 형식입니다. JPEG, PNG, GIF, WebP, SVG 파일을 사용해 주세요."
+          "본문에 삽입할 수 없는 이미지 형식입니다. JPEG, PNG, GIF, WebP, SVG, HEIC, HEIF 파일을 사용해 주세요."
         )
       }
-      const src = URL.createObjectURL(file)
-      onInlineImage(file, src)
+      if (file.size > INLINE_IMAGE_MAX_SIZE) {
+        throw new Error("본문 이미지는 최대 50MB까지 첨부할 수 있습니다.")
+      }
+      let preparedFile: File
+      try {
+        preparedFile = await prepareImageFile(file)
+      } catch {
+        throw new Error("HEIC/HEIF 이미지를 미리보기용 JPEG로 변환하지 못했습니다.")
+      }
+      const src = URL.createObjectURL(preparedFile)
+      onInlineImage(preparedFile, src)
       return src
     },
     [onInlineImage]
@@ -312,8 +351,8 @@ export function SimpleEditor({
         injectCSS: false,
       }),
       ImageUploadNode.configure({
-        accept: "image/jpeg,image/png,image/gif,image/webp,image/svg+xml",
-        maxSize: MAX_FILE_SIZE,
+        accept: INLINE_IMAGE_TYPES.join(","),
+        maxSize: INLINE_IMAGE_MAX_SIZE,
         limit: 3,
         upload: uploadInlineImage,
         onError: (error) => onImageError?.(error.message),
@@ -406,12 +445,20 @@ export function SimpleEditor({
         />
         <input
           ref={videoInputRef}
-          accept="video/mp4,video/webm"
+          accept={INLINE_VIDEO_TYPES.join(",")}
           className="sr-only"
           type="file"
           onChange={(event) => {
             const file = event.target.files?.[0]
-            if (file && editor) {
+            if (!file) {
+              event.target.value = ""
+              return
+            }
+            if (!INLINE_VIDEO_TYPES.includes(getMediaType(file))) {
+              onImageError?.("본문에 삽입할 수 없는 동영상 형식입니다. MP4, WebM 또는 MOV 파일을 사용해 주세요.")
+            } else if (file.size > INLINE_VIDEO_MAX_SIZE) {
+              onImageError?.("본문 동영상은 최대 200MB까지 첨부할 수 있습니다.")
+            } else if (editor) {
               const src = URL.createObjectURL(file)
               editor.chain().focus().insertContent({ type: "inlineVideo", attrs: { src } }).run()
               onInlineVideo(file, src)
