@@ -102,10 +102,10 @@ export function ArticleReplies({
   }
 
   return (
-    <section className="border-default-separator bg-default-surface overflow-hidden rounded-xl border shadow-sm">
+    <section className="border-default-separator bg-default-surface overflow-hidden border">
       <header className="border-default-separator bg-default-fill/45 flex items-center gap-2 border-b px-5 py-4">
         <h2 className="text-default-label font-semibold">댓글</h2>
-        <span className="bg-default-blue-soft text-default-blue-contrast rounded-full px-2 py-0.5 text-xs font-bold">
+        <span className="bg-default-fill text-default-label border-default-separator border px-2 py-0.5 text-xs font-bold">
           {replies.length}
         </span>
       </header>
@@ -129,7 +129,7 @@ export function ArticleReplies({
                         {reply.maskedAuthor ?? reply.createdBy ?? '익명'}
                       </span>
                       {reply.createdBy === article.createdBy ? (
-                        <span className="bg-default-blue-soft text-default-blue-contrast rounded-full px-2 py-0.5 text-[0.6875rem] font-bold">
+                        <span className="bg-default-fill text-default-label border-default-separator border px-2 py-0.5 text-[0.6875rem] font-bold">
                           작성자
                         </span>
                       ) : null}
@@ -183,13 +183,13 @@ export function ArticleReplies({
                   >
                     <textarea
                       aria-label="댓글 수정"
-                      className="border-default-separator bg-default-fill text-default-label focus:border-default-blue min-h-24 flex-1 resize-y rounded-lg border px-3 py-2 text-sm outline-none"
+                      className="border-default-separator bg-default-fill text-default-label min-h-24 flex-1 resize-y border px-3 py-2 text-sm outline-none"
                       defaultValue={reply.content ?? ''}
                       name="content"
                       required
                     />
                     <button
-                      className={`${buttonClassName} border-default-blue bg-default-blue self-end text-white`}
+                      className={`${buttonClassName} border-default-label bg-default-label text-default-background self-end`}
                       disabled={pending}
                       type="submit"
                     >
@@ -198,7 +198,7 @@ export function ArticleReplies({
                     </button>
                   </form>
                 ) : (
-                  <p className="bg-default-fill text-default-secondary-label mt-4 rounded-lg px-4 py-3 text-sm leading-6 whitespace-pre-wrap">
+                  <p className="bg-default-fill text-default-secondary-label mt-4 border-l-2 border-default-label px-4 py-3 text-sm leading-6 whitespace-pre-wrap">
                     {reply.content}
                   </p>
                 )}
@@ -228,13 +228,13 @@ export function ArticleReplies({
             <input name="articleId" type="hidden" value={article.id} />
             <textarea
               aria-label="댓글 입력"
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue min-h-24 flex-1 resize-y rounded-lg border px-3 py-2 text-sm outline-none"
+              className="border-default-separator bg-default-surface text-default-label min-h-24 flex-1 resize-y border px-3 py-2 text-sm outline-none"
               name="content"
               placeholder="댓글을 입력하세요."
               required
             />
             <button
-              className={`${buttonClassName} border-default-blue bg-default-blue self-end text-white`}
+              className={`${buttonClassName} border-default-label bg-default-label text-default-background self-end`}
               disabled={pending}
               type="submit"
             >
@@ -349,7 +349,7 @@ export function ArticleManagementActions({
         ) : null}
         {isOwner || isManager ? (
           <a
-            className={`${buttonClassName} border-default-blue-muted text-default-blue hover:bg-default-blue-soft`}
+            className={`${buttonClassName} border-default-separator text-default-label hover:bg-default-fill`}
             href={`/articles/${encodeURIComponent(article.id)}/edit?categoryId=${encodeURIComponent(article.categoryId ?? '')}`}
           >
             <Pencil className="size-4" />
@@ -407,7 +407,7 @@ export function ArticleManagementActions({
               취소
             </button>
             <button
-              className={`${buttonClassName} border-default-blue bg-default-blue text-white`}
+              className={`${buttonClassName} border-default-label bg-default-label text-default-background`}
               disabled={pending}
               type="submit"
             >

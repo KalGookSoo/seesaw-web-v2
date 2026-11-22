@@ -61,21 +61,23 @@
 }
 
 .viewer blockquote {
-  border-left: 3px solid var(--default-blue-muted);
+  border-left: 3px solid var(--default-label);
   color: var(--default-secondary-label);
   margin: 1.25em 0;
   padding: 0.25em 0 0.25em 1rem;
 }
 
 .viewer a {
-  color: var(--default-blue);
+  color: var(--default-label);
+  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
 .viewer img,
 .viewer video {
-  border-radius: 0.625rem;
+  border: 1px solid var(--default-separator);
+  border-radius: 0;
   height: auto;
   margin: 1.5em auto;
   max-width: 100%;
@@ -152,7 +154,7 @@
 .viewer pre {
   background: var(--default-fill);
   border: 1px solid var(--default-separator);
-  border-radius: 0.625rem;
+  border-radius: 0;
   margin: 1.25em 0;
   overflow-x: auto;
   padding: 1rem;
@@ -160,7 +162,8 @@
 
 .viewer code {
   background: var(--default-fill);
-  border-radius: 0.25rem;
+  border: 1px solid var(--default-separator);
+  border-radius: 0;
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.9em;
   padding: 0.15em 0.35em;
@@ -168,6 +171,7 @@
 
 .viewer pre code {
   background: transparent;
+  border: 0;
   padding: 0;
 }
 

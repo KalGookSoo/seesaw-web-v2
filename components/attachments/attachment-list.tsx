@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import {
   Download,
+  ChevronDown,
   Eye,
   File,
   FileArchive,
@@ -92,11 +93,11 @@ function AttachmentPreview({
 
   if (attachment.mimeType?.startsWith('image/')) {
     return (
-      <div className="bg-default-fill flex min-h-64 items-center justify-center rounded-lg p-3">
+      <div className="bg-default-fill flex min-h-64 items-center justify-center border border-default-separator p-3">
         <MonochromeImage
           alt={name}
-          className="flex min-h-48 max-h-[70vh] max-w-full items-center justify-center rounded-md"
-          imageClassName="max-h-[70vh] max-w-full rounded-md object-contain"
+          className="flex min-h-48 max-h-[70vh] max-w-full items-center justify-center"
+          imageClassName="max-h-[70vh] max-w-full object-contain"
           src={previewUrl}
         />
       </div>
@@ -105,11 +106,11 @@ function AttachmentPreview({
 
   if (attachment.mimeType?.startsWith('video/')) {
     return (
-      <div className="bg-default-fill flex min-h-64 items-center justify-center rounded-lg p-3">
+      <div className="bg-default-fill flex min-h-64 items-center justify-center border border-default-separator p-3">
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           aria-label={name}
-          className="max-h-[70vh] max-w-full rounded-md"
+          className="max-h-[70vh] max-w-full"
           controls
           preload="metadata"
           src={previewUrl}
@@ -120,7 +121,7 @@ function AttachmentPreview({
 
   if (attachment.mimeType?.startsWith('audio/')) {
     return (
-      <div className="bg-default-fill flex min-h-24 items-center justify-center rounded-lg p-6">
+      <div className="bg-default-fill flex min-h-24 items-center justify-center border border-default-separator p-6">
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <audio aria-label={name} className="w-full" controls src={previewUrl} />
       </div>
@@ -129,7 +130,7 @@ function AttachmentPreview({
 
   return (
     <iframe
-      className="border-default-separator h-[70vh] w-full rounded-lg border bg-white"
+      className="border-default-separator h-[70vh] w-full border bg-default-surface"
       src={previewUrl}
       title={`${name} 미리보기`}
       sandbox=""
@@ -152,25 +153,28 @@ export function AttachmentList({
   }
 
   return (
-    <section className="border-default-separator border-t px-5 py-6 sm:px-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <FileText aria-hidden className="size-4" />
-          첨부파일
-          <span className="text-default-tertiary-label">
-            {attachments.length}
-          </span>
-        </h2>
-        <a
-          className={`${actionClassName} border-default-separator bg-default-surface text-default-blue hover:border-default-blue-muted hover:bg-default-blue-soft`}
-          href={`/api/attachments/download-zip?articleId=${encodeURIComponent(articleId)}`}
-        >
-          <FileArchive aria-hidden className="size-4" />
-          전체 다운로드
-        </a>
-      </div>
+    <details className="group border-default-separator border-b">
+      <summary className="text-default-label hover:bg-default-fill flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 text-sm font-semibold transition [&::-webkit-details-marker]:hidden sm:px-5">
+        <span className="flex min-w-0 items-center gap-2">
+          <FileText aria-hidden className="size-4 shrink-0" />
+          <span>첨부파일</span>
+          <span className="text-default-tertiary-label">{attachments.length}</span>
+        </span>
+        <ChevronDown aria-hidden className="text-default-tertiary-label size-4 shrink-0 transition-transform group-open:rotate-180" />
+      </summary>
 
-      <ul className="border-default-separator mt-4 overflow-hidden rounded-lg border">
+      <div className="border-default-separator border-t px-4 py-5 sm:px-5">
+        <div className="flex justify-end">
+          <a
+            className={`${actionClassName} border-default-separator bg-default-surface text-default-label hover:bg-default-fill`}
+            href={`/api/attachments/download-zip?articleId=${encodeURIComponent(articleId)}`}
+          >
+            <FileArchive aria-hidden className="size-4" />
+            전체 다운로드
+          </a>
+        </div>
+
+        <ul className="border-default-separator mt-4 overflow-hidden border">
         {attachments.map((attachment) => {
           const name = attachment.originalName ?? attachment.name ?? '첨부파일';
 
@@ -180,7 +184,7 @@ export function AttachmentList({
               key={attachment.id}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="bg-default-blue-soft text-default-blue-contrast flex size-9 shrink-0 items-center justify-center rounded-lg">
+                <span className="bg-default-fill text-default-label flex size-9 shrink-0 items-center justify-center border border-default-separator">
                   <AttachmentIcon mimeType={attachment.mimeType} />
                 </span>
                 <div className="min-w-0">
@@ -196,7 +200,7 @@ export function AttachmentList({
               <div className="flex shrink-0 justify-end gap-2">
                 {attachment.previewable ? (
                   <button
-                    className={`${actionClassName} border-default-green-muted text-default-green-contrast hover:bg-default-green-soft`}
+                    className={`${actionClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
                     type="button"
                     onClick={() => setPreviewAttachment(attachment)}
                   >
@@ -205,7 +209,7 @@ export function AttachmentList({
                   </button>
                 ) : null}
                 <a
-                  className={`${actionClassName} border-default-blue-muted text-default-blue hover:bg-default-blue-soft`}
+                  className={`${actionClassName} border-default-separator text-default-label hover:bg-default-fill`}
                   href={toDownloadUrl(attachment.id)}
                 >
                   <Download aria-hidden className="size-4" />
@@ -215,7 +219,8 @@ export function AttachmentList({
             </li>
           );
         })}
-      </ul>
+        </ul>
+      </div>
 
       <Modal
         description={
@@ -246,6 +251,7 @@ export function AttachmentList({
         onClose={() => setPreviewAttachment(null)}
         open={previewAttachment !== null}
         size="lg"
+        variant="monochrome"
         title={
           previewAttachment?.originalName ??
           previewAttachment?.name ??
@@ -256,6 +262,6 @@ export function AttachmentList({
           <AttachmentPreview attachment={previewAttachment} />
         ) : null}
       </Modal>
-    </section>
+    </details>
   );
 }

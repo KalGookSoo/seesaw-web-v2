@@ -1,4 +1,5 @@
 import sanitizeHtml from 'sanitize-html';
+import { decodeHTML } from 'entities';
 
 // 자체 에디터(components/editor)가 실제로 만들어내는 태그/속성만 허용한다.
 // 새 서식을 에디터에 추가하면 이 화이트리스트도 함께 넓혀야 한다.
@@ -49,13 +50,10 @@ const ALLOWED_ATTRIBUTES = {
   code: ['class']
 };
 
-const CSS_COLOR = /^(#[0-9a-fA-F]{3,8}|rgba?\([\d\s.,%]+\)|hsla?\([\d\s.,%]+\)|[a-zA-Z]+)$/;
 const CSS_LENGTH = /^[\d.]+(px|em|rem|%|pt)?$/;
 
 const ALLOWED_STYLES = {
   '*': {
-    color: [CSS_COLOR],
-    'background-color': [CSS_COLOR],
     'font-size': [CSS_LENGTH],
     'line-height': [CSS_LENGTH],
     'text-align': [/^(left|right|center|justify)$/]
@@ -63,7 +61,12 @@ const ALLOWED_STYLES = {
 };
 
 export function sanitizeArticleHtml(html: string): string {
-  return sanitizeHtml(html, {
+  // 일부 기존 게시글은 HTML 태그가 한 번 더 엔티티로 인코딩되어 저장되어 있다.
+  // 먼저 한 번만 디코딩한 뒤 sanitizer를 적용해야 정상적인 HTML로 표시하면서
+  // 인코딩된 script/event 태그도 허용 목록에서 제거할 수 있다.
+  const decodedHtml = decodeHTML(html);
+
+  return sanitizeHtml(decodedHtml, {
     allowedTags: ALLOWED_TAGS,
     allowedAttributes: ALLOWED_ATTRIBUTES,
     allowedClasses: {

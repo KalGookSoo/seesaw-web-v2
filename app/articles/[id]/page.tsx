@@ -35,9 +35,9 @@ type ArticleDetailPageProps = Readonly<{
 }>;
 
 const panelClassName =
-  'border-default-separator bg-default-surface overflow-hidden rounded-xl border shadow-[0_1px_2px_rgb(0_0_0_/_0.05)]';
+  'border-default-separator bg-default-surface overflow-hidden border';
 const navigationButtonClassName =
-  'border-default-separator bg-default-surface text-default-secondary-label hover:border-default-blue-muted hover:text-default-blue inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-semibold transition';
+  'border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-10 items-center justify-center gap-2 border px-3 text-sm font-semibold transition';
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -367,10 +367,10 @@ export default async function ArticleDetailPage({
         }}
         type="application/ld+json"
       />
-      <div className="mx-auto max-w-5xl space-y-5 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
         <nav
           aria-label="현재 위치"
-          className="text-default-tertiary-label flex flex-wrap items-center gap-2 text-sm"
+          className="text-default-tertiary-label flex flex-wrap items-center gap-2 text-xs"
         >
           <Link className="hover:text-default-blue transition" href="/">
             홈
@@ -386,50 +386,50 @@ export default async function ArticleDetailPage({
         </nav>
 
         <article className={panelClassName}>
-          <header className="border-default-separator border-b px-5 py-6 sm:px-8 sm:py-8">
-            <p className="text-default-blue text-xs font-bold tracking-[0.18em] uppercase">
-              {category?.name ?? 'Article'}
-            </p>
-            <h1 className="mt-3 text-2xl leading-tight font-semibold text-balance sm:text-3xl">
-              {article.title}
-            </h1>
-            <div className="text-default-tertiary-label mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-              <span className="inline-flex items-center gap-1.5">
-                <UserRound aria-hidden className="size-4" />
-                {article.maskedAuthor ?? article.createdBy ?? '익명'}
-              </span>
-              <time
-                className="inline-flex items-center gap-1.5"
-                dateTime={article.createdDate ?? undefined}
-              >
-                <CalendarDays aria-hidden className="size-4" />
-                {formatDate(article.createdDate)}
-              </time>
-              <span className="inline-flex items-center gap-1.5">
-                <Eye aria-hidden className="size-4" />
-                조회 {article.views?.length ?? 0}
-              </span>
+          <header className="border-default-separator grid gap-8 border-b px-5 py-7 sm:px-8 sm:py-9 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12 lg:px-10 lg:py-12">
+            <div>
+              <p className="text-default-tertiary-label text-[0.65rem] font-semibold tracking-[0.2em] uppercase">Article / {category?.type ?? 'Content'}</p>
+              <p className="text-default-secondary-label mt-4 text-sm leading-6">{category?.name ?? '게시글'}</p>
+            </div>
+            <div>
+              <h1 className="text-default-label max-w-3xl text-xl leading-[1.25] font-semibold tracking-tight text-balance sm:text-2xl">
+                {article.title}
+              </h1>
+              <div className="text-default-tertiary-label mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+                <span className="inline-flex items-center gap-1.5">
+                  <UserRound aria-hidden className="size-3.5" />
+                  {article.maskedAuthor ?? article.createdBy ?? '익명'}
+                </span>
+                <time className="inline-flex items-center gap-1.5" dateTime={article.createdDate ?? undefined}>
+                  <CalendarDays aria-hidden className="size-3.5" />
+                  {formatDate(article.createdDate)}
+                </time>
+                <span className="inline-flex items-center gap-1.5">
+                  <Eye aria-hidden className="size-3.5" />
+                  조회 {article.views?.length ?? 0}
+                </span>
+              </div>
             </div>
           </header>
 
-          <div className="px-5 py-8 sm:px-8 sm:py-10">
-            {article.content ? (
-              <ArticleViewer content={article.content} />
-            ) : (
-              <p className="text-default-tertiary-label py-10 text-center">
-                표시할 본문이 없습니다.
-              </p>
-            )}
-          </div>
-
           <AttachmentList articleId={article.id} attachments={attachments} />
+
+          <div className="min-w-0 px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+            <div className="mx-auto max-w-4xl">
+              {article.content ? (
+                <ArticleViewer content={article.content} />
+              ) : (
+                <p className="text-default-tertiary-label py-10 text-center">표시할 본문이 없습니다.</p>
+              )}
+            </div>
+          </div>
         </article>
 
         <ArticleReplies article={article} />
 
-        <footer className={`${panelClassName} p-4`}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-2">
+        <footer className={`${panelClassName}`}>
+          <div className="grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+            <div className="flex flex-wrap gap-2 p-4 sm:p-5">
               {detail.previousArticleId ? (
                 <Link
                   className={navigationButtonClassName}
@@ -442,10 +442,6 @@ export default async function ArticleDetailPage({
                   이전 글
                 </Link>
               ) : null}
-              <Link className={navigationButtonClassName} href={listHref}>
-                <List aria-hidden className="size-4" />
-                목록
-              </Link>
               {detail.nextArticleId ? (
                 <Link
                   className={navigationButtonClassName}
@@ -460,11 +456,13 @@ export default async function ArticleDetailPage({
               ) : null}
             </div>
 
-            <ArticleManagementActions
-              article={article}
-              categories={categories}
-              listHref={listHref}
-            />
+            <Link className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label border-y px-4 py-4 text-center text-xs font-semibold transition sm:border-x sm:border-y-0" href={listHref}>
+              목록으로 돌아가기
+            </Link>
+
+            <div className="flex justify-start p-4 sm:justify-end sm:p-5">
+              <ArticleManagementActions article={article} categories={categories} listHref={listHref} />
+            </div>
           </div>
         </footer>
       </div>
