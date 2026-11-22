@@ -431,6 +431,24 @@ paths:
                 type: object
                 additionalProperties:
                   $ref: "#/components/schemas/PermissionResponse"
+  /api/oauth2/naver/token:
+    post:
+      tags:
+      - sign-api-controller
+      operationId: authenticateNaverAccessToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NaverAccessTokenRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JsonWebToken"
   /api/events:
     get:
       tags:
@@ -873,6 +891,11 @@ paths:
         schema:
           pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
           type: string
+      - name: Range
+        in: header
+        required: false
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -1107,17 +1130,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VoteResponse"
-        maskedAuthor:
+        url:
           type: string
-        recentlyGenerated:
-          type: boolean
         inlineImages:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
         plainContent:
           type: string
-        url:
+        recentlyGenerated:
+          type: boolean
+        maskedAuthor:
           type: string
         root:
           type: boolean
@@ -1172,16 +1195,18 @@ components:
         size:
           type: integer
           format: int64
-        iconClass:
-          type: string
-        formattedSize:
-          type: string
-        inlineImage:
-          type: boolean
         attachment:
           type: boolean
         previewable:
           type: boolean
+        renderableMedia:
+          type: boolean
+        inlineImage:
+          type: boolean
+        iconClass:
+          type: string
+        formattedSize:
+          type: string
         baseModel:
           $ref: "#/components/schemas/BaseEntity"
       description: 첨부파일 모델
@@ -1307,12 +1332,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VoteResponse"
-        maskedAuthor:
-          type: string
         inlineImages:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
+        maskedAuthor:
+          type: string
         root:
           type: boolean
         baseModel:
@@ -1846,9 +1871,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AttachmentResponse"
-        backgroundImage:
-          $ref: "#/components/schemas/AttachmentResponse"
         profileImage:
+          $ref: "#/components/schemas/AttachmentResponse"
+        backgroundImage:
           $ref: "#/components/schemas/AttachmentResponse"
         root:
           type: boolean
@@ -1975,6 +2000,16 @@ components:
         baseModel:
           $ref: "#/components/schemas/BaseEntity"
       description: 권한 모델
+    NaverAccessTokenRequest:
+      required:
+      - accessToken
+      - siteId
+      type: object
+      properties:
+        accessToken:
+          type: string
+        siteId:
+          type: string
     CreateEventRequest:
       required:
       - categoryId
