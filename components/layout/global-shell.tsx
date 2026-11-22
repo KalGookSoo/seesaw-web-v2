@@ -841,19 +841,20 @@ export function GlobalShell({
         title="환경설정"
         description="화면 표시, 글로벌 내비게이션 위치, 언어 설정을 변경합니다."
         size="md"
+        variant="monochrome"
         onClose={() => setSettingsOpen(false)}
       >
-        <div className="space-y-6">
+        <div className="space-y-7">
           <section className="space-y-3">
-            <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+            <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
               {theme === 'dark' ? (
                 <Moon size={16} aria-hidden />
               ) : (
                 <Sun size={16} aria-hidden />
               )}
-              화면 모드
+              <span>화면 모드</span>
             </div>
-            <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
+            <div className="border-default-separator grid grid-cols-2 border p-1">
               <SegmentedButton
                 active={theme === 'light'}
                 onClick={() => changeTheme('light')}
@@ -872,11 +873,11 @@ export function GlobalShell({
           </section>
 
           <section className="space-y-3">
-            <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+            <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
               <Languages size={16} aria-hidden />
-              언어
+              <span>언어</span>
             </div>
-            <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
+            <div className="border-default-separator grid grid-cols-2 border p-1">
               <SegmentedButton
                 active={locale === 'ko'}
                 onClick={() => changeLocale('ko')}
@@ -893,15 +894,15 @@ export function GlobalShell({
           </section>
 
           <section className="space-y-3">
-            <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+            <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
               {navigationPosition === 'left' ? (
                 <PanelLeft size={16} aria-hidden />
               ) : (
                 <PanelRight size={16} aria-hidden />
               )}
-              GNB 위치
+              <span>GNB 위치</span>
             </div>
-            <div className="bg-default-fill grid grid-cols-2 gap-2 rounded-lg p-1">
+            <div className="border-default-separator grid grid-cols-2 border p-1">
               <SegmentedButton
                 active={navigationPosition === 'left'}
                 onClick={() => changeNavigationPosition('left')}
@@ -926,18 +927,19 @@ export function GlobalShell({
         title="마이페이지"
         description="계정 정보와 알림 수신 설정을 확인합니다."
         size="md"
+        variant="monochrome"
         onClose={() => setMyPageOpen(false)}
         footer={
           <>
             <button
-              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill rounded-md border px-4 py-2 text-sm font-semibold transition"
+              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex h-11 items-center justify-center border px-4 text-sm font-semibold transition"
               type="button"
               onClick={() => setMyPageOpen(false)}
             >
               닫기
             </button>
             <button
-              className="bg-default-blue inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold text-white transition"
+              className="bg-default-label text-default-background hover:bg-default-secondary-label inline-flex h-11 items-center gap-1.5 px-4 text-sm font-semibold transition"
               form="my-page-form"
               type="submit"
             >
@@ -948,13 +950,13 @@ export function GlobalShell({
         }
       >
         {user ? (
-          <div className="space-y-6">
+          <div className="space-y-7">
             <section className="space-y-3">
-              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
                 <UserRound size={16} aria-hidden />
-                계정 정보
+                <span>계정 정보</span>
               </div>
-              <div className="border-default-separator divide-default-separator divide-y rounded-lg border">
+              <div className="border-default-separator divide-default-separator divide-y border">
                 <div className="flex items-center justify-between gap-4 px-4 py-3">
                   <span className="text-default-secondary-label text-sm">
                     아이디
@@ -971,7 +973,7 @@ export function GlobalShell({
                     {user.authorities.length > 0 ? (
                       user.authorities.map((authority) => (
                         <span
-                          className="bg-default-blue-soft text-default-blue-contrast rounded-full px-2.5 py-1 text-xs font-semibold"
+                          className="bg-default-fill text-default-label border-default-separator rounded-none border px-2.5 py-1 text-xs font-semibold"
                           key={authority}
                         >
                           {toRoleLabel(authority)}
@@ -988,11 +990,11 @@ export function GlobalShell({
             </section>
 
             <section className="space-y-3">
-              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
                 <Clock size={16} aria-hidden />
-                로그인 세션
+                <span>로그인 세션</span>
               </div>
-              <div className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+              <div className="border-default-separator flex flex-col items-stretch gap-4 border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-default-secondary-label text-sm">
                   {expiresAt === null
                     ? '로그인 정보를 확인할 수 없습니다.'
@@ -1001,7 +1003,7 @@ export function GlobalShell({
                       : `${formatExpiresAt(expiresAt)}까지 로그인이 유지됩니다.`}
                 </span>
                 <button
-                  className="border-default-blue-muted text-default-blue hover:bg-default-blue-soft inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:opacity-50"
+                  className="border-default-label text-default-label hover:bg-default-fill inline-flex h-10 shrink-0 items-center justify-center gap-1.5 border px-3 text-sm font-semibold transition disabled:opacity-50"
                   disabled={extendSessionPending}
                   type="button"
                   onClick={handleExtendSession}
@@ -1017,16 +1019,16 @@ export function GlobalShell({
             </section>
 
             <section className="space-y-3">
-              <div className="text-default-red flex items-center gap-2 text-sm font-semibold">
+              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
                 <UserX size={16} aria-hidden />
-                회원탈퇴
+                <span>회원탈퇴</span>
               </div>
-              <div className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+              <div className="border-default-separator flex flex-col items-stretch gap-4 border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-default-secondary-label text-sm">
                   네이버 연동을 해제하고 이 사이트의 권한을 제거합니다.
                 </span>
                 <button
-                  className="border-default-red-muted text-default-red hover:bg-default-red-soft inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:opacity-50"
+                  className="border-default-red-muted text-default-red hover:bg-default-red-soft inline-flex h-10 shrink-0 items-center justify-center gap-1.5 border px-3 text-sm font-semibold transition disabled:opacity-50"
                   disabled={withdrawPending}
                   type="button"
                   onClick={() => setWithdrawConfirmOpen(true)}
@@ -1046,18 +1048,18 @@ export function GlobalShell({
               id="my-page-form"
               onSubmit={handleMyPageSubmit}
             >
-              <div className="text-default-label flex items-center gap-2 text-sm font-semibold">
+              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
                 <ShieldCheck size={16} aria-hidden />
-                알림 설정
+                <span>알림 설정</span>
               </div>
-              <label className="border-default-separator flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+              <label className="border-default-separator flex items-center justify-between gap-4 border px-4 py-4">
                 <span className="flex items-center gap-2 text-sm">
                   <Mail aria-hidden className="text-default-secondary-label size-4" />
                   이메일 수신
                 </span>
                 <input
                   checked={receiveEmail}
-                  className="accent-default-blue size-4"
+                  className="accent-default-label size-4"
                   type="checkbox"
                   onChange={(event) => setReceiveEmail(event.target.checked)}
                 />
