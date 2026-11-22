@@ -20,7 +20,12 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanitize-html": "^2.17.6",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.14",
+    "@tiptap/core": "latest",
+    "@tiptap/react": "latest",
+    "@tiptap/starter-kit": "latest",
+    "@tiptap/extension-text-style": "latest",
+    "@tiptap/pm": "latest"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",

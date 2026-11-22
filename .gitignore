@@ -50,6 +50,7 @@ next-env.d.ts
 /.aiassistant/
 /.agent/
 /.vscode/
+/.claude/
 /local-changes.md
 /GEMINI.md
 /AGENTS.md
