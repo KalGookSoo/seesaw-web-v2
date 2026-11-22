@@ -19,7 +19,7 @@ import type { PagedModel } from '@/types/common';
 import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
-import { ArticleViewer } from '@/components/articles/article-viewer';
+import { MosaicStaticContent } from '@/components/articles/mosaic-static-content';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -426,36 +426,33 @@ export function StaticContentPage({
   category
 }: StaticContentPageProps) {
   return (
-    <main className="bg-default-surface-grouped min-h-full px-4 py-6 sm:px-6">
-      <header
-        className={`${mattePanelClassName} mx-auto mb-5 max-w-4xl px-5 py-5`}
-      >
-        <p className="text-default-secondary-label text-sm font-medium">
-          Static content
-        </p>
-        <h1 className="text-default-label mt-2 text-3xl font-semibold">
-          {category.name}
-        </h1>
-        {category.description ? (
-          <p className="text-default-secondary-label mt-3 text-base leading-7">
-            {category.description}
+    <main className="bg-default-background text-default-label min-h-full">
+      <header className="bg-default-background relative z-10 mx-auto flex max-w-6xl items-end justify-between gap-6 px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+        <div className="min-w-0">
+          <Link
+            className="text-default-tertiary-label hover:text-default-label text-xs font-semibold tracking-[0.18em] uppercase transition"
+            href="/"
+          >
+            ← Back to space
+          </Link>
+          <p className="text-default-blue mt-8 text-xs font-semibold tracking-[0.2em] uppercase">
+            Static content / Exhibition
           </p>
-        ) : null}
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
+            {category.name}
+          </h1>
+          {category.description ? (
+            <p className="text-default-secondary-label mt-4 max-w-2xl text-sm leading-7 sm:text-base">
+              {category.description}
+            </p>
+          ) : null}
+        </div>
+        <span className="text-default-tertiary-label shrink-0 pb-1 text-xs tracking-[0.16em] uppercase">
+          {String(articles.length).padStart(2, '0')} entries
+        </span>
       </header>
-      <section className="mx-auto max-w-4xl space-y-4">
-        {articles.length > 0 ? (
-          articles.map((article) => (
-            <article
-              key={article.id}
-              className={`${mattePanelClassName} max-w-none p-5`}
-            >
-              <ArticleViewer content={article.content ?? ''} />
-            </article>
-          ))
-        ) : (
-          <EmptyState />
-        )}
-      </section>
+
+      <MosaicStaticContent articles={articles} />
     </main>
   );
 }

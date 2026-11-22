@@ -17,6 +17,11 @@ const styleGuides = [
     desc: '불필요한 요소를 극도로 절제한 중립적 레이아웃입니다.'
   },
   {
+    href: '/style-guide/monochrome',
+    label: 'Monochrome',
+    desc: '차분한 회색조와 낮은 대비로 콘텐츠에 집중하는 제품형 인터페이스입니다.'
+  },
+  {
     href: '/style-guide/neo-brutalism',
     label: 'Neo Brutalism',
     desc: '고대비의 원색과 단단한 하드 섀도우를 조합한 트렌디한 디자인입니다.'

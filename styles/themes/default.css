@@ -278,3 +278,133 @@
   --color-default-fill: var(--default-fill);
   --color-default-separator: var(--default-separator);
 }
+
+/* --------------------------------------------------------------------------
+   Seesaw Monochrome product theme
+   Keep the existing default-* API while replacing the visual language used by
+   the application screens. Feature components can migrate without changing
+   their semantic color class names.
+   -------------------------------------------------------------------------- */
+:root {
+  --default-background: #ecece8;
+  --default-surface: #f8f8f5;
+  --default-surface-elevated: #ffffff;
+  --default-surface-grouped: #e4e5e0;
+  --default-blue: #3d423d;
+  --default-blue-soft: #d9ddd7;
+  --default-blue-muted: #5d635c;
+  --default-blue-contrast: #20221f;
+  --default-indigo: #4d514d;
+  --default-indigo-soft: #dfe1dc;
+  --default-indigo-muted: #777b74;
+  --default-indigo-contrast: #20221f;
+  --default-purple: #555954;
+  --default-purple-soft: #e1e2dd;
+  --default-purple-muted: #7d8179;
+  --default-purple-contrast: #20221f;
+  --default-pink: #645956;
+  --default-pink-soft: #e8e1de;
+  --default-pink-muted: #8b7d78;
+  --default-pink-contrast: #302725;
+  --default-red: #694d4b;
+  --default-red-soft: #eadedd;
+  --default-red-muted: #91706d;
+  --default-red-contrast: #3a2928;
+  --default-orange: #6a6251;
+  --default-orange-soft: #e8e4d9;
+  --default-orange-muted: #8c836e;
+  --default-orange-contrast: #3d382b;
+  --default-yellow: #716b55;
+  --default-yellow-soft: #ebe8db;
+  --default-yellow-muted: #938b6d;
+  --default-yellow-contrast: #413d2f;
+  --default-green: #4d5a50;
+  --default-green-soft: #dfe5df;
+  --default-green-muted: #718175;
+  --default-green-contrast: #2f3a32;
+  --default-mint: #52615c;
+  --default-mint-soft: #dfe6e2;
+  --default-mint-muted: #75857e;
+  --default-mint-contrast: #303b36;
+  --default-teal: #52615e;
+  --default-teal-soft: #e0e6e3;
+  --default-teal-muted: #74827e;
+  --default-teal-contrast: #303b38;
+  --default-cyan: #58636a;
+  --default-cyan-soft: #e0e5e8;
+  --default-cyan-muted: #7b878e;
+  --default-cyan-contrast: #303a40;
+  --default-gray: #858982;
+  --default-gray-2: #a4a8a0;
+  --default-gray-3: #bfc2bb;
+  --default-gray-4: #d1d3cc;
+  --default-gray-5: #ddded9;
+  --default-gray-6: #e4e5e0;
+  --default-label: #20221f;
+  --default-secondary-label: #62665f;
+  --default-tertiary-label: #92968e;
+  --default-fill: #ddded9;
+  --default-separator: #d1d3cc;
+}
+
+.dark {
+  --default-background: #171917;
+  --default-surface: #20221f;
+  --default-surface-elevated: #292c28;
+  --default-surface-grouped: #191b19;
+  --default-blue: #dce1d9;
+  --default-blue-soft: #343a34;
+  --default-blue-muted: #b9c0b6;
+  --default-blue-contrast: #20221f;
+  --default-indigo: #c9cec6;
+  --default-indigo-soft: #343934;
+  --default-indigo-muted: #aab2a7;
+  --default-indigo-contrast: #20221f;
+  --default-purple: #c4c9c1;
+  --default-purple-soft: #353a35;
+  --default-purple-muted: #a5ada2;
+  --default-purple-contrast: #20221f;
+  --default-pink: #cebdb8;
+  --default-pink-soft: #3b302e;
+  --default-pink-muted: #ae9690;
+  --default-pink-contrast: #20221f;
+  --default-red: #d5b1ae;
+  --default-red-soft: #3a2928;
+  --default-red-muted: #b88e89;
+  --default-red-contrast: #20221f;
+  --default-orange: #d1c6a9;
+  --default-orange-soft: #383426;
+  --default-orange-muted: #b6a87e;
+  --default-orange-contrast: #20221f;
+  --default-yellow: #d5cda9;
+  --default-yellow-soft: #393626;
+  --default-yellow-muted: #b9ae7b;
+  --default-yellow-contrast: #20221f;
+  --default-green: #b8c8b9;
+  --default-green-soft: #263329;
+  --default-green-muted: #95ad99;
+  --default-green-contrast: #20221f;
+  --default-mint: #b7c9c0;
+  --default-mint-soft: #26342f;
+  --default-mint-muted: #94afa2;
+  --default-mint-contrast: #20221f;
+  --default-teal: #b8c8c2;
+  --default-teal-soft: #273531;
+  --default-teal-muted: #95ada4;
+  --default-teal-contrast: #20221f;
+  --default-cyan: #bdc9ce;
+  --default-cyan-soft: #29343a;
+  --default-cyan-muted: #99aeb7;
+  --default-cyan-contrast: #20221f;
+  --default-gray: #8d948c;
+  --default-gray-2: #6f766e;
+  --default-gray-3: #555c54;
+  --default-gray-4: #444a43;
+  --default-gray-5: #363a35;
+  --default-gray-6: #292c28;
+  --default-label: #f1f2ed;
+  --default-secondary-label: #b5b9b0;
+  --default-tertiary-label: #81877e;
+  --default-fill: #30332f;
+  --default-separator: #3b3f3a;
+}

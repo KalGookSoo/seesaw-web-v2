@@ -5,7 +5,6 @@ import Link from 'next/link';
 import {
   ArrowRight,
   CalendarDays,
-  MessageCircle,
   Newspaper
 } from 'lucide-react';
 
@@ -17,7 +16,6 @@ import {
   fetchRecentArticles,
   toAttachmentUrl
 } from '@/lib/home-summary';
-import { HorizontalCarousel } from '@/components/home/horizontal-carousel';
 
 type LoadState<T> =
   | Readonly<{
@@ -116,7 +114,7 @@ function getMonthRange(): Readonly<{ start: Date; end: Date; label: string }> {
 
 function Spinner() {
   return (
-    <div className="border-default-separator bg-default-fill/70 flex min-h-32 items-center justify-center rounded-lg border border-dashed">
+    <div className="border-default-separator bg-default-fill/70 flex min-h-32 items-center justify-center border border-dashed">
       <span
         className="border-default-gray-4 border-t-default-blue size-7 animate-spin rounded-full border-2"
         aria-label="로딩 중"
@@ -127,7 +125,7 @@ function Spinner() {
 
 function EmptyState({ message }: Readonly<{ message: string }>) {
   return (
-    <div className="border-default-separator bg-default-fill/70 text-default-secondary-label rounded-lg border border-dashed px-5 py-8 text-center text-sm">
+    <div className="border-default-separator bg-default-fill/70 text-default-secondary-label border border-dashed px-5 py-8 text-center text-sm">
       {message}
     </div>
   );
@@ -172,55 +170,6 @@ function FeaturedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
   );
 }
 
-function ArticleCarouselCard({
-  article,
-  index
-}: Readonly<{ article: ArticleResponse; index: number }>) {
-  const thumbnail = article.inlineImages?.[0];
-  const plainContent = article.plainContent ?? toPlainText(article.content);
-
-  return (
-    <Link
-      href={toArticleHref(article)}
-      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-64 flex-col overflow-hidden rounded-lg border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:w-72"
-    >
-      {thumbnail ? (
-        <img
-          src={toAttachmentUrl(thumbnail.id)}
-          alt={thumbnail.originalName ?? article.title}
-          className="h-36 w-full object-cover"
-        />
-      ) : (
-        <div className="from-default-blue-muted to-default-mint-soft text-default-tertiary-label flex h-36 items-center justify-center bg-gradient-to-br text-sm font-semibold">
-          {String(index).padStart(2, '0')}
-        </div>
-      )}
-      <div className="flex flex-1 flex-col p-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="text-default-label group-hover:text-default-blue line-clamp-2 text-base font-semibold">
-            {article.title}
-          </h3>
-          {article.replies?.length ? (
-            <span className="bg-default-mint-soft text-default-mint-contrast inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-xs font-medium">
-              <MessageCircle className="size-3.5" />
-              {article.replies.length}
-            </span>
-          ) : null}
-        </div>
-        <p className="text-default-secondary-label mt-2 line-clamp-2 flex-1 text-sm leading-6">
-          {plainContent || '본문 미리보기가 없습니다.'}
-        </p>
-        <div className="text-default-tertiary-label mt-3 flex items-center justify-between text-xs">
-          <span className="truncate">
-            {article.maskedAuthor ?? article.createdBy ?? '익명'}
-          </span>
-          <span className="shrink-0">{formatDate(article.createdDate)}</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function ArticleStoryStack({
   articles
 }: Readonly<{ articles: readonly ArticleResponse[] }>) {
@@ -230,17 +179,34 @@ function ArticleStoryStack({
     <div className="space-y-4">
       <FeaturedArticle article={featuredArticle} />
       {otherArticles.length > 0 ? (
-        <HorizontalCarousel>
+        <div className="divide-y divide-default-separator border-y border-default-separator">
           {otherArticles.map((article, index) => (
-            <ArticleCarouselCard
-              key={article.id}
-              article={article}
-              index={index + 1}
-            />
+            <ArticleListRow key={article.id} article={article} index={index + 1} />
           ))}
-        </HorizontalCarousel>
+        </div>
       ) : null}
     </div>
+  );
+}
+
+function ArticleListRow({
+  article,
+  index
+}: Readonly<{ article: ArticleResponse; index: number }>) {
+  const plainContent = article.plainContent ?? toPlainText(article.content);
+
+  return (
+    <Link href={toArticleHref(article)} className="group grid gap-2 px-1 py-4 transition-colors hover:bg-default-fill sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+      <span className="text-xs text-default-tertiary-label">{String(index).padStart(2, '0')}</span>
+      <div className="min-w-0">
+        <h3 className="truncate text-sm font-semibold text-default-label group-hover:text-default-blue">{article.title}</h3>
+        <p className="mt-1 line-clamp-1 text-xs leading-5 text-default-secondary-label">{plainContent || '본문 미리보기가 없습니다.'}</p>
+      </div>
+      <div className="flex gap-3 text-xs text-default-tertiary-label sm:flex-col sm:items-end sm:gap-1">
+        <span>{article.maskedAuthor ?? article.createdBy ?? '익명'}</span>
+        <span>{formatDate(article.createdDate)}</span>
+      </div>
+    </Link>
   );
 }
 
@@ -278,7 +244,7 @@ function BoardCategorySection({
   return (
     <section
       id={category.id}
-      className="border-default-separator bg-default-surface/58 scroll-mt-20 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6"
+      className="border-default-separator bg-default-surface/58 scroll-mt-20 border p-5 backdrop-blur sm:p-6"
     >
       <SectionHeader
         category={category}
@@ -340,7 +306,7 @@ function ScheduleCategorySection({
   return (
     <section
       id={category.id}
-      className="border-default-separator bg-default-surface/58 scroll-mt-20 rounded-lg border p-5 shadow-sm backdrop-blur sm:p-6"
+      className="border-default-separator bg-default-surface/58 scroll-mt-20 border p-5 backdrop-blur sm:p-6"
     >
       <SectionHeader
         category={category}
@@ -356,7 +322,7 @@ function ScheduleCategorySection({
           <EmptyState message="이번 달 등록된 일정이 없습니다." />
         ) : null}
         {state.status === 'success' && state.data.length > 0 ? (
-          <MonthlyEventList events={state.data} />
+          <MonthlyCalendar events={state.data} month={monthRange.start} />
         ) : null}
       </div>
     </section>
@@ -377,7 +343,7 @@ function EventTicketCard({ event }: Readonly<{ event: VEventResponse }>) {
           ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}`
           : '#'
       }
-      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-56 flex-col overflow-hidden rounded-lg border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-full flex-col overflow-hidden border transition"
     >
       <div className="bg-default-blue-soft text-default-blue-contrast flex items-baseline gap-1 px-4 py-3">
         <span className="text-sm font-semibold">{month}</span>
@@ -401,15 +367,53 @@ function EventTicketCard({ event }: Readonly<{ event: VEventResponse }>) {
   );
 }
 
-function MonthlyEventList({
-  events
-}: Readonly<{ events: readonly VEventResponse[] }>) {
+function dateKey(date: Date): string {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+
+function monthDays(date: Date): Date[] {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  start.setDate(start.getDate() - start.getDay());
+  return Array.from({ length: 42 }, (_, index) => {
+    const day = new Date(start);
+    day.setDate(start.getDate() + index);
+    return day;
+  });
+}
+
+function MonthlyCalendar({
+  events,
+  month
+}: Readonly<{ events: readonly VEventResponse[]; month: Date }>) {
+  const days = monthDays(month);
+  const eventsByDay = new Map<string, VEventResponse[]>();
+  events.forEach((event) => {
+    if (!event.dtStart) return;
+    const key = dateKey(new Date(event.dtStart));
+    eventsByDay.set(key, [...(eventsByDay.get(key) ?? []), event]);
+  });
+
   return (
-    <HorizontalCarousel>
-      {events.map((event) => (
-        <EventTicketCard key={event.id} event={event} />
-      ))}
-    </HorizontalCarousel>
+    <div>
+      <div className="grid grid-cols-7 border-t border-l border-default-separator text-center text-[0.65rem] font-semibold tracking-[0.12em] text-default-tertiary-label uppercase">
+        {['일', '월', '화', '수', '목', '금', '토'].map((day) => <span key={day} className="border-r border-b border-default-separator py-2">{day}</span>)}
+      </div>
+      <div className="hidden grid-cols-7 border-l border-default-separator sm:grid">
+        {days.map((day) => {
+          const dayEvents = eventsByDay.get(dateKey(day)) ?? [];
+          const currentMonth = day.getMonth() === month.getMonth();
+          return (
+            <div key={dateKey(day)} className={`min-h-24 border-r border-b border-default-separator p-2 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/45'}`}>
+              <span className={`text-xs ${currentMonth ? 'text-default-label' : 'text-default-tertiary-label'}`}>{day.getDate()}</span>
+              <div className="mt-2 space-y-1">
+                {dayEvents.slice(0, 2).map((event) => <a key={event.id} href={event.articleId ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}` : '#'} className="block truncate border-l-2 border-default-blue bg-default-blue-soft px-1.5 py-1 text-left text-[0.65rem] font-medium text-default-blue-contrast hover:bg-default-fill">{event.title}</a>)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="space-y-2 pt-3 sm:hidden">{events.map((event) => <EventTicketCard key={event.id} event={event} />)}</div>
+    </div>
   );
 }
 
@@ -437,7 +441,7 @@ function SectionHeader({
       </div>
       <Link
         href={toCategoryHref(category)}
-        className="border-default-separator bg-default-surface text-default-secondary-label hover:border-default-blue-muted hover:text-default-blue inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium transition"
+        className="border-default-separator bg-default-surface text-default-secondary-label hover:border-default-blue-muted hover:text-default-blue inline-flex shrink-0 items-center gap-1 border px-3 py-1.5 text-sm font-medium transition"
       >
         더보기
         <ArrowRight className="size-4" />

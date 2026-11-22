@@ -1,0 +1,92 @@
+.theme {
+  --monochrome-background: #ecece8;
+  --monochrome-surface: #f8f8f5;
+  --monochrome-surface-elevated: #ffffff;
+  --monochrome-surface-grouped: #e4e5e0;
+  --monochrome-fill: #ddded9;
+  --monochrome-fill-strong: #cfd1cb;
+  --monochrome-separator: #d1d3cc;
+  --monochrome-line: #aeb1aa;
+  --monochrome-label: #20221f;
+  --monochrome-secondary-label: #62665f;
+  --monochrome-tertiary-label: #92968e;
+  --monochrome-accent: #3d423d;
+  --monochrome-accent-soft: #d9ddd7;
+  --monochrome-accent-muted: #5d635c;
+  --monochrome-accent-contrast: #f8f8f5;
+  --monochrome-success: #4d5a50;
+  --monochrome-success-soft: #dfe5df;
+  --monochrome-warning: #6a6251;
+  --monochrome-warning-soft: #e8e4d9;
+  --monochrome-danger: #694d4b;
+  --monochrome-danger-soft: #eadedd;
+  --monochrome-danger-contrast: #ffffff;
+  --monochrome-shadow: none;
+  --monochrome-radius: 0.25rem;
+
+  --default-background: var(--monochrome-background);
+  --default-surface: var(--monochrome-surface);
+  --default-surface-elevated: var(--monochrome-surface-elevated);
+  --default-surface-grouped: var(--monochrome-surface-grouped);
+  --default-label: var(--monochrome-label);
+  --default-secondary-label: var(--monochrome-secondary-label);
+  --default-tertiary-label: var(--monochrome-tertiary-label);
+  --default-fill: var(--monochrome-fill);
+  --default-separator: var(--monochrome-separator);
+  --default-blue: var(--monochrome-accent);
+  --default-blue-soft: var(--monochrome-accent-soft);
+  --default-blue-muted: var(--monochrome-accent-muted);
+  --default-blue-contrast: var(--monochrome-accent-contrast);
+  --default-green: var(--monochrome-success);
+  --default-green-soft: var(--monochrome-success-soft);
+  --default-orange: var(--monochrome-warning);
+  --default-orange-soft: var(--monochrome-warning-soft);
+  --default-red: var(--monochrome-danger);
+  --default-red-soft: var(--monochrome-danger-soft);
+}
+
+:global(.dark) .theme {
+  --monochrome-background: #171917;
+  --monochrome-surface: #20221f;
+  --monochrome-surface-elevated: #292c28;
+  --monochrome-surface-grouped: #191b19;
+  --monochrome-fill: #30332f;
+  --monochrome-fill-strong: #3b3e39;
+  --monochrome-separator: #3b3f3a;
+  --monochrome-line: #6d736a;
+  --monochrome-label: #f1f2ed;
+  --monochrome-secondary-label: #b5b9b0;
+  --monochrome-tertiary-label: #81877e;
+  --monochrome-accent: #dce1d9;
+  --monochrome-accent-soft: #343a34;
+  --monochrome-accent-muted: #b9c0b6;
+  --monochrome-accent-contrast: #20221f;
+  --monochrome-success: #b8c8b9;
+  --monochrome-success-soft: #263329;
+  --monochrome-warning: #d1c6a9;
+  --monochrome-warning-soft: #383426;
+  --monochrome-danger: #d5b1ae;
+  --monochrome-danger-soft: #3a2928;
+  --monochrome-danger-contrast: #20221f;
+  --monochrome-shadow: none;
+}
+
+/* The monochrome system uses quiet edges instead of Bootstrap-like pills and shadows. */
+.theme :global(.rounded-full),
+.theme :global(.rounded-xl),
+.theme :global(.rounded-lg) {
+  border-radius: var(--monochrome-radius);
+}
+
+.theme :global(button) {
+  border-radius: var(--monochrome-radius);
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+}
+
+.theme :global(input),
+.theme :global(textarea),
+.theme :global(select) {
+  border-radius: 0.2rem;
+  font-size: 0.875rem;
+}

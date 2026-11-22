@@ -129,3 +129,8 @@
   border-top: 1px solid var(--default-separator);
   margin: 2rem 0;
 }
+
+.textOnly img,
+.textOnly video {
+  display: none;
+}
