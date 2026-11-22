@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, Loader2, Trash2, X } from 'lucide-react';
 
@@ -13,10 +13,25 @@ import {
 import { deleteAttachment } from '@/lib/attachments';
 import { useAuth } from '@/hooks/use-auth';
 import { AttachmentUpload } from '@/components/articles/attachment-upload';
+import { ArticleEditor } from '@/components/articles/article-editor';
 import { Confirm } from '@/components/ui/confirm';
 import { useToast } from '@/components/ui/toast';
 
 type ArticleFormMode = 'create' | 'edit';
+
+type InlineFile = Readonly<{
+  file: File;
+  src: string;
+}>;
+
+function collectBlobSources(content: string, selector: string): Set<string> {
+  const document = new DOMParser().parseFromString(content, 'text/html');
+  return new Set(
+    Array.from(document.querySelectorAll<HTMLImageElement | HTMLVideoElement>(selector))
+      .map((element) => element.src)
+      .filter((src) => src.startsWith('blob:'))
+  );
+}
 
 type ArticleFormProps = Readonly<{
   mode: ArticleFormMode;
@@ -48,11 +63,12 @@ export function ArticleForm({
   const router = useRouter();
   const { showToast } = useToast();
   const { user, isAuthenticated } = useAuth();
-  const editorRef = useRef<HTMLDivElement>(null);
-
   const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
   const [fixed, setFixed] = useState(initialFixed);
   const [files, setFiles] = useState<File[]>([]);
+  const [inlineImages, setInlineImages] = useState<InlineFile[]>([]);
+  const [inlineVideos, setInlineVideos] = useState<InlineFile[]>([]);
   const [attachments, setAttachments] =
     useState<readonly AttachmentResponse[]>(initialAttachments);
   const [attachmentToDelete, setAttachmentToDelete] =
@@ -78,15 +94,21 @@ export function ArticleForm({
     setSubmitting(true);
     setFieldErrors({});
 
-    const content = editorRef.current?.innerHTML ?? '';
-
+    const inlineImageSources = collectBlobSources(content, 'img[src]');
+    const inlineVideoSources = collectBlobSources(content, 'video[src]');
     const command = {
       categoryId,
       type: 'HTML' as const,
       fixed,
       title,
       content,
-      multipartFiles: files
+      multipartFiles: files,
+      inlineImages: inlineImages
+        .filter((inlineFile) => inlineImageSources.has(inlineFile.src))
+        .map((inlineFile) => inlineFile.file),
+      inlineVideos: inlineVideos
+        .filter((inlineFile) => inlineVideoSources.has(inlineFile.src))
+        .map((inlineFile) => inlineFile.file)
     };
 
     const result =
@@ -138,31 +160,31 @@ export function ArticleForm({
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <p className="text-default-secondary-label text-sm font-medium">
-        {categoryName}
-      </p>
-
-      <section className="border-default-separator bg-default-surface rounded-xl border shadow-sm">
-        <header className="border-default-separator border-b px-5 py-4">
-          <h1 className="text-default-label text-base font-semibold">
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <header className="space-y-3">
+        <p className="text-default-tertiary-label text-[0.65rem] font-semibold tracking-[0.2em] uppercase">
+          {mode === 'create' ? 'New article' : 'Edit article'}
+        </p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-default-label text-2xl font-semibold tracking-tight">
             {mode === 'create' ? '새 게시글 작성' : '게시글 수정'}
-          </h1>
-        </header>
+            </h1>
+            <p className="text-default-secondary-label mt-2 text-sm">{categoryName}</p>
+          </div>
+          <span className="text-default-tertiary-label text-xs">작성자 {mode === 'create' ? user?.username : createdBy}</span>
+        </div>
+      </header>
 
-        <div className="space-y-5 p-5">
+      <section className="border-default-separator bg-default-surface overflow-hidden border">
+        <div className="border-default-separator border-b px-5 py-5 sm:px-7">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-default-secondary-label text-sm">작성자</span>
-              <span className="text-default-label text-sm font-medium">
-                {mode === 'create' ? user?.username : createdBy}
-              </span>
-            </div>
+            <span className="text-default-tertiary-label text-xs">작성 설정</span>
             {canToggleFixed ? (
-              <label className="flex items-center gap-2 text-sm">
+              <label className="text-default-secondary-label inline-flex items-center gap-2 text-sm">
                 <input
                   checked={fixed}
-                  className="accent-default-blue size-4"
+                  className="accent-default-label size-4"
                   type="checkbox"
                   onChange={(event) => setFixed(event.target.checked)}
                 />
@@ -170,11 +192,9 @@ export function ArticleForm({
               </label>
             ) : null}
           </div>
-
-          <label className="block space-y-1.5">
-            <span className="text-default-label text-sm font-medium">제목</span>
+          <label className="mt-5 block">
             <input
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue h-11 w-full rounded-lg border px-3 text-sm outline-none"
+              className="border-default-separator bg-default-surface text-default-label placeholder:text-default-tertiary-label focus:border-default-label h-14 w-full border-x-0 border-t-0 border-b px-0 text-xl font-semibold tracking-tight outline-none transition focus-visible:ring-0"
               maxLength={30}
               placeholder="제목을 입력하세요"
               required
@@ -187,31 +207,35 @@ export function ArticleForm({
               </span>
             ) : null}
           </label>
+        </div>
 
-          <div className="space-y-1.5">
-            <span className="text-default-label text-sm font-medium">내용</span>
-            <div
-              ref={editorRef}
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue min-h-[20rem] w-full overflow-y-auto rounded-lg border px-3 py-2 text-sm outline-none"
-              contentEditable
-              suppressContentEditableWarning
-              dangerouslySetInnerHTML={{ __html: initialContent }}
-            />
+        <div className="space-y-2 px-5 py-5 sm:px-7 sm:py-7">
+          <span className="text-default-label text-sm font-medium">본문</span>
+          <ArticleEditor
+            initialContent={initialContent}
+            onChange={setContent}
+            onInlineImage={(file, src) => setInlineImages((current) => [...current, { file, src }])}
+            onInlineVideo={(file, src) => setInlineVideos((current) => [...current, { file, src }])}
+            onImageError={(message) => showToast(message, 'error')}
+          />
             {fieldErrors.content ? (
               <p className="text-default-red text-xs">{fieldErrors.content}</p>
             ) : null}
-          </div>
+        </div>
 
-          <div className="space-y-3">
+        <div className="border-default-separator space-y-3 border-t px-5 py-5 sm:px-7">
+          <div>
             <span className="text-default-label text-sm font-medium">첨부파일</span>
-            <AttachmentUpload files={files} onChange={setFiles} />
+            <p className="text-default-tertiary-label mt-1 text-xs">본문에 삽입하지 않는 파일을 추가합니다.</p>
+          </div>
+          <AttachmentUpload files={files} onChange={setFiles} />
 
             {attachments.length > 0 ? (
               <div className="space-y-2">
                 <p className="text-default-secondary-label text-xs font-semibold">
                   기존 첨부파일
                 </p>
-                <ul className="border-default-separator overflow-hidden rounded-lg border">
+                <ul className="border-default-separator overflow-hidden border">
                   {attachments.map((attachment) => (
                     <li
                       className="border-default-separator flex items-center justify-between gap-3 border-b px-4 py-2.5 last:border-b-0"
@@ -221,7 +245,7 @@ export function ArticleForm({
                         {attachment.originalName ?? attachment.name}
                       </span>
                       <button
-                        className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red shrink-0 rounded-full p-1.5 transition"
+                        className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red focus-visible:outline-default-label shrink-0 p-1.5 transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
                         type="button"
                         onClick={() => setAttachmentToDelete(attachment)}
                       >
@@ -232,13 +256,12 @@ export function ArticleForm({
                 </ul>
               </div>
             ) : null}
-          </div>
         </div>
       </section>
 
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
         <button
-          className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill inline-flex h-10 items-center gap-1.5 rounded-lg border px-4 text-sm font-semibold transition"
+          className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill focus-visible:outline-default-label inline-flex h-11 items-center justify-center gap-1.5 border px-5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
           type="button"
           onClick={() => router.push(cancelHref)}
         >
@@ -246,7 +269,7 @@ export function ArticleForm({
           취소
         </button>
         <button
-          className="bg-default-blue inline-flex h-10 items-center gap-1.5 rounded-lg px-4 text-sm font-semibold text-white transition disabled:opacity-50"
+          className="bg-default-label text-default-surface hover:bg-default-secondary-label focus-visible:outline-default-label inline-flex h-11 items-center justify-center gap-1.5 px-5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50"
           disabled={submitting}
           type="submit"
         >
