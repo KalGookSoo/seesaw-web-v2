@@ -19,7 +19,10 @@ import type { PagedModel } from '@/types/common';
 import type { ArticleViewType, SearchArticlesParams } from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
+import { ArticleFeed } from '@/components/articles/article-feed';
+import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown';
 import { MosaicStaticContent } from '@/components/articles/mosaic-static-content';
+import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -150,7 +153,7 @@ function ViewSwitcher({
         href={buildArticlesHref(search, { page: 0, viewType: 'CARD' })}
       >
         <Grid2X2 className="size-4" />
-        카드
+        피드
       </Link>
     </div>
   );
@@ -160,25 +163,16 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
   return (
     <form
       action="/articles"
-      className={`${mattePanelClassName} grid gap-2 p-2 sm:grid-cols-[10rem_1fr_auto]`}
+      className="border-default-separator bg-default-surface grid gap-2 border p-2 sm:grid-cols-[12rem_1fr_auto]"
     >
       <input name="categoryId" type="hidden" value={search.categoryId} />
       {search.categoryType ? (
         <input name="categoryType" type="hidden" value={search.categoryType} />
       ) : null}
       <input name="viewType" type="hidden" value={search.viewType ?? 'TABLE'} />
-      <select
-        className="bg-default-fill text-default-label focus:ring-default-blue/10 h-10 rounded-md border-0 px-3 text-sm transition outline-none focus:ring-4"
-        name="keyField"
-        defaultValue={search.keyField ?? 'title'}
-        aria-label="검색 필드"
-      >
-        <option value="title">제목</option>
-        <option value="content">내용</option>
-        <option value="createdBy">작성자</option>
-      </select>
+      <SearchFieldDropdown defaultValue={search.keyField ?? 'title'} />
       <input
-        className="bg-default-fill text-default-label focus:ring-default-blue/10 h-10 rounded-md border-0 px-3 text-sm transition outline-none focus:ring-4"
+        className="border-default-separator bg-default-surface text-default-label focus:border-default-label h-10 rounded-none border px-3 text-sm outline-none transition focus:ring-2 focus:ring-default-blue/15"
         name="keyWord"
         type="search"
         defaultValue={search.keyWord ?? ''}
@@ -186,7 +180,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
         aria-label="검색어"
       />
       <button
-        className={`${controlClassName} bg-default-blue px-4 font-semibold text-white hover:brightness-95`}
+        className="border-default-label bg-default-label text-default-background inline-flex h-10 items-center justify-center gap-2 border px-4 text-sm font-semibold transition hover:bg-default-secondary-label focus-visible:ring-2 focus-visible:ring-default-blue/20 focus-visible:outline-none"
         type="submit"
       >
         <Search className="size-4" />
@@ -212,138 +206,168 @@ function EmptyState() {
   );
 }
 
-function TableArticleRow({
+function formatArchiveMonth(value: string | null | undefined): string {
+  if (!value) {
+    return '날짜 미상';
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long'
+  }).format(new Date(value));
+}
+
+function formatArchiveDay(value: string | null | undefined): string {
+  if (!value) {
+    return '--';
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', { day: '2-digit' }).format(
+    new Date(value)
+  );
+}
+
+function formatArchiveWeekday(value: string | null | undefined): string {
+  if (!value) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', { weekday: 'short' }).format(
+    new Date(value)
+  );
+}
+
+function ArchiveTimelineEntry({
   article,
-  indexLabel,
+  compact,
   pinned
 }: Readonly<{
   article: ArticleResponse;
-  indexLabel: string;
+  compact: boolean;
   pinned?: boolean;
 }>) {
+  const thumbnail = article.inlineImages?.[0];
+  const content = article.plainContent ?? toPlainText(article.content);
+
   return (
-    <li className="border-default-separator/70 hover:bg-default-fill/60 grid grid-cols-[2.5rem_1fr] gap-3 border-b px-3 py-3 transition last:border-b-0 sm:px-4">
-      <div className="flex items-start justify-center pt-0.5">
-        {pinned ? (
-          <span className="bg-default-orange-soft text-default-orange-contrast inline-flex size-7 items-center justify-center rounded-md shadow-[inset_0_1px_0_rgb(255_255_255_/_0.3)]">
-            <Pin className="size-3.5" />
+    <li className="group relative grid grid-cols-[3.25rem_minmax(0,1fr)] gap-4 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6">
+      <div className="relative border-r border-default-separator pr-4 text-right sm:pr-6">
+        <span className="text-default-label block text-xl leading-none font-semibold tracking-tight sm:text-2xl">
+          {pinned ? <Pin className="text-default-orange ml-auto size-4" /> : formatArchiveDay(article.createdDate)}
+        </span>
+        {!pinned ? (
+          <span className="text-default-tertiary-label mt-1 block text-[0.65rem] font-medium uppercase">
+            {formatArchiveWeekday(article.createdDate)}
           </span>
-        ) : (
-          <span className="bg-default-fill text-default-tertiary-label inline-flex min-w-7 justify-center rounded-md px-1.5 py-1 text-xs font-semibold">
-            {indexLabel}
-          </span>
-        )}
+        ) : null}
+        <span className="bg-default-background absolute top-1.5 -right-1.5 size-2.5 border border-default-separator" />
       </div>
-      <div className="min-w-0">
-        <Link
-          className="text-default-label hover:text-default-blue inline-flex max-w-full items-center gap-2 text-sm font-medium"
-          href={toArticleHref(article)}
-        >
-          <span className="truncate">{article.title}</span>
-          {isRecentlyGenerated(article.createdDate) ? (
-            <span className="bg-default-blue-soft text-default-blue-contrast rounded-full px-2 py-0.5 text-[0.625rem] font-bold">
-              NEW
+
+      <Link
+        className={`relative min-w-0 border-b border-default-separator pb-6 transition-colors last:border-b-0 hover:border-default-blue-muted ${compact ? 'grid grid-cols-[minmax(0,1fr)_5rem] gap-3 pt-0 sm:grid-cols-[minmax(0,1fr)_7rem]' : 'grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]'}`}
+        href={toArticleHref(article)}
+      >
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-default-tertiary-label text-[0.65rem] font-semibold tracking-[0.16em] uppercase">
+              {pinned ? '공지' : 'Article'}
             </span>
+            {isRecentlyGenerated(article.createdDate) ? (
+              <span className="border-default-blue-muted bg-default-blue-soft text-default-blue-contrast border px-1.5 py-0.5 text-[0.6rem] font-bold">
+                NEW
+              </span>
+            ) : null}
+          </div>
+          <h2 className="text-default-label group-hover:text-default-blue mt-2 line-clamp-2 text-base font-semibold transition-colors sm:text-lg">
+            {article.title}
+          </h2>
+          {!compact ? (
+            <p className="text-default-secondary-label mt-3 line-clamp-2 text-sm leading-6">
+              {content || '본문 미리보기가 없습니다.'}
+            </p>
           ) : null}
-        </Link>
-        <ArticleMeta article={article} />
-      </div>
+          <ArticleMeta article={article} showViews={!compact} />
+        </div>
+        {thumbnail ? (
+          <MonochromeImage
+            className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} w-full`}
+            imageClassName="object-cover grayscale transition duration-500 group-hover:grayscale-0"
+            src={toAttachmentUrl(thumbnail.id)}
+            alt={thumbnail.originalName ?? article.title}
+          />
+        ) : (
+          <MonochromeImageFallback className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} w-full`} label="NO IMAGE / ARTICLE" />
+        )}
+      </Link>
     </li>
   );
 }
 
-function ArticleTable({
+function ArticleTimeline({
   fixedArticles,
-  page
+  page,
+  viewType
 }: Readonly<{
   fixedArticles: readonly ArticleResponse[];
   page: PagedModel<ArticleResponse>;
+  viewType: ArticleViewType;
 }>) {
   const articles = page.content.filter((article) => !article.fixed);
-  const pageNumber = page.page?.number ?? 0;
-  const pageSize = page.page?.size ?? articles.length;
-  const totalElements = page.page?.totalElements ?? articles.length;
+  const compact = viewType === 'TABLE';
 
   if (fixedArticles.length === 0 && articles.length === 0) {
     return <EmptyState />;
   }
 
+  let previousMonth = '';
+
   return (
-    <section className={`${mattePanelClassName} overflow-hidden`}>
-      <header className="border-default-separator/70 bg-default-fill/55 flex items-center justify-between border-b px-4 py-3">
-        <h2 className="text-default-label text-sm font-medium">게시글</h2>
+    <section className={`${mattePanelClassName} p-5 sm:p-7`}>
+      <header className="mb-8 flex items-end justify-between gap-4 border-b border-default-separator pb-4">
+        <div>
+          <p className="text-default-blue text-xs font-semibold tracking-[0.2em] uppercase">
+            Archive timeline
+          </p>
+          <h2 className="text-default-label mt-2 text-xl font-semibold tracking-tight">
+            게시글의 흐름
+          </h2>
+        </div>
         <span className="text-default-tertiary-label text-xs">
-          총 {page.page?.totalElements ?? page.content.length}개
+          {page.page?.totalElements ?? page.content.length} entries
         </span>
       </header>
-      <ul>
+
+      <ol className="space-y-7">
         {fixedArticles.map((article) => (
-          <TableArticleRow
+          <ArchiveTimelineEntry
             key={article.id}
             article={article}
-            indexLabel="공지"
+            compact={compact}
             pinned
           />
         ))}
-        {articles.map((article, index) => (
-          <TableArticleRow
-            key={article.id}
-            article={article}
-            indexLabel={String(
-              Math.max(totalElements - pageNumber * pageSize - index, 1)
-            )}
-          />
-        ))}
-      </ul>
-    </section>
-  );
-}
+        {articles.map((article) => {
+          const month = formatArchiveMonth(article.createdDate);
+          const showMonth = month !== previousMonth;
+          previousMonth = month;
 
-function ArticleCard({ article }: Readonly<{ article: ArticleResponse }>) {
-  const thumbnail = article.inlineImages?.[0];
-  const content = article.plainContent ?? toPlainText(article.content);
-
-  return (
-    <Link
-      className={`${mattePanelClassName} hover:border-default-blue-muted group hover:bg-default-surface flex h-full flex-col overflow-hidden transition hover:-translate-y-0.5`}
-      href={toArticleHref(article)}
-    >
-      {thumbnail ? (
-        <img
-          className="aspect-video w-full object-cover"
-          src={toAttachmentUrl(thumbnail.id)}
-          alt={thumbnail.originalName ?? article.title}
-        />
-      ) : (
-        <div className="bg-default-fill text-default-tertiary-label flex aspect-video w-full items-center justify-center text-sm font-medium">
-          <Inbox className="size-7" />
-        </div>
-      )}
-      <div className="flex flex-1 flex-col p-4">
-        <h2 className="text-default-label group-hover:text-default-blue line-clamp-2 text-base font-medium">
-          {article.title}
-        </h2>
-        <p className="text-default-secondary-label mt-3 line-clamp-3 flex-1 text-sm leading-6">
-          {content || '본문 미리보기가 없습니다.'}
-        </p>
-        <ArticleMeta article={article} />
-      </div>
-    </Link>
-  );
-}
-
-function ArticleCards({
-  page
-}: Readonly<{ page: PagedModel<ArticleResponse> }>) {
-  if (page.content.length === 0) {
-    return <EmptyState />;
-  }
-
-  return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {page.content.map((article) => (
-        <ArticleCard key={article.id} article={article} />
-      ))}
+          return (
+            <li key={article.id} className="space-y-4">
+              {showMonth ? (
+                <div className="border-b border-default-separator pb-2 pl-[4.25rem] text-xs font-semibold tracking-[0.16em] text-default-tertiary-label uppercase sm:pl-[7.5rem]">
+                  {month}
+                </div>
+              ) : null}
+              <ol>
+                <ArchiveTimelineEntry
+                  article={article}
+                  compact={compact}
+                />
+              </ol>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
@@ -511,12 +535,12 @@ export function ArticlePageContent({
         <SearchForm search={search} />
 
         {viewType === 'CARD' ? (
-          <ArticleCards page={page} />
+          <ArticleFeed fixedArticles={fixedArticles} initialPage={page} search={search} />
         ) : (
-          <ArticleTable fixedArticles={fixedArticles} page={page} />
+          <ArticleTimeline fixedArticles={fixedArticles} page={page} viewType={viewType} />
         )}
 
-        <Pagination page={page} search={search} />
+        {viewType === 'TABLE' ? <Pagination page={page} search={search} /> : null}
       </div>
     </main>
   );

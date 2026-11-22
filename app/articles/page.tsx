@@ -94,7 +94,7 @@ export default async function ArticlesPage({
   };
   const [page, fixedArticles] = await Promise.all([
     fetchArticles(search),
-    viewType === 'TABLE' ? fetchFixedArticles(categoryId) : Promise.resolve([])
+    fetchFixedArticles(categoryId)
   ]);
 
   return (
