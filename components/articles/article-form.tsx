@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, Loader2, Trash2, X } from 'lucide-react';
+import { Check, ChevronDown, FileText, Loader2, Trash2, X } from 'lucide-react';
 
 import type { AttachmentResponse } from '@/types/attachment';
 import {
@@ -209,6 +209,45 @@ export function ArticleForm({
           </label>
         </div>
 
+        <details className="group border-default-separator border-b">
+          <summary className="text-default-label hover:bg-default-fill flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-semibold transition [&::-webkit-details-marker]:hidden sm:px-7">
+            <span className="flex min-w-0 items-center gap-2">
+              <FileText aria-hidden className="size-4 shrink-0" />
+              <span>첨부파일</span>
+              <span className="text-default-tertiary-label">{files.length + attachments.length}</span>
+            </span>
+            <ChevronDown aria-hidden className="text-default-tertiary-label size-4 shrink-0 transition-transform group-open:rotate-180" />
+          </summary>
+
+          <div className="border-default-separator space-y-3 border-t px-5 py-5 sm:px-7">
+            <div>
+              <p className="text-default-label text-sm font-medium">파일 추가</p>
+              <p className="text-default-tertiary-label mt-1 text-xs">본문에 삽입하지 않는 파일을 추가합니다.</p>
+            </div>
+            <AttachmentUpload files={files} onChange={setFiles} />
+
+            {attachments.length > 0 ? (
+              <div className="space-y-2">
+                <p className="text-default-secondary-label text-xs font-semibold">기존 첨부파일</p>
+                <ul className="border-default-separator overflow-hidden border">
+                  {attachments.map((attachment) => (
+                    <li className="border-default-separator flex items-center justify-between gap-3 border-b px-4 py-2.5 last:border-b-0" key={attachment.id}>
+                      <span className="text-default-label truncate text-sm">{attachment.originalName ?? attachment.name}</span>
+                      <button
+                        className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red focus-visible:outline-default-label shrink-0 p-1.5 transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+                        type="button"
+                        onClick={() => setAttachmentToDelete(attachment)}
+                      >
+                        <Trash2 aria-hidden className="size-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </details>
+
         <div className="space-y-2 px-5 py-5 sm:px-7 sm:py-7">
           <span className="text-default-label text-sm font-medium">본문</span>
           <ArticleEditor
@@ -223,40 +262,6 @@ export function ArticleForm({
             ) : null}
         </div>
 
-        <div className="border-default-separator space-y-3 border-t px-5 py-5 sm:px-7">
-          <div>
-            <span className="text-default-label text-sm font-medium">첨부파일</span>
-            <p className="text-default-tertiary-label mt-1 text-xs">본문에 삽입하지 않는 파일을 추가합니다.</p>
-          </div>
-          <AttachmentUpload files={files} onChange={setFiles} />
-
-            {attachments.length > 0 ? (
-              <div className="space-y-2">
-                <p className="text-default-secondary-label text-xs font-semibold">
-                  기존 첨부파일
-                </p>
-                <ul className="border-default-separator overflow-hidden border">
-                  {attachments.map((attachment) => (
-                    <li
-                      className="border-default-separator flex items-center justify-between gap-3 border-b px-4 py-2.5 last:border-b-0"
-                      key={attachment.id}
-                    >
-                      <span className="text-default-label truncate text-sm">
-                        {attachment.originalName ?? attachment.name}
-                      </span>
-                      <button
-                        className="text-default-tertiary-label hover:bg-default-fill hover:text-default-red focus-visible:outline-default-label shrink-0 p-1.5 transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
-                        type="button"
-                        onClick={() => setAttachmentToDelete(attachment)}
-                      >
-                        <Trash2 aria-hidden className="size-4" />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-        </div>
       </section>
 
       <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
