@@ -293,15 +293,15 @@
   --default-blue: #3d423d;
   --default-blue-soft: #d9ddd7;
   --default-blue-muted: #5d635c;
-  --default-blue-contrast: #20221f;
+  --default-blue-contrast: #f1f2ed;
   --default-indigo: #4d514d;
   --default-indigo-soft: #dfe1dc;
   --default-indigo-muted: #777b74;
-  --default-indigo-contrast: #20221f;
+  --default-indigo-contrast: #f1f2ed;
   --default-purple: #555954;
   --default-purple-soft: #e1e2dd;
   --default-purple-muted: #7d8179;
-  --default-purple-contrast: #20221f;
+  --default-purple-contrast: #f1f2ed;
   --default-pink: #645956;
   --default-pink-soft: #e8e1de;
   --default-pink-muted: #8b7d78;
@@ -367,35 +367,35 @@
   --default-pink: #cebdb8;
   --default-pink-soft: #3b302e;
   --default-pink-muted: #ae9690;
-  --default-pink-contrast: #20221f;
+  --default-pink-contrast: #f1f2ed;
   --default-red: #d5b1ae;
   --default-red-soft: #3a2928;
   --default-red-muted: #b88e89;
-  --default-red-contrast: #20221f;
+  --default-red-contrast: #f1f2ed;
   --default-orange: #d1c6a9;
   --default-orange-soft: #383426;
   --default-orange-muted: #b6a87e;
-  --default-orange-contrast: #20221f;
+  --default-orange-contrast: #f1f2ed;
   --default-yellow: #d5cda9;
   --default-yellow-soft: #393626;
   --default-yellow-muted: #b9ae7b;
-  --default-yellow-contrast: #20221f;
+  --default-yellow-contrast: #f1f2ed;
   --default-green: #b8c8b9;
   --default-green-soft: #263329;
   --default-green-muted: #95ad99;
-  --default-green-contrast: #20221f;
+  --default-green-contrast: #f1f2ed;
   --default-mint: #b7c9c0;
   --default-mint-soft: #26342f;
   --default-mint-muted: #94afa2;
-  --default-mint-contrast: #20221f;
+  --default-mint-contrast: #f1f2ed;
   --default-teal: #b8c8c2;
   --default-teal-soft: #273531;
   --default-teal-muted: #95ada4;
-  --default-teal-contrast: #20221f;
+  --default-teal-contrast: #f1f2ed;
   --default-cyan: #bdc9ce;
   --default-cyan-soft: #29343a;
   --default-cyan-muted: #99aeb7;
-  --default-cyan-contrast: #20221f;
+  --default-cyan-contrast: #f1f2ed;
   --default-gray: #8d948c;
   --default-gray-2: #6f766e;
   --default-gray-3: #555c54;
@@ -407,4 +407,18 @@
   --default-tertiary-label: #81877e;
   --default-fill: #30332f;
   --default-separator: #3b3f3a;
+}
+
+/* 다크 모드의 밝은 primary surface 위에서는 흰색 대신 어두운 전경색을 사용한다. */
+.dark .bg-default-blue.text-white {
+  color: var(--default-blue-contrast);
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--default-blue);
+  outline-offset: 2px;
 }

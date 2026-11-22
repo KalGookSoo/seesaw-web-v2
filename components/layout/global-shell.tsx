@@ -151,10 +151,10 @@ function ParentCategoryLink({
 }>) {
   const href = getCategoryHref(category);
   const recentCount = category.recentArticles?.length ?? 0;
-  const className = `flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${
+  const className = `flex min-h-11 items-center gap-3 border-l-2 px-3 py-2 text-sm font-semibold transition ${
     active
-      ? 'bg-default-blue-soft text-default-blue-contrast ring-1 ring-default-blue-muted'
-      : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
+      ? 'border-default-label bg-default-fill text-default-label'
+      : 'border-transparent text-default-secondary-label hover:border-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
   } ${collapsed ? 'justify-center' : 'justify-between'}`;
 
   const content = (
@@ -197,10 +197,10 @@ function ChildCategoryLink({
 }>) {
   const href = getCategoryHref(category);
   const recentCount = category.recentArticles?.length ?? 0;
-  const className = `flex min-h-9 items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition ${
+  const className = `flex min-h-9 items-center justify-between gap-2 border-l-2 px-3 py-2 text-sm transition ${
     active
-      ? 'bg-default-label text-default-background'
-      : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
+      ? 'border-default-label bg-default-fill text-default-label font-semibold'
+      : 'border-transparent text-default-secondary-label hover:border-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
   }`;
   const content = (
     <>
@@ -242,7 +242,7 @@ function NavigationCategoryGroup({
         onNavigate={onNavigate}
       />
       {!collapsed && children.length > 0 ? (
-        <ul className="border-default-separator mt-1 space-y-1 border-l pl-3">
+        <ul className="border-default-separator mt-2 space-y-1 border-l pl-3">
           {children.map((child) => (
             <li key={child.id}>
               <ChildCategoryLink
@@ -346,10 +346,10 @@ function SideNavigation({
         <ul className="space-y-2">
           <li>
             <Link
-              className={`flex min-h-10 items-center rounded-lg px-3 py-2 text-sm font-semibold transition ${
+              className={`flex min-h-11 items-center border-l-2 px-3 py-2 text-sm font-semibold transition ${
                 currentCategory === null
-                  ? 'bg-default-blue-soft text-default-blue-contrast ring-default-blue-muted ring-1'
-                  : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
+                  ? 'border-default-label bg-default-fill text-default-label'
+                  : 'border-transparent text-default-secondary-label hover:border-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
               } ${collapsed ? 'justify-center' : ''}`}
               href="/"
               title={collapsed ? '홈' : undefined}
