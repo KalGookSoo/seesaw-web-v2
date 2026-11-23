@@ -196,6 +196,7 @@ export function scrollCurrentResultIntoView(
   if (!target || typeof target.scrollIntoView !== "function") return
 
   const prefersReducedMotion =
+    typeof window !== "undefined" &&
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
 

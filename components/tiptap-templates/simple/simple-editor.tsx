@@ -65,6 +65,7 @@ import {
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/tiptap-icons/link-icon"
+import { VideoIcon } from "lucide-react"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -223,15 +224,15 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton text="Add" />
         <Button
           aria-label="동영상 삽입"
           showTooltip
           tooltip="동영상 삽입"
           onClick={onVideoClick}
         >
-          <span className="tiptap-button-text">Video</span>
+          <VideoIcon className="tiptap-button-icon" />
         </Button>
+        <ImageUploadButton aria-label="이미지 삽입" />
       </ToolbarGroup>
 
       <Spacer />

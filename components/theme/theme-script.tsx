@@ -1,3 +1,5 @@
+import Script from 'next/script';
+
 const themeScript = `
 (() => {
   const key = 'seesaw-theme';
@@ -10,5 +12,11 @@ const themeScript = `
 `;
 
 export function ThemeScript() {
-  return <script dangerouslySetInnerHTML={{ __html: themeScript }} />;
+  return (
+    <Script
+      id="seesaw-theme-script"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: themeScript }}
+    />
+  );
 }
