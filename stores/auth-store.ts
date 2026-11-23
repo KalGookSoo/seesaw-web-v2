@@ -17,11 +17,15 @@ type AuthState = Readonly<{
 }>;
 
 async function fetchCurrentUser(): Promise<AuthenticatedUser | null> {
-  const response = await authorizedFetch('/api/me');
-  if (!response.ok) {
+  try {
+    const response = await authorizedFetch('/api/me');
+    if (!response.ok) {
+      return null;
+    }
+    return (await response.json()) as AuthenticatedUser;
+  } catch {
     return null;
   }
-  return (await response.json()) as AuthenticatedUser;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -34,6 +38,9 @@ export const useAuthStore = create<AuthState>()(
       // 않고(JS가 토큰을 갖고 있지 않게 하는 것이 목적) /api/me로 본인 정보만 조회해 채운다.
       login: async (tokens) => {
         const user = await fetchCurrentUser();
+        if (!user) {
+          throw new Error('로그인 정보를 확인할 수 없습니다. 다시 로그인해주세요.');
+        }
         set({
           expiresAt: tokens.expiresIn ? Date.now() + tokens.expiresIn : null,
           user,
@@ -68,6 +75,10 @@ export const useAuthStore = create<AuthState>()(
       // 새로고침 등으로 앱이 다시 시작될 때, 로컬에 남아있던(persist된) 로그인 상태가 실제로도
       // 유효한지 서버에 다시 확인한다. persist된 값은 화면이 깜빡이지 않게 하는 낙관적 표시일 뿐이다.
       bootstrap: async () => {
+        if (!get().isAuthenticated) {
+          set({ user: null, isAuthenticated: false, expiresAt: null });
+          return;
+        }
         const user = await fetchCurrentUser();
         set({ user, isAuthenticated: user !== null, expiresAt: user !== null ? get().expiresAt : null });
       }
