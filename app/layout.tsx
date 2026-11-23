@@ -8,7 +8,6 @@ import { NAVIGATION_COLLAPSED_COOKIE_KEY, NAVIGATION_POSITION_COOKIE_KEY } from 
 import { getSiteContext } from '@/lib/site';
 import { createSiteContext } from '@/lib/site-context';
 import { GlobalShell } from '@/components/layout/global-shell';
-import { ThemeScript } from '@/components/theme/theme-script';
 import { ServiceWorkerRegistration } from '@/app/service-worker-registration';
 import { SiteContextProvider } from '@/app/site-context-provider';
 import { ToastProvider } from '@/components/ui/toast';
@@ -50,7 +49,6 @@ export default async function RootLayout({
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <ThemeScript />
         <title>{`홈 | ${site.name}`}</title>
       </head>
       <body className="flex min-h-full flex-col">
@@ -61,7 +59,7 @@ export default async function RootLayout({
             </GlobalShell>
           </SiteContextProvider>
         </ToastProvider>
-        <ServiceWorkerRegistration siteId={site.id} siteName={site.name} themeColor={site.themeColor} />
+        <ServiceWorkerRegistration siteId={site.id} siteName={site.name} />
       </body>
     </html>
   );

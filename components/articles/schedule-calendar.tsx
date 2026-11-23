@@ -232,9 +232,9 @@ export function ScheduleCalendar({ categoryId, query }: ScheduleCalendarProps) {
         onClose={() => setSubscriptionOpen(false)}
       >
         <label className="text-default-label block text-sm font-medium" htmlFor="schedule-subscription-url">구독 URL</label>
-        <div className="mt-2 flex">
-          <input id="schedule-subscription-url" className="border-default-separator bg-default-fill text-default-label min-w-0 flex-1 border px-3 text-xs outline-none" readOnly value={subscriptionUrl} />
-          <button aria-label="구독 URL 복사" className="border-default-label bg-default-label text-default-surface inline-flex shrink-0 items-center gap-1.5 border px-3 text-xs font-semibold transition hover:bg-default-secondary-label focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-2" type="button" onClick={copySubscriptionUrl}>
+        <div className="mt-2 flex min-w-0 items-stretch">
+          <input id="schedule-subscription-url" className="border-default-separator bg-default-fill text-default-label min-h-11 min-w-0 flex-1 border px-3 py-2 text-base outline-none focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-[-2px]" readOnly value={subscriptionUrl} />
+          <button aria-label="구독 URL 복사" className="border-default-label bg-default-label text-default-surface inline-flex min-h-11 shrink-0 items-center gap-1.5 border px-4 text-sm font-semibold transition hover:bg-default-secondary-label focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-2" type="button" onClick={copySubscriptionUrl}>
             {copied ? <Check className="size-3.5" /> : <Clipboard className="size-3.5" />}
             {copied ? '복사됨' : '복사'}
           </button>

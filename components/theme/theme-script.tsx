@@ -16,7 +16,8 @@ export function ThemeScript() {
     <Script
       id="seesaw-theme-script"
       strategy="beforeInteractive"
-      dangerouslySetInnerHTML={{ __html: themeScript }}
-    />
+    >
+      {themeScript}
+    </Script>
   );
 }

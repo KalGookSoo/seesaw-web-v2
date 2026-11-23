@@ -248,15 +248,20 @@ export function ArticleForm({
           </div>
         </details>
 
-        <div className="space-y-2 px-5 py-5 sm:px-7 sm:py-7">
-          <span className="text-default-label text-sm font-medium">본문</span>
-          <ArticleEditor
-            initialContent={initialContent}
-            onChange={setContent}
-            onInlineImage={(file, src) => setInlineImages((current) => [...current, { file, src }])}
-            onInlineVideo={(file, src) => setInlineVideos((current) => [...current, { file, src }])}
-            onImageError={(message) => showToast(message, 'error')}
-          />
+        <div className="border-default-separator border-t">
+          <div className="bg-default-fill border-default-separator flex items-center justify-between gap-3 border-b px-5 py-3 sm:px-7">
+            <span className="text-default-label text-sm font-semibold">본문 편집</span>
+            <span className="text-default-tertiary-label text-xs">서식과 미디어를 추가할 수 있습니다</span>
+          </div>
+          <div className="px-5 py-5 sm:px-7 sm:py-7">
+            <ArticleEditor
+              initialContent={initialContent}
+              onChange={setContent}
+              onInlineImage={(file, src) => setInlineImages((current) => [...current, { file, src }])}
+              onInlineVideo={(file, src) => setInlineVideos((current) => [...current, { file, src }])}
+              onImageError={(message) => showToast(message, 'error')}
+            />
+          </div>
             {fieldErrors.content ? (
               <p className="text-default-red text-xs">{fieldErrors.content}</p>
             ) : null}

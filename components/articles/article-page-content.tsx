@@ -330,7 +330,7 @@ function ArchiveTimelineEntry({
               {pinned ? '공지' : 'Article'}
             </span>
             {isRecentlyGenerated(article.createdDate) ? (
-              <span className="border-default-blue-muted bg-default-blue-soft text-default-blue-contrast border px-1.5 py-0.5 text-[0.6rem] font-bold">
+              <span className="border-default-label bg-default-label text-default-surface border px-1.5 py-0.5 text-[0.6rem] font-bold">
                 NEW
               </span>
             ) : null}

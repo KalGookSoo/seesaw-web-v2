@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/use-auth';
 type ServiceWorkerRegistrationProps = Readonly<{
   siteId: string;
   siteName: string;
-  themeColor: string;
 }>;
 
 type BeforeInstallPromptEvent = Event &
@@ -142,7 +141,7 @@ async function subscribePushNotification(
   return subscription;
 }
 
-export function ServiceWorkerRegistration({ siteId, siteName, themeColor }: ServiceWorkerRegistrationProps) {
+export function ServiceWorkerRegistration({ siteId, siteName }: ServiceWorkerRegistrationProps) {
   const { isAuthenticated: authenticated } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installPromptVisible, setInstallPromptVisible] = useState(false);
@@ -228,11 +227,10 @@ export function ServiceWorkerRegistration({ siteId, siteName, themeColor }: Serv
   }
 
   return (
-    <aside className="border-default-separator bg-default-surface/95 text-default-label fixed right-4 bottom-4 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-xl border p-4 shadow-2xl shadow-black/15 backdrop-blur">
+    <aside className="border-default-separator bg-default-surface text-default-label fixed inset-x-3 bottom-3 z-50 rounded-lg border p-4 shadow-xl sm:right-4 sm:bottom-4 sm:left-auto sm:w-[calc(100vw-2rem)] sm:max-w-sm">
       <div className="flex items-start gap-3">
         <div
-          className="flex size-11 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
-          style={{ backgroundColor: themeColor || `var(--default-blue)` }}
+          className="bg-default-label text-default-surface flex size-11 shrink-0 items-center justify-center rounded-md"
         >
           <Smartphone className="size-5" />
         </div>
@@ -246,7 +244,7 @@ export function ServiceWorkerRegistration({ siteId, siteName, themeColor }: Serv
             </div>
             <button
               type="button"
-              className="text-default-tertiary-label hover:bg-default-fill hover:text-default-label rounded-full p-1 transition"
+              className="text-default-tertiary-label hover:bg-default-fill hover:text-default-label rounded-md p-1 transition"
               aria-label="설치 제안 닫기"
               onClick={closeInstallPrompt}
             >
@@ -256,8 +254,7 @@ export function ServiceWorkerRegistration({ siteId, siteName, themeColor }: Serv
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: themeColor || `var(--default-blue)` }}
+              className="bg-default-label text-default-surface hover:bg-default-secondary-label inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
               disabled={installing}
               onClick={installApplication}
             >

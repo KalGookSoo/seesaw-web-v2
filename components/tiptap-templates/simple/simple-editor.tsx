@@ -3,18 +3,24 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 import { mergeAttributes, Node } from "@tiptap/core"
-import heic2any from "heic2any"
+import sanitizeHtml from "sanitize-html"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
 import { Image } from "@tiptap/extension-image"
-import { TaskItem, TaskList } from "@tiptap/extension-list"
+import {
+  BulletList,
+  OrderedList,
+  TaskItem,
+  TaskList,
+} from "@tiptap/extension-list"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Typography } from "@tiptap/extension-typography"
 import { Highlight } from "@tiptap/extension-highlight"
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { FindAndReplace } from "@tiptap/extension-find-and-replace"
+import { TableKit } from "@tiptap/extension-table"
 import { Selection } from "@tiptap/extensions"
 
 // --- UI Primitives ---
@@ -65,7 +71,7 @@ import {
 import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/tiptap-icons/link-icon"
-import { VideoIcon } from "lucide-react"
+import { Code2, MoreHorizontal, Table2, VideoIcon, X } from "lucide-react"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -108,12 +114,22 @@ function getMediaType(file: File): string {
   return type
 }
 
+function normalizeHtmlSource(source: string): string {
+  const fencedSource = source.trim().match(/^```(?:html|xml)?\s*([\s\S]*?)\s*```$/i)?.[1] ?? source
+
+  return fencedSource
+    .replace(/&(?:nbsp|#160|#xA0);?/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .normalize("NFC")
+}
+
 async function prepareImageFile(file: File): Promise<File> {
   const mediaType = getMediaType(file)
   if (mediaType !== "image/heic" && mediaType !== "image/heif") {
     return file
   }
 
+  const { default: heic2any } = await import("heic2any")
   const converted = await heic2any({
     blob: file,
     toType: "image/jpeg",
@@ -143,6 +159,45 @@ const InlineVideo = Node.create({
   },
 })
 
+const HtmlContainer = Node.create({
+  name: "htmlContainer",
+  group: "block",
+  content: "block+",
+  defining: true,
+  addAttributes() {
+    return {
+      class: { default: null },
+      style: { default: null },
+    }
+  },
+  parseHTML() {
+    return [{ tag: "div" }]
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ["div", mergeAttributes(HTMLAttributes), 0]
+  },
+})
+
+const StyledBulletList = BulletList.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      class: { default: null },
+      style: { default: null },
+    }
+  },
+})
+
+const StyledOrderedList = OrderedList.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      class: { default: null },
+      style: { default: null },
+    }
+  },
+})
+
 export type SimpleEditorProps = Readonly<{
   initialContent: string
   onChange: (content: string) => void
@@ -159,6 +214,10 @@ const MainToolbarContent = ({
   searchAndReplaceButtonRef,
   isMobile,
   onVideoClick,
+  onTableClick,
+  onHtmlClick,
+  isOverflowOpen,
+  onOverflowToggle,
 }: {
   onHighlighterClick: () => void
   onLinkClick: () => void
@@ -167,6 +226,10 @@ const MainToolbarContent = ({
   searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>
   isMobile: boolean
   onVideoClick: () => void
+  onTableClick: () => void
+  onHtmlClick: () => void
+  isOverflowOpen: boolean
+  onOverflowToggle: () => void
 }) => {
   return (
     <>
@@ -179,61 +242,60 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
-      <ToolbarGroup>
-        <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
-        <ListDropdownMenu
-          modal={false}
-          types={["bulletList", "orderedList", "taskList"]}
-        />
-        <BlockquoteButton />
-        <CodeBlockButton />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
+      <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
 
       <ToolbarGroup>
         <MarkButton type="bold" />
         <MarkButton type="italic" />
         <MarkButton type="strike" />
-        <MarkButton type="code" />
-        <MarkButton type="underline" />
-        {!isMobile ? (
-          <ColorHighlightPopover />
-        ) : (
-          <ColorHighlightPopoverButton onClick={onHighlighterClick} />
-        )}
-        {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type="superscript" />
-        <MarkButton type="subscript" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
         <TextAlignButton align="left" />
         <TextAlignButton align="center" />
         <TextAlignButton align="right" />
         <TextAlignButton align="justify" />
       </ToolbarGroup>
 
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
+      <div className="simple-editor-toolbar-more">
         <Button
-          aria-label="동영상 삽입"
+          aria-expanded={isOverflowOpen}
+          aria-haspopup="menu"
+          aria-label="추가 편집 도구"
           showTooltip
-          tooltip="동영상 삽입"
-          onClick={onVideoClick}
+          tooltip="추가 편집 도구"
+          onClick={onOverflowToggle}
         >
-          <VideoIcon className="tiptap-button-icon" />
+          <MoreHorizontal className="tiptap-button-icon" />
         </Button>
-        <ImageUploadButton aria-label="이미지 삽입" />
-      </ToolbarGroup>
+        {isOverflowOpen ? (
+          <div className="simple-editor-toolbar-menu" role="menu">
+            <div className="simple-editor-toolbar-menu-group" role="group">
+              <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
+              <ListDropdownMenu modal={false} types={["bulletList", "orderedList", "taskList"]} />
+              <BlockquoteButton />
+              <CodeBlockButton />
+            </div>
+            <div className="simple-editor-toolbar-menu-group" role="group">
+              <MarkButton type="code" />
+              <MarkButton type="underline" />
+              {!isMobile ? <ColorHighlightPopover /> : <ColorHighlightPopoverButton onClick={onHighlighterClick} />}
+              {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
+              <MarkButton type="superscript" />
+              <MarkButton type="subscript" />
+            </div>
+            <div className="simple-editor-toolbar-menu-group" role="group">
+              <Button aria-label="표 삽입" showTooltip tooltip="표 삽입" onClick={onTableClick}>
+                <Table2 className="tiptap-button-icon" />
+              </Button>
+              <Button aria-label="HTML 삽입" showTooltip tooltip="HTML 삽입" onClick={onHtmlClick}>
+                <Code2 className="tiptap-button-icon" />
+              </Button>
+              <Button aria-label="동영상 삽입" showTooltip tooltip="동영상 삽입" onClick={onVideoClick}>
+                <VideoIcon className="tiptap-button-icon" />
+              </Button>
+              <ImageUploadButton aria-label="이미지 삽입" />
+            </div>
+          </div>
+        ) : null}
+      </div>
 
       <Spacer />
 
@@ -297,6 +359,13 @@ export function SimpleEditor({
   const toolbarRef = useRef<HTMLDivElement>(null)
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
+  const insertSelectionRef = useRef<{ from: number; to: number } | null>(null)
+  const [tableDialogOpen, setTableDialogOpen] = useState(false)
+  const [htmlDialogOpen, setHtmlDialogOpen] = useState(false)
+  const [tableRows, setTableRows] = useState("3")
+  const [tableColumns, setTableColumns] = useState("3")
+  const [htmlSource, setHtmlSource] = useState("")
+  const [isOverflowOpen, setIsOverflowOpen] = useState(false)
 
   const uploadInlineImage = useCallback(
     async (file: File) => {
@@ -335,11 +404,15 @@ export function SimpleEditor({
     extensions: [
       StarterKit.configure({
         horizontalRule: false,
+        bulletList: false,
+        orderedList: false,
         link: {
           openOnClick: false,
           enableClickSelection: true,
         },
       }),
+      StyledBulletList,
+      StyledOrderedList,
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
@@ -354,6 +427,15 @@ export function SimpleEditor({
         searchDebounceMs: 500,
         injectCSS: false,
       }),
+      TableKit.configure({
+        table: {
+          resizable: true,
+          HTMLAttributes: {
+            class: "simple-editor-table",
+          },
+        },
+      }),
+      HtmlContainer,
       ImageUploadNode.configure({
         accept: INLINE_IMAGE_TYPES.join(","),
         maxSize: INLINE_IMAGE_MAX_SIZE,
@@ -397,6 +479,71 @@ export function SimpleEditor({
     openSearchAndReplace()
   }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace])
 
+  const insertTable = useCallback(() => {
+    const rows = Math.min(20, Math.max(1, Number.parseInt(tableRows, 10) || 3))
+    const cols = Math.min(10, Math.max(1, Number.parseInt(tableColumns, 10) || 3))
+
+    editor?.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run()
+    setTableDialogOpen(false)
+  }, [editor, tableColumns, tableRows])
+
+  const insertHtml = useCallback(() => {
+    try {
+      const sanitizedHtml = sanitizeHtml(normalizeHtmlSource(htmlSource), {
+        allowedTags: [
+          "a", "blockquote", "br", "code", "del", "div", "em", "h1", "h2", "h3", "h4", "h5", "h6",
+          "hr", "img", "li", "ol", "p", "pre", "s", "span", "strong", "sub", "sup", "table", "tbody",
+          "td", "tfoot", "th", "thead", "tr", "u", "ul", "video"
+        ],
+        allowedAttributes: {
+          "*": ["class", "style"],
+          a: ["href", "target", "rel"],
+          img: ["src", "alt", "title"],
+          td: ["colspan", "rowspan"],
+          th: ["colspan", "rowspan"],
+          video: ["src", "controls", "poster"]
+        },
+        allowedSchemes: ["http", "https", "mailto"],
+        allowedSchemesByTag: {
+          a: ["http", "https", "mailto"],
+          img: ["http", "https", "data"],
+          video: ["http", "https"]
+        }
+      })
+
+      if (!sanitizedHtml.trim()) {
+        throw new Error("삽입할 수 있는 HTML 요소가 없습니다.")
+      }
+
+      if (!editor) {
+        throw new Error("에디터가 아직 준비되지 않았습니다.")
+      }
+
+      const selection = insertSelectionRef.current
+      const chain = editor.chain().focus()
+      if (selection) {
+        chain.setTextSelection(selection)
+      }
+      const inserted = chain.insertContent(sanitizedHtml, {
+        parseOptions: { preserveWhitespace: false },
+      }).run()
+      if (!inserted) {
+        throw new Error("HTML을 에디터 문서로 변환하지 못했습니다.")
+      }
+
+      setHtmlSource("")
+      setHtmlDialogOpen(false)
+    } catch (error) {
+      onImageError?.(
+        error instanceof Error
+          ? `HTML 코드를 삽입하지 못했습니다: ${error.message}`
+          : "HTML 코드를 삽입하지 못했습니다. HTML 형식을 확인해 주세요."
+      )
+    } finally {
+      insertSelectionRef.current = null
+    }
+  }, [editor, htmlSource, onImageError])
+
   // 공식 EditorProvider와 동일하게, Editor 인스턴스가 준비된 뒤에만 UI를 마운트한다.
   // 먼저 toolbar가 마운트되면 UI 컴포넌트가 null editor 상태를 구독한 채 남을 수 있다.
   if (!editor) {
@@ -425,6 +572,26 @@ export function SimpleEditor({
               searchAndReplaceButtonRef={searchAndReplaceButtonRef}
               isMobile={isMobile}
               onVideoClick={() => videoInputRef.current?.click()}
+              onTableClick={() => {
+                if (editor) {
+                  insertSelectionRef.current = {
+                    from: editor.state.selection.from,
+                    to: editor.state.selection.to,
+                  }
+                }
+                setTableDialogOpen(true)
+              }}
+              onHtmlClick={() => {
+                if (editor) {
+                  insertSelectionRef.current = {
+                    from: editor.state.selection.from,
+                    to: editor.state.selection.to,
+                  }
+                }
+                setHtmlDialogOpen(true)
+              }}
+              isOverflowOpen={isOverflowOpen}
+              onOverflowToggle={() => setIsOverflowOpen((open) => !open)}
             />
           ) : (
             <MobileToolbarContent
@@ -470,6 +637,51 @@ export function SimpleEditor({
             event.target.value = ""
           }}
         />
+
+        {tableDialogOpen ? (
+          <div className="simple-editor-dialog-backdrop" role="presentation">
+            <div className="simple-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="table-dialog-title">
+              <div className="simple-editor-dialog-header">
+                <div>
+                  <p id="table-dialog-title" className="simple-editor-dialog-title">표 삽입</p>
+                  <p className="simple-editor-dialog-description">표의 행과 열을 지정합니다.</p>
+                </div>
+                <button type="button" className="simple-editor-dialog-close" aria-label="표 삽입 닫기" onClick={() => setTableDialogOpen(false)}>
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="simple-editor-dialog-fields">
+                <label>행<input min="1" max="20" type="number" value={tableRows} onChange={(event) => setTableRows(event.target.value)} /></label>
+                <label>열<input min="1" max="10" type="number" value={tableColumns} onChange={(event) => setTableColumns(event.target.value)} /></label>
+              </div>
+              <div className="simple-editor-dialog-actions">
+                <button type="button" className="simple-editor-dialog-secondary" onClick={() => setTableDialogOpen(false)}>취소</button>
+                <button type="button" className="simple-editor-dialog-primary" onClick={insertTable}>삽입</button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {htmlDialogOpen ? (
+          <div className="simple-editor-dialog-backdrop" role="presentation">
+            <div className="simple-editor-dialog simple-editor-html-dialog" role="dialog" aria-modal="true" aria-labelledby="html-dialog-title">
+              <div className="simple-editor-dialog-header">
+                <div>
+                  <p id="html-dialog-title" className="simple-editor-dialog-title">HTML 삽입</p>
+                  <p className="simple-editor-dialog-description">안전하게 정제된 HTML이 현재 커서 위치에 삽입됩니다.</p>
+                </div>
+                <button type="button" className="simple-editor-dialog-close" aria-label="HTML 삽입 닫기" onClick={() => setHtmlDialogOpen(false)}>
+                  <X className="size-4" />
+                </button>
+              </div>
+              <textarea className="simple-editor-html-input" autoFocus value={htmlSource} placeholder="<p>본문을 입력하세요.</p>" onChange={(event) => setHtmlSource(event.target.value)} />
+              <div className="simple-editor-dialog-actions">
+                <button type="button" className="simple-editor-dialog-secondary" onClick={() => setHtmlDialogOpen(false)}>취소</button>
+                <button type="button" className="simple-editor-dialog-primary" disabled={!htmlSource.trim()} onClick={insertHtml}>HTML 삽입</button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </EditorContext.Provider>
     </div>
   )

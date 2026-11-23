@@ -91,6 +91,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       shortcutKeys,
       variant,
       size,
+      type = "button",
       role,
       "aria-checked": ariaChecked,
       ...props
@@ -127,6 +128,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           data-slot="tiptap-button"
           className={cn("tiptap-button", className)}
           ref={ref}
+          type={type}
           data-style={buttonStyle}
           data-size={buttonSize}
           data-variant={isCheckVariant ? "check" : undefined}
@@ -145,6 +147,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           data-slot="tiptap-button"
           className={cn("tiptap-button", className)}
           ref={ref}
+          type={type}
           data-style={buttonStyle}
           data-size={buttonSize}
           data-variant={isCheckVariant ? "check" : undefined}

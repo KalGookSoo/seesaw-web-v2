@@ -5,6 +5,8 @@ import Link from 'next/link';
 import {
   ArrowRight,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Newspaper
 } from 'lucide-react';
 
@@ -92,23 +94,22 @@ function formatDateTime(value: string | null | undefined): string {
   }).format(new Date(value));
 }
 
-function getMonthRange(): Readonly<{ start: Date; end: Date; label: string }> {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-  const end = new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    0,
-    23,
-    59,
-    59,
-    999
-  );
-  const label = new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
-    month: 'long'
-  }).format(now);
+type ScheduleView = 'upcoming' | 'monthly';
 
+function getScheduleRange(
+  view: ScheduleView,
+  month: Date
+): Readonly<{ start: Date; end: Date; label: string }> {
+  const now = new Date();
+  if (view === 'upcoming') {
+    const end = new Date(now);
+    end.setDate(end.getDate() + 30);
+    return { start: now, end, label: '앞으로 30일' };
+  }
+
+  const start = new Date(month.getFullYear(), month.getMonth(), 1, 0, 0, 0, 0);
+  const end = new Date(month.getFullYear(), month.getMonth() + 1, 0, 23, 59, 59, 999);
+  const label = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long' }).format(start);
   return { start, end, label };
 }
 
@@ -267,12 +268,13 @@ function BoardCategorySection({
 }
 
 function ScheduleCategorySection({
-  category,
-  monthRange
+  category
 }: Readonly<{
   category: CategoryResponse;
-  monthRange: ReturnType<typeof getMonthRange>;
 }>) {
+  const [view, setView] = useState<ScheduleView>('upcoming');
+  const [month, setMonth] = useState(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const scheduleRange = useMemo(() => getScheduleRange(view, month), [month, view]);
   const [state, setState] = useState<LoadState<readonly VEventResponse[]>>({
     status: 'loading',
     data: null,
@@ -282,7 +284,7 @@ function ScheduleCategorySection({
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchMonthlyEvents(category.id, monthRange.start, monthRange.end, {
+    fetchMonthlyEvents(category.id, scheduleRange.start, scheduleRange.end, {
       signal: controller.signal
     })
       .then((events) => {
@@ -295,13 +297,13 @@ function ScheduleCategorySection({
           const message =
             error instanceof Error
               ? error.message
-              : '월간 일정을 조회하지 못했습니다.';
+              : '일정을 조회하지 못했습니다.';
           setState({ status: 'error', data: null, message });
         }
       });
 
     return () => controller.abort();
-  }, [category.id, monthRange.end, monthRange.start]);
+  }, [category.id, scheduleRange.end, scheduleRange.start]);
 
   return (
     <section
@@ -311,108 +313,187 @@ function ScheduleCategorySection({
       <SectionHeader
         category={category}
         icon={<CalendarDays className="size-5" />}
-        suffix={monthRange.label}
+        suffix={scheduleRange.label}
       />
+      <ScheduleViewTabs value={view} onChange={setView} />
+      {view === 'monthly' ? <MonthlyMonthNavigator month={month} onChange={setMonth} /> : null}
       <div className="mt-4">
         {state.status === 'loading' ? <Spinner /> : null}
         {state.status === 'error' ? (
           <EmptyState message={state.message} />
         ) : null}
-        {state.status === 'success' && state.data.length === 0 ? (
-          <EmptyState message="이번 달 등록된 일정이 없습니다." />
-        ) : null}
-        {state.status === 'success' && state.data.length > 0 ? (
-          <MonthlyCalendar events={state.data} month={monthRange.start} />
-        ) : null}
+        {state.status === 'success' && view === 'upcoming' ? <UpcomingScheduleList events={state.data} /> : null}
+        {state.status === 'success' && view === 'monthly' ? <MonthlyDotCalendar events={state.data} month={scheduleRange.start} /> : null}
       </div>
     </section>
   );
 }
 
-function EventTicketCard({ event }: Readonly<{ event: VEventResponse }>) {
-  const start = event.dtStart ? new Date(event.dtStart) : null;
-  const day = start ? String(start.getDate()) : '--';
-  const month = start
-    ? new Intl.DateTimeFormat('ko-KR', { month: 'short' }).format(start)
-    : '';
+function ScheduleViewTabs({
+  value,
+  onChange
+}: Readonly<{
+  value: ScheduleView;
+  onChange: (value: ScheduleView) => void;
+}>) {
+  const tabs: ReadonlyArray<Readonly<{ value: ScheduleView; label: string }>> = [
+    { value: 'upcoming', label: '다가오는 일정' },
+    { value: 'monthly', label: '월별 일정' }
+  ];
 
   return (
-    <Link
-      href={
-        event.articleId
-          ? `/articles/${event.articleId}`
-          : '#'
-      }
-      className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-full flex-col overflow-hidden border transition"
-    >
-      <div className="bg-default-blue-soft text-default-blue-contrast flex items-baseline gap-1 px-4 py-3">
-        <span className="text-sm font-semibold">{month}</span>
-        <span className="text-2xl leading-none font-bold">{day}</span>
-        <span className="text-sm font-semibold">일</span>
-      </div>
-      <div className="flex-1 space-y-2 p-4">
-        <p className="text-default-tertiary-label text-xs font-semibold">
-          {formatDateTime(event.dtStart)}
-        </p>
-        <p className="text-default-label group-hover:text-default-blue line-clamp-2 text-sm font-semibold">
-          {event.title}
-        </p>
-        {event.location ? (
-          <p className="text-default-secondary-label truncate text-xs">
-            {event.location}
-          </p>
-        ) : null}
-      </div>
-    </Link>
+    <div className="border-default-separator bg-default-fill/45 mt-4 grid grid-cols-2 gap-1 border p-1" role="tablist" aria-label="일정 보기 방식">
+      {tabs.map((tab) => (
+        <button
+          key={tab.value}
+          type="button"
+          role="tab"
+          aria-selected={value === tab.value}
+          className={`min-w-0 px-2 py-2 text-xs font-semibold transition sm:text-sm ${value === tab.value ? 'bg-default-surface text-default-label shadow-sm' : 'text-default-tertiary-label hover:text-default-label'}`}
+          onClick={() => onChange(tab.value)}
+        >
+          <span className="block truncate">{tab.label}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
-function dateKey(date: Date): string {
+function MonthlyMonthNavigator({
+  month,
+  onChange
+}: Readonly<{
+  month: Date;
+  onChange: (month: Date) => void;
+}>) {
+  const label = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long' }).format(month);
+
+  return (
+    <div className="mt-3 flex items-center justify-between gap-3">
+      <button
+        type="button"
+        className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label border p-2 transition"
+        aria-label="이전 달"
+        onClick={() => onChange(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+      >
+        <ChevronLeft className="size-4" />
+      </button>
+      <p className="text-default-label text-sm font-semibold">{label}</p>
+      <button
+        type="button"
+        className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label border p-2 transition"
+        aria-label="다음 달"
+        onClick={() => onChange(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+      >
+        <ChevronRight className="size-4" />
+      </button>
+    </div>
+  );
+}
+
+function UpcomingScheduleList({ events }: Readonly<{ events: readonly VEventResponse[] }>) {
+  const upcomingEvents = events
+    .filter((event) => event.status !== 'CANCELLED')
+    .filter((event) => event.dtStart)
+    .sort((left, right) => new Date(left.dtStart ?? 0).getTime() - new Date(right.dtStart ?? 0).getTime())
+    .slice(0, 4);
+
+  if (upcomingEvents.length === 0) {
+    return <EmptyState message="다가오는 일정이 없습니다." />;
+  }
+
+  return (
+    <div className="divide-default-separator border-default-separator divide-y border-y">
+      {upcomingEvents.map((event) => {
+        const start = event.dtStart ? new Date(event.dtStart) : null;
+        const dateLabel = start
+          ? new Intl.DateTimeFormat('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' }).format(start)
+          : '일정 미정';
+
+        return (
+          <Link
+            key={event.id}
+            href={event.articleId ? `/articles/${event.articleId}` : '#'}
+            className="group grid gap-2 px-1 py-4 transition hover:bg-default-fill/60 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4"
+          >
+            <time className="text-default-secondary-label text-xs font-semibold tracking-wide uppercase">
+              {dateLabel}
+            </time>
+            <span className="min-w-0">
+              <span className="text-default-label block truncate text-sm font-semibold group-hover:underline">
+                {event.title || '제목 없는 일정'}
+              </span>
+              <span className="text-default-tertiary-label mt-1 block truncate text-xs">
+                {[formatDateTime(event.dtStart), event.location].filter(Boolean).join(' · ') || '상세 정보 보기'}
+              </span>
+            </span>
+            <ArrowRight className="text-default-tertiary-label hidden size-4 shrink-0 transition-transform group-hover:translate-x-1 sm:block" />
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function calendarDateKey(date: Date): string {
   return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
-function monthDays(date: Date): Date[] {
-  const start = new Date(date.getFullYear(), date.getMonth(), 1);
-  start.setDate(start.getDate() - start.getDay());
+function getCalendarDays(month: Date): Date[] {
+  const firstDay = new Date(month.getFullYear(), month.getMonth(), 1);
+  firstDay.setDate(firstDay.getDate() - firstDay.getDay());
   return Array.from({ length: 42 }, (_, index) => {
-    const day = new Date(start);
-    day.setDate(start.getDate() + index);
-    return day;
+    const date = new Date(firstDay);
+    date.setDate(firstDay.getDate() + index);
+    return date;
   });
 }
 
-function MonthlyCalendar({
+function MonthlyDotCalendar({
   events,
   month
 }: Readonly<{ events: readonly VEventResponse[]; month: Date }>) {
-  const days = monthDays(month);
-  const eventsByDay = new Map<string, VEventResponse[]>();
-  events.forEach((event) => {
-    if (!event.dtStart) return;
-    const key = dateKey(new Date(event.dtStart));
-    eventsByDay.set(key, [...(eventsByDay.get(key) ?? []), event]);
-  });
+  const days = getCalendarDays(month);
+  const eventDays = new Map<string, number>();
+  events
+    .filter((event) => event.status !== 'CANCELLED' && event.dtStart)
+    .forEach((event) => {
+      const key = calendarDateKey(new Date(event.dtStart ?? 0));
+      eventDays.set(key, (eventDays.get(key) ?? 0) + 1);
+    });
 
   return (
-    <div>
-      <div className="grid grid-cols-7 border-t border-l border-default-separator text-center text-[0.65rem] font-semibold tracking-[0.12em] text-default-tertiary-label uppercase">
-        {['일', '월', '화', '수', '목', '금', '토'].map((day) => <span key={day} className="border-r border-b border-default-separator py-2">{day}</span>)}
+    <div className="border-default-separator border-t">
+      <div className="grid grid-cols-7 border-l border-default-separator text-center text-[0.65rem] font-semibold tracking-[0.12em] uppercase">
+        {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
+          <span key={day} className={`border-r border-b border-default-separator py-2 ${index === 0 ? 'text-red-700 dark:text-red-300' : index === 6 ? 'text-blue-700 dark:text-blue-300' : 'text-default-tertiary-label'}`}>
+            {day}
+          </span>
+        ))}
       </div>
-      <div className="hidden grid-cols-7 border-l border-default-separator sm:grid">
+      <div className="grid grid-cols-7 border-l border-default-separator">
         {days.map((day) => {
-          const dayEvents = eventsByDay.get(dateKey(day)) ?? [];
+          const eventCount = eventDays.get(calendarDateKey(day)) ?? 0;
           const currentMonth = day.getMonth() === month.getMonth();
+          const today = new Date();
+          const isToday = calendarDateKey(day) === calendarDateKey(today);
+          const weekendClass = day.getDay() === 0 ? 'text-red-700 dark:text-red-300' : day.getDay() === 6 ? 'text-blue-700 dark:text-blue-300' : 'text-default-label';
+
           return (
-            <div key={dateKey(day)} className={`min-h-24 border-r border-b border-default-separator p-2 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/45'}`}>
-              <span className={`text-xs ${currentMonth ? 'text-default-label' : 'text-default-tertiary-label'}`}>{day.getDate()}</span>
-              <div className="mt-2 space-y-1">
-                {dayEvents.slice(0, 2).map((event) => <a key={event.id} href={event.articleId ? `/articles/${event.articleId}` : '#'} className="block truncate border-l-2 border-default-blue bg-default-blue-soft px-1.5 py-1 text-left text-[0.65rem] font-medium text-default-blue-contrast hover:bg-default-fill">{event.title}</a>)}
-              </div>
+            <div
+              key={calendarDateKey(day)}
+              className={`flex min-h-12 flex-col items-center justify-center gap-1 border-r border-b border-default-separator p-1.5 sm:min-h-14 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/35'}`}
+              aria-label={`${day.getMonth() + 1}월 ${day.getDate()}일${eventCount > 0 ? ` 일정 ${eventCount}건` : ''}`}
+            >
+              <span className={`flex size-6 items-center justify-center text-xs ${currentMonth ? weekendClass : 'text-default-tertiary-label'} ${isToday ? 'bg-default-label text-default-surface rounded-full font-bold' : ''}`}>
+                {day.getDate()}
+              </span>
+              <span className={`size-1.5 rounded-full ${eventCount > 0 && currentMonth ? 'bg-default-label' : 'bg-transparent'}`} aria-hidden="true" />
             </div>
           );
         })}
       </div>
-      <div className="space-y-2 pt-3 sm:hidden">{events.map((event) => <EventTicketCard key={event.id} event={event} />)}</div>
+      {eventDays.size === 0 ? <p className="text-default-tertiary-label pt-3 text-xs">표시할 일정이 없습니다.</p> : null}
     </div>
   );
 }
@@ -451,7 +532,6 @@ function SectionHeader({
 }
 
 export function HomeSummarySections({ categories }: HomeSummarySectionsProps) {
-  const monthRange = useMemo(() => getMonthRange(), []);
   const boardCategories = [...categories]
     .filter(
       (category) =>
@@ -481,7 +561,6 @@ export function HomeSummarySections({ categories }: HomeSummarySectionsProps) {
           <ScheduleCategorySection
             key={category.id}
             category={category}
-            monthRange={monthRange}
           />
         ))}
       </div>

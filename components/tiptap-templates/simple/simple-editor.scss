@@ -56,7 +56,11 @@ body,
 
 .simple-editor-wrapper {
   width: 100%;
-  min-height: 32rem;
+  height: min(60dvh, 48rem);
+  min-height: 24rem;
+  max-height: calc(100dvh - 12rem);
+  display: flex;
+  flex-direction: column;
   overflow: visible;
 }
 
@@ -70,16 +74,227 @@ body,
 
 .simple-editor-content {
   width: 100%;
-  min-height: 32rem;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
-  flex: 1;
-  min-height: 32rem;
+  flex: none;
+  min-height: 100%;
   padding: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.simple-editor-toolbar-more {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.tiptap-toolbar:has(.simple-editor-toolbar-more) {
+  overflow: visible;
+  min-width: 0;
+}
+
+.simple-editor-toolbar-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 55;
+  display: grid;
+  gap: 0.5rem;
+  min-width: 14rem;
+  padding: 0.5rem;
+  border: 1px solid var(--tt-gray-light-a-200);
+  background: var(--tt-bg-color);
+  box-shadow: var(--tt-shadow-elevated-md);
+}
+
+.dark .simple-editor-toolbar-menu {
+  border-color: var(--tt-gray-dark-a-200);
+}
+
+.simple-editor-toolbar-menu-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 1rem 0;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor th,
+.simple-editor-content .tiptap.ProseMirror.simple-editor td {
+  min-width: 5rem;
+  border: 1px solid var(--tt-gray-light-300);
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+}
+
+.dark .simple-editor-content .tiptap.ProseMirror.simple-editor th,
+.dark .simple-editor-content .tiptap.ProseMirror.simple-editor td {
+  border-color: var(--tt-gray-dark-700);
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor th {
+  background: var(--tt-gray-light-100);
+  font-weight: 600;
+}
+
+.dark .simple-editor-content .tiptap.ProseMirror.simple-editor th {
+  background: var(--tt-gray-dark-800);
+}
+
+.simple-editor-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 0.48);
+}
+
+.simple-editor-dialog {
+  width: min(100%, 25rem);
+  border: 1px solid var(--tt-gray-light-300);
+  background: var(--tt-bg-color);
+  color: var(--tt-theme-text);
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.2);
+}
+
+.dark .simple-editor-dialog {
+  border-color: var(--tt-gray-dark-700);
+}
+
+.simple-editor-dialog-header,
+.simple-editor-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--tt-gray-light-300);
+}
+
+.dark .simple-editor-dialog-header,
+.dark .simple-editor-dialog-actions {
+  border-color: var(--tt-gray-dark-700);
+}
+
+.simple-editor-dialog-actions {
+  justify-content: flex-end;
+  border-top: 1px solid var(--tt-gray-light-300);
+  border-bottom: 0;
+}
+
+.simple-editor-dialog-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.simple-editor-dialog-description {
+  margin-top: 0.25rem;
+  color: var(--tt-gray-light-600);
+  font-size: 0.75rem;
+}
+
+.dark .simple-editor-dialog-description {
+  color: var(--tt-gray-dark-400);
+}
+
+.simple-editor-dialog-close {
+  padding: 0.4rem;
+  color: var(--tt-gray-light-600);
+}
+
+.simple-editor-dialog-close:hover,
+.simple-editor-dialog-close:focus-visible {
+  color: var(--tt-theme-text);
+}
+
+.simple-editor-dialog-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.simple-editor-dialog-fields label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.simple-editor-dialog-fields input,
+.simple-editor-html-input {
+  width: 100%;
+  border: 1px solid var(--tt-gray-light-300);
+  background: transparent;
+  color: inherit;
+  outline: 0;
+}
+
+.simple-editor-dialog-fields input {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 1rem;
+}
+
+.simple-editor-html-input {
+  min-height: 12rem;
+  margin: 1.25rem;
+  width: calc(100% - 2.5rem);
+  padding: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.simple-editor-dialog-fields input:focus-visible,
+.simple-editor-html-input:focus-visible {
+  border-color: var(--tt-theme-text);
+  box-shadow: 0 0 0 2px rgb(128 128 128 / 0.2);
+}
+
+.dark .simple-editor-dialog-fields input,
+.dark .simple-editor-html-input {
+  border-color: var(--tt-gray-dark-700);
+}
+
+.simple-editor-dialog-primary,
+.simple-editor-dialog-secondary {
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.simple-editor-dialog-primary {
+  background: var(--tt-theme-text);
+  color: var(--tt-bg-color);
+}
+
+.simple-editor-dialog-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.simple-editor-dialog-secondary {
+  border: 1px solid var(--tt-gray-light-300);
+}
+
+.dark .simple-editor-dialog-secondary {
+  border-color: var(--tt-gray-dark-700);
 }
 
 @media screen and (max-width: 480px) {
