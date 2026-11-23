@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight, Search } from 'lucide-react';
+import { useSiteContext } from '@/app/site-context-provider';
 
 type SearchResponse = {
   keyword: string;
@@ -22,24 +23,25 @@ function normalizeSearchResponse(response: Partial<SearchResponse> | null | unde
 
 function SearchPageContent() {
   const params = useSearchParams();
+  const { SITE_CONTEXT } = useSiteContext();
   const keyword = params.get('keyword')?.trim() ?? '';
   const [result, setResult] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!keyword) {
+    if (!keyword || !SITE_CONTEXT.id) {
       setLoading(false);
       return;
     }
     const controller = new AbortController();
     setLoading(true);
-    fetch(`/api/search?${new URLSearchParams({ keyword, limit: '20' })}`, { signal: controller.signal })
+    fetch(`/api/search?${new URLSearchParams({ siteId: SITE_CONTEXT.id, keyword, limit: '20' })}`, { signal: controller.signal })
       .then((response) => response.json() as Promise<Partial<SearchResponse>>)
       .then(normalizeSearchResponse)
       .then(setResult)
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [keyword]);
+  }, [SITE_CONTEXT.id, keyword]);
 
   return (
     <div className="bg-default-surface-grouped min-h-full px-4 py-10 sm:px-8 lg:px-12">
