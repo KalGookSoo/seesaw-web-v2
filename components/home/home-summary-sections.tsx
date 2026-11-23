@@ -342,14 +342,14 @@ function ScheduleViewTabs({
   ];
 
   return (
-    <div className="border-default-separator bg-default-fill/45 mt-4 grid grid-cols-2 gap-1 border p-1" role="tablist" aria-label="일정 보기 방식">
+    <div className="tab-group mt-4 grid-cols-2" role="tablist" aria-label="일정 보기 방식">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           type="button"
           role="tab"
           aria-selected={value === tab.value}
-          className={`min-w-0 px-2 py-2 text-xs font-semibold transition sm:text-sm ${value === tab.value ? 'bg-default-surface text-default-label shadow-sm' : 'text-default-tertiary-label hover:text-default-label'}`}
+          className={`min-w-0 px-2 py-2 text-xs font-semibold transition sm:text-sm ${value === tab.value ? 'bg-default-surface text-default-label' : 'text-default-tertiary-label hover:bg-default-surface/60 hover:text-default-label'}`}
           onClick={() => onChange(tab.value)}
         >
           <span className="block truncate">{tab.label}</span>

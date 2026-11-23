@@ -14,6 +14,7 @@
 :root {
   --background: #ecece8;
   --foreground: #20221f;
+  --default-radius: 0.25rem;
 }
 
 .dark {
@@ -82,7 +83,7 @@ input[type='radio']:focus-visible {
   min-height: 2.875rem;
   width: 100%;
   border: 1px solid var(--default-gray-3);
-  border-radius: 0.25rem;
+  border-radius: var(--default-radius);
   background: var(--default-surface-elevated);
   padding: 0.7rem 0.8rem;
   color: var(--default-label);
@@ -166,14 +167,32 @@ input[type='radio']:focus-visible {
 
 .form-success { border-color: var(--default-green); }
 
+.tab-group,
+.button-group {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--default-separator);
+  border-radius: var(--default-radius);
+  background: var(--default-fill);
+}
+
+.tab-group > button,
+.tab-group > a,
+.button-group > button,
+.button-group > a {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
 /* Monochrome relies on quiet edges instead of glossy cards and pill controls. */
 body .rounded-xl,
 body .rounded-lg {
-  border-radius: 0.25rem;
+  border-radius: var(--default-radius);
 }
 
 body .rounded-md {
-  border-radius: 0.2rem;
+  border-radius: var(--default-radius);
 }
 
 body .rounded-full {

@@ -182,7 +182,7 @@ function ViewSwitcher({
   }
 
   return (
-    <div className="bg-default-fill grid grid-cols-2 gap-1 rounded-lg p-1 shadow-[inset_0_1px_2px_rgb(0_0_0_/_0.08)]">
+    <div className="tab-group grid-cols-2">
       <Link
         className={`${controlClassName} ${
           viewType === 'TABLE'
