@@ -50,7 +50,7 @@ button {
   cursor: pointer;
 }
 
-/* Monochrome focus treatment: use the label tone instead of browser blue. */
+/* Modern Metal focus treatment: use the label tone instead of browser blue. */
 button:focus-visible,
 a:focus-visible,
 [role='button']:focus-visible,
@@ -76,7 +76,7 @@ input[type='radio']:focus-visible {
   box-shadow: none;
 }
 
-/* Shared form language for the site UI. The monochrome guide is the source of
+/* Shared form language for the site UI. The Modern Metal guide is the source of
    truth, while these classes keep production forms consistent with it. */
 .form-control,
 .form-select {
@@ -167,6 +167,21 @@ input[type='radio']:focus-visible {
 
 .form-success { border-color: var(--default-green); }
 
+.form-submit {
+  min-height: 2.875rem;
+  border-radius: var(--default-radius);
+  padding: 0.7rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.25;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.form-submit:focus-visible {
+  outline: 2px solid var(--default-label);
+  outline-offset: 2px;
+}
+
 .tab-group,
 .button-group {
   display: grid;
@@ -185,7 +200,7 @@ input[type='radio']:focus-visible {
   border-radius: 0 !important;
 }
 
-/* Monochrome relies on quiet edges instead of glossy cards and pill controls. */
+/* Modern Metal relies on quiet edges instead of glossy cards and pill controls. */
 body .rounded-xl,
 body .rounded-lg {
   border-radius: var(--default-radius);

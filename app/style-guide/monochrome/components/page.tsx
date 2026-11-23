@@ -90,7 +90,7 @@ export default function MonochromeComponentsPage() {
             <form className="grid gap-2 border-b border-[var(--monochrome-separator)] bg-[var(--monochrome-surface-grouped)] p-3 sm:grid-cols-[9rem_1fr_auto]" onSubmit={(event) => event.preventDefault()}>
               <select className="form-select" defaultValue="title" aria-label="검색 기준"><option value="title">제목</option><option value="content">내용</option></select>
               <input className="form-control" type="search" placeholder="검색어" aria-label="검색어" />
-              <button className={buttonPrimary} type="submit"><Search className="size-4" />검색</button>
+              <button className={`form-submit ${buttonPrimary}`} type="submit"><Search className="size-4" />검색</button>
             </form>
             <div className="m-3 rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-surface)] px-5 py-12 text-center sm:m-5">
               <span className="mx-auto flex size-11 items-center justify-center rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-fill)] text-[var(--monochrome-tertiary-label)]"><Inbox className="size-5" /></span>

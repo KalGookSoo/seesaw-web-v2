@@ -18,7 +18,7 @@ const styleGuides = [
   },
   {
     href: '/style-guide/monochrome',
-    label: 'Monochrome',
+    label: 'Modern Metal',
     desc: '차분한 회색조와 낮은 대비로 콘텐츠에 집중하는 제품형 인터페이스입니다.'
   },
   {

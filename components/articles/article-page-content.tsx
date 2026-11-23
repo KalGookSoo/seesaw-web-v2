@@ -237,7 +237,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
         aria-label="검색어"
       />
       <button
-        className="border-default-label bg-default-label text-default-background inline-flex h-10 items-center justify-center gap-2 border px-4 text-sm font-semibold transition hover:bg-default-secondary-label focus-visible:ring-2 focus-visible:ring-default-blue/20 focus-visible:outline-none"
+        className="form-submit border-default-label bg-default-label text-default-background inline-flex items-center justify-center gap-2 border transition hover:bg-default-secondary-label"
         type="submit"
       >
         <Search className="size-4" />

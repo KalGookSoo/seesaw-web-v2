@@ -3,7 +3,7 @@ import { PageIntro, PreviewPanel, StyleGuideSection } from 'app/style-guide/mono
 
 const pages = [
   { href: '/style-guide/monochrome/colors', title: 'Colors', desc: '배경, 표면, 잉크, 선, 상태색의 역할과 대비 기준' },
-  { href: '/style-guide/monochrome/forms', title: 'Forms', desc: '입력, 선택, 검색, 검증 상태를 위한 조용한 컨트롤' },
+  { href: '/style-guide/monochrome/forms', title: 'Forms', desc: '입력, 선택, 검색, 검증 상태를 위한 모던 메탈 컨트롤' },
   { href: '/style-guide/monochrome/components', title: 'Components', desc: '게시글, 일정, 탐색에 사용하는 공통 UI 조합' }
 ] as const;
 

@@ -16,8 +16,8 @@ export default function StyleGuideLayout({ children }: Readonly<{ children: Reac
               Style Guide Index
             </Link>
             <p className="text-sm font-medium text-[var(--monochrome-secondary-label)]">Seesaw Web v2</p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight lg:text-5xl">Monochrome Style Guide</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--monochrome-secondary-label)]">차분한 회색조, 낮은 대비, 선명한 정보 위계로 콘텐츠와 사용자의 행동에 집중하는 제품형 디자인 시스템입니다.</p>
+            <h1 className="mt-2 text-4xl font-semibold tracking-tight lg:text-5xl">Modern Metal Style Guide</h1>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--monochrome-secondary-label)]">크롬과 스테인리스의 절제된 반사감, 스틸의 얇은 경계, 따뜻한 모노톤을 조합해 콘텐츠와 행동을 또렷하게 보여주는 제품형 디자인 시스템입니다.</p>
           </div>
           <div className="flex items-end justify-between gap-3 lg:flex-col lg:items-stretch">
             <div className="rounded-lg bg-[var(--monochrome-fill)] px-4 py-3 font-mono text-xs text-[var(--monochrome-secondary-label)]">/style-guide/monochrome</div>

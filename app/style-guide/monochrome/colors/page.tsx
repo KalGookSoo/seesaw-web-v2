@@ -17,7 +17,7 @@ const tokens = [
 export default function MonochromeColorsPage() {
   return (
     <>
-      <PageIntro title="Colors">색상은 따뜻한 회색조를 기본으로 하며, 상태색도 채도와 밝기를 낮춰 전체 무드를 깨지 않도록 합니다. 액센트는 장식이 아니라 선택, 포커스, 주요 행동을 표시하는 도구입니다.</PageIntro>
+      <PageIntro title="Colors">따뜻한 회색조를 바탕으로 크롬 하이라이트와 스틸 경계를 절제해 사용합니다. 상태색도 채도와 밝기를 낮춰 금속성 무드를 깨지 않도록 하며, 액센트는 선택·포커스·주요 행동을 표시하는 도구로만 사용합니다.</PageIntro>
       <StyleGuideSection eyebrow="Neutral scale" title="Surfaces and ink">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tokens.map(([name, token, description]) => <div key={token} className="overflow-hidden rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-surface)] shadow-[var(--monochrome-shadow)]"><div className="h-20 border-b border-[var(--monochrome-separator)]" style={{ backgroundColor: `var(${token})` }} /><div className="p-4"><p className="font-semibold text-[var(--monochrome-label)]">{name}</p><p className="mt-1 text-sm text-[var(--monochrome-secondary-label)]">{description}</p><code className="mt-3 block text-xs text-[var(--monochrome-tertiary-label)]">{token}</code></div></div>)}
