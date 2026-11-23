@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { decode } from 'entities';
 
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
@@ -51,7 +51,7 @@ export async function renderSearchScopePage(scope: SearchScope, siteId: string, 
         {keyword && !result ? <div className="py-8"><SearchErrorState /></div> : null}
         {result && items.length === 0 ? <div className="py-8"><SearchEmptyState title="검색 결과가 없습니다" description="다른 검색어로 다시 시도해보세요." /></div> : null}
         {result && items.length > 0 ? <>
-          <ul className="divide-default-separator bg-default-surface mt-8 divide-y border px-5 sm:px-8">{scope === 'categories' ? items.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-5 transition"><span className="text-default-label block font-medium">{item.name || '이름 없는 카테고리'}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>) : items.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-5 transition"><span className="text-default-label block font-medium">{item.title || '제목 없는 게시글'}</span><span className="text-default-secondary-label mt-1 block line-clamp-3 text-sm leading-6">{toPlainText(item.preview) || '본문 미리보기 없음'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul>
+          <ul className="divide-default-separator bg-default-surface mt-8 divide-y border">{scope === 'categories' ? items.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill block px-5 py-5 transition sm:px-8"><span className="text-default-label block font-medium">{item.name || '이름 없는 카테고리'}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span></Link></li>) : items.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill block px-5 py-5 transition sm:px-8"><span className="text-default-label block font-medium">{item.title || '제목 없는 게시글'}</span><span className="text-default-secondary-label mt-1 block line-clamp-3 text-sm leading-6">{toPlainText(item.preview) || '본문 미리보기 없음'}</span></Link></li>)}</ul>
           <nav aria-label="검색 결과 페이지 이동" className="mt-6 flex flex-wrap items-center justify-center gap-1"><PaginationLink href={page > 1 ? buildPageHref(scope, keyword, page - 1) : undefined} label="이전" />{Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => <PaginationLink key={pageNumber} href={pageNumber === page ? undefined : buildPageHref(scope, keyword, pageNumber)} label={String(pageNumber)} active={pageNumber === page} />)}<PaginationLink href={page < totalPages ? buildPageHref(scope, keyword, page + 1) : undefined} label="다음" /></nav>
         </> : null}
       </main>

@@ -228,13 +228,13 @@ export function ArticleReplies({
             <input name="articleId" type="hidden" value={article.id} />
             <textarea
               aria-label="댓글 입력"
-              className="border-default-separator bg-default-surface text-default-label min-h-24 flex-1 resize-y border px-3 py-2 text-sm outline-none"
+              className="border-default-separator bg-default-surface text-default-label h-12 min-h-12 flex-1 resize-none border px-3 py-2 text-sm outline-none"
               name="content"
               placeholder="댓글을 입력하세요."
               required
             />
             <button
-              className={`${buttonClassName} border-default-label bg-default-label text-default-background self-end`}
+              className={`${buttonClassName} !h-12 border-default-label bg-default-label text-default-background self-end sm:self-stretch`}
               disabled={pending}
               type="submit"
             >

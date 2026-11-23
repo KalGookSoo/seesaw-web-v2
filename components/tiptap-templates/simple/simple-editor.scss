@@ -61,15 +61,32 @@ body,
   max-height: calc(100dvh - 12rem);
   display: flex;
   flex-direction: column;
+  position: relative;
   overflow: visible;
+  border: 1px solid var(--tt-gray-light-300);
+  background: var(--tt-bg-color);
+  box-shadow: 0 0.15rem 0.5rem rgb(0 0 0 / 0.04);
+}
+
+.dark .simple-editor-wrapper {
+  border-color: var(--tt-gray-dark-700);
+  box-shadow: 0 0.15rem 0.5rem rgb(0 0 0 / 0.18);
 }
 
 .simple-editor-search-and-replace {
-  position: fixed;
-  top: calc(var(--tt-toolbar-height) + 0.5rem);
-  right: 0.5rem;
+  position: absolute;
+  top: calc(var(--tt-toolbar-height) + 0.75rem);
+  right: 0.75rem;
   z-index: 51;
-  max-height: calc(100dvh - var(--tt-toolbar-height) - 1rem);
+  max-height: calc(100% - var(--tt-toolbar-height) - 1.5rem);
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .simple-editor-search-and-replace {
+    right: 0.5rem;
+    width: calc(100% - 1rem);
+  }
 }
 
 .simple-editor-content {
@@ -80,13 +97,25 @@ body,
   flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
+  padding: 0.75rem;
+  background: var(--tt-gray-light-a-50);
 }
 
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: none;
   min-height: 100%;
+  border: 1px solid var(--tt-gray-light-a-200);
+  background: var(--tt-bg-color);
   padding: 1.5rem;
   overflow-wrap: anywhere;
+}
+
+.dark .simple-editor-content {
+  background: var(--tt-gray-dark-a-50);
+}
+
+.dark .simple-editor-content .tiptap.ProseMirror.simple-editor {
+  border-color: var(--tt-gray-dark-a-200);
 }
 
 .simple-editor-toolbar-more {

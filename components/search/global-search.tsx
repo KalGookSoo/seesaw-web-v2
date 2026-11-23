@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Search, ArrowUpRight, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useSiteContext } from '@/app/site-context-provider';
 
 type SearchCategory = {
@@ -120,7 +120,7 @@ export function GlobalSearch() {
           {result.articles.map((article) => <Link key={article.id} href={article.url || '#'} onClick={close} className="hover:bg-default-fill block px-3 py-2 transition"><span className="text-default-label block text-sm font-medium">{article.title || '제목 없는 게시글'}</span><span className="text-default-tertiary-label block truncate text-xs">{article.preview || '본문 미리보기 없음'}</span></Link>)}
         </section>
       ) : null}
-      <Link href={`/search?keyword=${encodeURIComponent(keyword.trim())}`} onClick={close} className="border-default-separator text-default-secondary-label hover:text-default-label mt-3 flex items-center justify-between border-t px-3 pt-3 text-xs transition"><span>전체 결과 보기</span><ArrowUpRight size={14} aria-hidden /></Link>
+      <Link href={`/search?keyword=${encodeURIComponent(keyword.trim())}`} onClick={close} className="border-default-separator text-default-secondary-label hover:text-default-label mt-3 flex items-center justify-between border-t px-3 pt-3 text-xs transition"><span>전체 결과 보기</span></Link>
     </div>
   ) : null;
 
