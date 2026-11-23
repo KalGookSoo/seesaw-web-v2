@@ -5,6 +5,8 @@ const tokens = [
   ['Surface', '--monochrome-surface', '카드와 주요 콘텐츠 표면'],
   ['Grouped', '--monochrome-surface-grouped', '목록과 보조 영역'],
   ['Elevated', '--monochrome-surface-elevated', '모달과 떠 있는 표면'],
+  ['Metal', '--monochrome-metal', '스틸과 스테인리스 느낌의 얇은 선'],
+  ['Metal soft', '--monochrome-metal-soft', '금속 표면을 암시하는 보조 배경'],
   ['Fill', '--monochrome-fill', '입력과 비활성 컨트롤'],
   ['Separator', '--monochrome-separator', '구분선과 경계'],
   ['Label', '--monochrome-label', '제목과 핵심 본문'],

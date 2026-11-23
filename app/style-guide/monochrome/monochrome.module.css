@@ -7,6 +7,8 @@
   --monochrome-fill-strong: #cfd1cb;
   --monochrome-separator: #d1d3cc;
   --monochrome-line: #aeb1aa;
+  --monochrome-metal: #b9bdb7;
+  --monochrome-metal-soft: #eef0ec;
   --monochrome-label: #20221f;
   --monochrome-secondary-label: #62665f;
   --monochrome-tertiary-label: #92968e;
@@ -54,6 +56,8 @@
   --monochrome-fill-strong: #3b3e39;
   --monochrome-separator: #3b3f3a;
   --monochrome-line: #6d736a;
+  --monochrome-metal: #737a73;
+  --monochrome-metal-soft: #2d322e;
   --monochrome-label: #f1f2ed;
   --monochrome-secondary-label: #b5b9b0;
   --monochrome-tertiary-label: #81877e;
@@ -89,6 +93,10 @@
 .theme :global(select) {
   border-radius: 0.2rem;
   font-size: 0.875rem;
+}
+
+.theme :global(.rounded-none) {
+  border-radius: 0;
 }
 
 .formGrid {

@@ -82,7 +82,7 @@ input[type='radio']:focus-visible {
 .form-select {
   min-height: 2.875rem;
   width: 100%;
-  border: 1px solid var(--default-gray-3);
+  border: 1px solid var(--default-separator);
   border-radius: var(--default-radius);
   background: var(--default-surface-elevated);
   padding: 0.7rem 0.8rem;

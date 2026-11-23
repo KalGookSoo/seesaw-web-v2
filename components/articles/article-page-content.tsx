@@ -229,7 +229,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
       ) : null}
       <SearchFieldDropdown defaultValue={search.keyField ?? 'title'} />
       <input
-        className="border-default-separator bg-default-surface text-default-label focus:border-default-label h-10 rounded-none border px-3 text-sm outline-none transition focus:ring-2 focus:ring-default-blue/15"
+        className="form-control h-10"
         name="keyWord"
         type="search"
         defaultValue={search.keyWord ?? ''}

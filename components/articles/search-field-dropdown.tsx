@@ -20,7 +20,7 @@ export function SearchFieldDropdown({
 
   return (
     <details ref={detailsRef} className="group relative">
-      <summary className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill flex h-10 cursor-pointer list-none items-center justify-between gap-3 border px-3 text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-default-blue [&::-webkit-details-marker]:hidden">
+      <summary className="form-control flex h-10 cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
         <span>{selectedOption.label}</span>
         <ChevronDown className="text-default-tertiary-label size-4 transition-transform group-open:rotate-180" />
       </summary>

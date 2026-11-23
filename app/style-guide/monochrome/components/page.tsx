@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Grid2X2, Inbox, List, PenLine, Search, UserRound } from 'lucide-react';
 import { PageIntro, PreviewPanel, StyleGuideSection } from 'app/style-guide/monochrome/_components/style-guide-section';
 
 const componentItems = [
@@ -65,6 +66,43 @@ export default function MonochromeComponentsPage() {
             <ul id="list-group" className="mt-4 divide-y divide-[var(--monochrome-separator)] border-y border-[var(--monochrome-separator)] text-sm"><li className="flex justify-between gap-4 px-3 py-3"><span className="text-[var(--monochrome-label)]">새로운 게시글</span><span className="text-[var(--monochrome-tertiary-label)]">4분 전</span></li><li className="flex justify-between gap-4 px-3 py-3"><span className="text-[var(--monochrome-label)]">일정 변경 알림</span><span className="text-[var(--monochrome-tertiary-label)]">어제</span></li></ul>
           </PreviewPanel>
         </div>
+      </StyleGuideSection>
+
+      <StyleGuideSection eyebrow="Page pattern" title="Board surface">
+        <PreviewPanel title="List page composition">
+          <div className="overflow-hidden rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-background)]">
+            <header className="border-b border-[var(--monochrome-separator)] bg-[var(--monochrome-surface)] p-5 sm:p-7">
+              <div className="flex flex-wrap items-end justify-between gap-5">
+                <div>
+                  <p className="text-xs font-semibold tracking-[0.18em] text-[var(--monochrome-secondary-label)] uppercase">Board</p>
+                  <h3 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--monochrome-label)]">개발자노트</h3>
+                </div>
+                <div className="button-group grid-cols-2 text-sm" role="group" aria-label="게시글 보기 방식">
+                  <button className="flex items-center justify-center gap-2 bg-[var(--monochrome-surface-elevated)] px-3 py-2.5 font-semibold text-[var(--monochrome-label)]"><List className="size-4" />목록</button>
+                  <button className="flex items-center justify-center gap-2 bg-[var(--monochrome-fill)] px-3 py-2.5 text-[var(--monochrome-secondary-label)]"><Grid2X2 className="size-4" />피드</button>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <button className={buttonSecondary}><UserRound className="size-4" />내가 쓴 글</button>
+                <button className={buttonPrimary}><PenLine className="size-4" />글쓰기</button>
+              </div>
+            </header>
+            <form className="grid gap-2 border-b border-[var(--monochrome-separator)] bg-[var(--monochrome-surface-grouped)] p-3 sm:grid-cols-[9rem_1fr_auto]" onSubmit={(event) => event.preventDefault()}>
+              <select className="form-select" defaultValue="title" aria-label="검색 기준"><option value="title">제목</option><option value="content">내용</option></select>
+              <input className="form-control" type="search" placeholder="검색어" aria-label="검색어" />
+              <button className={buttonPrimary} type="submit"><Search className="size-4" />검색</button>
+            </form>
+            <div className="m-3 rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-surface)] px-5 py-12 text-center sm:m-5">
+              <span className="mx-auto flex size-11 items-center justify-center rounded-[var(--monochrome-radius)] border border-[var(--monochrome-separator)] bg-[var(--monochrome-fill)] text-[var(--monochrome-tertiary-label)]"><Inbox className="size-5" /></span>
+              <p className="mt-4 font-semibold text-[var(--monochrome-label)]">게시물이 없습니다.</p>
+              <p className="mt-2 text-sm text-[var(--monochrome-secondary-label)]">새로운 글이 올라오면 이곳에 표시됩니다.</p>
+            </div>
+            <footer className="flex items-center justify-between border-t border-[var(--monochrome-separator)] bg-[var(--monochrome-surface)] px-4 py-3 text-sm">
+              <span className="text-[var(--monochrome-secondary-label)]">총 <strong className="text-[var(--monochrome-label)]">0</strong>개 · 1 / 1</span>
+              <div className="button-group grid-cols-3" role="navigation" aria-label="페이지 이동"><button className="px-3 py-2 text-[var(--monochrome-tertiary-label)]" disabled>‹</button><button className="bg-[var(--monochrome-accent)] px-3 py-2 font-semibold text-[var(--monochrome-accent-contrast)]" aria-current="page">1</button><button className="px-3 py-2 text-[var(--monochrome-tertiary-label)]" disabled>›</button></div>
+            </footer>
+          </div>
+        </PreviewPanel>
       </StyleGuideSection>
 
       <StyleGuideSection eyebrow="Schedule" title="Calendar">
