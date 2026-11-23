@@ -184,7 +184,7 @@ export function ArticleForm({
               <label className="text-default-secondary-label inline-flex items-center gap-2 text-sm">
                 <input
                   checked={fixed}
-                  className="accent-default-label size-4"
+                  className="form-choice"
                   type="checkbox"
                   onChange={(event) => setFixed(event.target.checked)}
                 />
@@ -194,7 +194,7 @@ export function ArticleForm({
           </div>
           <label className="mt-5 block">
             <input
-              className="border-default-separator bg-default-surface text-default-label placeholder:text-default-tertiary-label focus:border-default-label h-14 w-full border-x-0 border-t-0 border-b px-0 text-xl font-semibold tracking-tight outline-none transition focus-visible:ring-0"
+              className="form-control border-x-0 border-t-0 border-b px-0 text-xl font-semibold tracking-tight"
               maxLength={30}
               placeholder="제목을 입력하세요"
               required

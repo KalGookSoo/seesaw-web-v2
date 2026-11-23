@@ -191,7 +191,7 @@ export function ArticleReplies({
                   >
                     <textarea
                       aria-label="댓글 수정"
-                      className="border-default-separator bg-default-surface text-default-label focus:border-default-label min-h-20 flex-1 resize-y border px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-default-label/15"
+                      className="form-control form-textarea min-h-20 flex-1 text-sm"
                       defaultValue={reply.content ?? ''}
                       name="content"
                       required
@@ -236,7 +236,7 @@ export function ArticleReplies({
             <input name="articleId" type="hidden" value={article.id} />
             <textarea
               aria-label="댓글 입력"
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-label h-12 min-h-12 flex-1 resize-none border px-3 py-2.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-default-label/15"
+              className="form-control form-textarea h-12 min-h-12 flex-1 resize-none text-sm"
               name="content"
               placeholder="댓글을 입력하세요."
               required

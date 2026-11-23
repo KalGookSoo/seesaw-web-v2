@@ -1072,7 +1072,7 @@ export function GlobalShell({
                 </span>
                 <input
                   checked={receiveEmail}
-                  className="accent-default-label size-4"
+                  className="form-choice"
                   type="checkbox"
                   onChange={(event) => setReceiveEmail(event.target.checked)}
                 />
@@ -1171,7 +1171,7 @@ export function GlobalShell({
               홈페이지명
             </span>
             <input
-              className="border-default-separator bg-default-fill text-default-label h-11 w-full rounded-md border px-3 text-sm outline-none"
+              className="form-control"
               readOnly
               value={SITE_CONTEXT.name}
             />
@@ -1181,7 +1181,7 @@ export function GlobalShell({
               이메일
             </span>
             <input
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
+              className="form-control"
               type="email"
               placeholder="name@example.com"
               name="email"
@@ -1204,7 +1204,7 @@ export function GlobalShell({
                 className="text-default-secondary-label flex items-center gap-2 text-sm"
               >
                 <input
-                  className="accent-default-blue size-4"
+                  className="form-choice"
                   type="radio"
                   name="reportReason"
                   value={reason}
@@ -1221,7 +1221,7 @@ export function GlobalShell({
               상세내용
             </span>
             <textarea
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-28 w-full resize-none rounded-md border px-3 py-3 text-sm outline-none focus:ring-4"
+              className="form-control form-textarea h-28 resize-none"
               name="content"
               value={reportContent}
               onChange={(event) => setReportContent(event.target.value)}
@@ -1268,7 +1268,7 @@ export function GlobalShell({
               이메일
             </span>
             <input
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
+              className="form-control"
               type="email"
               placeholder="name@example.com"
               name="email"
@@ -1280,7 +1280,7 @@ export function GlobalShell({
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">제목</span>
             <input
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-4"
+              className="form-control"
               name="title"
               value={inquiryTitle}
               onChange={(event) => setInquiryTitle(event.target.value)}
@@ -1290,7 +1290,7 @@ export function GlobalShell({
           <label className="block space-y-2">
             <span className="text-default-label text-sm font-medium">내용</span>
             <textarea
-              className="border-default-separator bg-default-surface text-default-label focus:border-default-blue focus:ring-default-blue/15 h-32 w-full resize-none rounded-md border px-3 py-3 text-sm outline-none focus:ring-4"
+              className="form-control form-textarea h-32 resize-none"
               name="content"
               value={inquiryContent}
               onChange={(event) => setInquiryContent(event.target.value)}
