@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight, Search } from 'lucide-react';
 import { useSiteContext } from '@/app/site-context-provider';
-import { SearchEmptyState } from '@/components/search/search-empty-state';
+import { SearchEmptyState, SearchErrorState, SearchLoadingState } from '@/components/search/search-empty-state';
 
 type SearchResponse = {
   keyword: string;
@@ -63,9 +63,9 @@ function SearchPageContent() {
       <div className="mx-auto max-w-5xl">
         <Link href="/" className="text-default-tertiary-label hover:text-default-label inline-flex items-center gap-2 text-sm transition"><ArrowLeft size={16} aria-hidden /> 돌아가기</Link>
         <header className="border-default-separator mt-8 border-b pb-6"><p className="text-default-tertiary-label text-xs font-semibold tracking-[0.2em] uppercase">Search</p><h1 className="text-default-label mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{keyword ? `“${keyword}” 검색 결과` : '통합검색'}</h1><p className="text-default-secondary-label mt-3 text-sm">{keyword ? '카테고리와 게시글에서 검색어를 찾았습니다.' : '찾고 싶은 콘텐츠를 검색해보세요.'}</p></header>
-        {loading ? <SearchEmptyState title="검색 결과를 불러오는 중입니다" description="잠시만 기다려주세요." /> : null}
+        {loading ? <SearchLoadingState /> : null}
         {!loading && !keyword ? <SearchEmptyState title="검색어를 입력해주세요" description="상단 검색창에서 키워드를 입력하면 카테고리와 게시글을 함께 찾아드립니다." /> : null}
-        {!loading && error ? <SearchEmptyState title="검색 결과를 불러오지 못했습니다" description="잠시 후 다시 검색해주세요." /> : null}
+        {!loading && error ? <SearchErrorState /> : null}
         {!loading && !error && result ? <div className="py-8"><div className="text-default-tertiary-label mb-4 text-xs">전체 { (result.categories?.length ?? 0) + (result.articles?.length ?? 0) }건</div><div className="grid gap-5 md:grid-cols-2"><SearchResultGroup title="카테고리" count={result.categories?.length ?? 0}>{result.categories?.length ? <ul className="divide-default-separator divide-y">{result.categories.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.name || '이름 없는 카테고리'}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul> : <SearchEmptyState compact title="카테고리 결과가 없습니다" description="검색어와 일치하는 카테고리를 찾지 못했습니다." />}</SearchResultGroup><SearchResultGroup title="게시글" count={result.articles?.length ?? 0}>{result.articles?.length ? <ul className="divide-default-separator divide-y">{result.articles.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.title || '제목 없는 게시글'}</span><span className="text-default-secondary-label mt-1 block line-clamp-2 text-sm leading-6">{item.preview || '본문 미리보기 없음'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul> : <SearchEmptyState compact title="게시글 결과가 없습니다" description="검색어와 일치하는 게시글을 찾지 못했습니다." />}</SearchResultGroup></div></div> : null}
       </div>
     </div>
