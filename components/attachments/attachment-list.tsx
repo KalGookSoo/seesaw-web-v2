@@ -154,19 +154,22 @@ export function AttachmentList({
 
   return (
     <details className="group border-default-separator border-b">
-      <summary className="text-default-label hover:bg-default-fill flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 text-sm font-semibold transition [&::-webkit-details-marker]:hidden sm:px-5">
+      <summary className="text-default-label hover:bg-default-fill/60 flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 text-sm font-semibold transition-colors [&::-webkit-details-marker]:hidden sm:px-5">
         <span className="flex min-w-0 items-center gap-2">
-          <FileText aria-hidden className="size-4 shrink-0" />
+          <span className="border-default-separator bg-default-fill text-default-secondary-label flex size-8 shrink-0 items-center justify-center border">
+            <FileText aria-hidden className="size-4" />
+          </span>
           <span>첨부파일</span>
-          <span className="text-default-tertiary-label">{attachments.length}</span>
+          <span className="text-default-tertiary-label tabular-nums">{attachments.length}</span>
         </span>
         <ChevronDown aria-hidden className="text-default-tertiary-label size-4 shrink-0 transition-transform group-open:rotate-180" />
       </summary>
 
-      <div className="border-default-separator border-t px-4 py-5 sm:px-5">
-        <div className="flex justify-end">
+      <div className="border-default-separator bg-default-surface-grouped/30 border-t px-4 py-4 sm:px-5 sm:py-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-default-tertiary-label text-xs">파일을 선택해 미리보거나 다운로드할 수 있습니다.</p>
           <a
-            className={`${actionClassName} border-default-separator bg-default-surface text-default-label hover:bg-default-fill`}
+            className={`${actionClassName} border-default-separator bg-default-surface text-default-label hover:bg-default-fill w-full sm:w-auto`}
             href={`/api/attachments/download-zip?articleId=${encodeURIComponent(articleId)}`}
           >
             <FileArchive aria-hidden className="size-4" />
@@ -174,17 +177,17 @@ export function AttachmentList({
           </a>
         </div>
 
-        <ul className="border-default-separator mt-4 overflow-hidden border">
+        <ul className="border-default-separator bg-default-surface mt-4 overflow-hidden border">
         {attachments.map((attachment) => {
           const name = attachment.originalName ?? attachment.name ?? '첨부파일';
 
           return (
             <li
-              className="border-default-separator bg-default-surface flex flex-col gap-3 border-b px-4 py-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+              className="border-default-separator hover:bg-default-fill/45 flex flex-col gap-3 border-b px-3.5 py-3.5 transition-colors last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-4"
               key={attachment.id}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="bg-default-fill text-default-label flex size-9 shrink-0 items-center justify-center border border-default-separator">
+                <span className="border-default-separator bg-default-fill text-default-secondary-label flex size-10 shrink-0 items-center justify-center border">
                   <AttachmentIcon mimeType={attachment.mimeType} />
                 </span>
                 <div className="min-w-0">
@@ -200,7 +203,7 @@ export function AttachmentList({
               <div className="flex shrink-0 justify-end gap-2">
                 {attachment.previewable ? (
                   <button
-                    className={`${actionClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
+                    className={`${actionClassName} border-default-separator text-default-secondary-label hover:bg-default-fill w-full sm:w-auto`}
                     type="button"
                     onClick={() => setPreviewAttachment(attachment)}
                   >
@@ -209,7 +212,7 @@ export function AttachmentList({
                   </button>
                 ) : null}
                 <a
-                  className={`${actionClassName} border-default-separator text-default-label hover:bg-default-fill`}
+                  className={`${actionClassName} border-default-separator text-default-label hover:bg-default-fill w-full sm:w-auto`}
                   href={toDownloadUrl(attachment.id)}
                 >
                   <Download aria-hidden className="size-4" />
@@ -232,7 +235,7 @@ export function AttachmentList({
           previewAttachment ? (
             <>
               <button
-                className={`${actionClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
+                className={`${actionClassName} border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill`}
                 type="button"
                 onClick={() => setPreviewAttachment(null)}
               >

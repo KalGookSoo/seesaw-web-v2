@@ -25,6 +25,7 @@ function buildEventFormData(
   if (command.tzid) formData.set('tzid', command.tzid);
   (command.multipartFiles ?? []).forEach((file) => formData.append('multipartFiles', file));
   (command.inlineImages ?? []).forEach((file) => formData.append('inlineImages', file));
+  (command.inlineVideos ?? []).forEach((file) => formData.append('inlineVideos', file));
   return formData;
 }
 

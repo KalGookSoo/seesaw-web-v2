@@ -72,6 +72,7 @@ export default async function EditArticlePage({
               categoryName={category.name ?? ''}
               cancelHref={detailHref}
               eventId={event.id}
+              initialAttachments={article.attachments ?? []}
               initialEvent={event}
               mode="edit"
               successHref={detailHref}

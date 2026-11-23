@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRightLeft, Check, Pencil, Send, Trash2, X } from 'lucide-react';
+import { ArrowRightLeft, Check, MessageCircle, Pencil, Send, Trash2, X } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
 import type { CategoryResponse } from '@/types/category';
@@ -102,10 +102,13 @@ export function ArticleReplies({
   }
 
   return (
-    <section className="border-default-separator bg-default-surface overflow-hidden border">
-      <header className="border-default-separator bg-default-fill/45 flex items-center gap-2 border-b px-5 py-4">
-        <h2 className="text-default-label font-semibold">댓글</h2>
-        <span className="bg-default-fill text-default-label border-default-separator border px-2 py-0.5 text-xs font-bold">
+    <section className="border-default-separator bg-default-surface overflow-hidden border shadow-[0_1px_0_rgb(0_0_0_/_0.04)]">
+      <header className="border-default-separator bg-default-surface flex items-center justify-between border-b px-4 py-4 sm:px-5">
+        <div className="flex items-center gap-2.5">
+          <MessageCircle aria-hidden className="text-default-secondary-label size-4" />
+          <h2 className="text-default-label text-sm font-semibold sm:text-base">댓글</h2>
+        </div>
+        <span className="border-default-separator bg-default-fill text-default-label inline-flex min-w-7 items-center justify-center border px-2 py-1 text-xs font-bold tabular-nums">
           {replies.length}
         </span>
       </header>
@@ -118,12 +121,16 @@ export function ArticleReplies({
 
             return (
               <li
-                className="border-default-separator/70 border-b p-5 last:border-b-0"
+                className="border-default-separator/70 hover:bg-default-fill/35 border-b p-4 transition-colors last:border-b-0 sm:p-5"
                 id={reply.id}
                 key={reply.id}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="border-default-separator bg-default-fill text-default-secondary-label flex size-9 shrink-0 items-center justify-center border text-xs font-bold uppercase">
+                      {(reply.maskedAuthor ?? reply.createdBy ?? '익').slice(0, 1)}
+                    </span>
+                    <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-default-label text-sm font-semibold">
                         {reply.maskedAuthor ?? reply.createdBy ?? '익명'}
@@ -137,6 +144,7 @@ export function ArticleReplies({
                     <time className="text-default-tertiary-label mt-1 block text-xs">
                       {formatDate(reply.createdDate)}
                     </time>
+                    </div>
                   </div>
 
                   {authentication.authenticated && (isOwner || isManager) ? (
@@ -183,13 +191,13 @@ export function ArticleReplies({
                   >
                     <textarea
                       aria-label="댓글 수정"
-                      className="border-default-separator bg-default-fill text-default-label min-h-24 flex-1 resize-y border px-3 py-2 text-sm outline-none"
+                      className="border-default-separator bg-default-surface text-default-label focus:border-default-label min-h-20 flex-1 resize-y border px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-default-label/15"
                       defaultValue={reply.content ?? ''}
                       name="content"
                       required
                     />
                     <button
-                      className={`${buttonClassName} border-default-label bg-default-label text-default-background self-end`}
+                      className={`${buttonClassName} !h-11 border-default-label bg-default-label text-default-background self-end`}
                       disabled={pending}
                       type="submit"
                     >
@@ -198,7 +206,7 @@ export function ArticleReplies({
                     </button>
                   </form>
                 ) : (
-                  <p className="bg-default-fill text-default-secondary-label mt-4 border-l-2 border-default-label px-4 py-3 text-sm leading-6 whitespace-pre-wrap">
+                  <p className="border-default-separator bg-default-surface-grouped/45 text-default-secondary-label mt-4 border px-4 py-3 text-sm leading-6 whitespace-pre-wrap">
                     {reply.content}
                   </p>
                 )}
@@ -212,10 +220,10 @@ export function ArticleReplies({
         </p>
       )}
 
-      <div className="border-default-separator bg-default-fill/30 border-t p-5">
+      <div className="border-default-separator bg-default-surface-grouped/35 border-t p-4 sm:p-5">
         {authentication.authenticated ? (
           <form
-            className="flex flex-col gap-3 sm:flex-row"
+            className="flex flex-col gap-2.5 sm:flex-row"
             onSubmit={(event) => {
               event.preventDefault();
               submitReply(
@@ -228,13 +236,13 @@ export function ArticleReplies({
             <input name="articleId" type="hidden" value={article.id} />
             <textarea
               aria-label="댓글 입력"
-              className="border-default-separator bg-default-surface text-default-label h-12 min-h-12 flex-1 resize-none border px-3 py-2 text-sm outline-none"
+              className="border-default-separator bg-default-surface text-default-label focus:border-default-label h-12 min-h-12 flex-1 resize-none border px-3 py-2.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-default-label/15"
               name="content"
               placeholder="댓글을 입력하세요."
               required
             />
             <button
-              className={`${buttonClassName} !h-12 border-default-label bg-default-label text-default-background self-end sm:self-stretch`}
+              className={`${buttonClassName} !h-12 w-full border-default-label bg-default-label text-default-background self-end sm:w-auto sm:self-stretch`}
               disabled={pending}
               type="submit"
             >

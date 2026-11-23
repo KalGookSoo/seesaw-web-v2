@@ -43,6 +43,7 @@ export type CreateEventRequest = Readonly<{
   categoryId: string;
   multipartFiles?: File[];
   inlineImages?: File[];
+  inlineVideos?: File[];
   multipartFilesSizeValid?: boolean | null;
   inlineImagesSizeValid?: boolean | null;
 }>;
@@ -58,6 +59,7 @@ export type UpdateEventRequest = Readonly<{
   categoryId?: string | null;
   multipartFiles?: File[];
   inlineImages?: File[];
+  inlineVideos?: File[];
   multipartFilesSizeValid?: boolean | null;
   inlineImagesSizeValid?: boolean | null;
 }>;
