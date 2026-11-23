@@ -127,9 +127,10 @@ export function GlobalSearch() {
       <button className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 items-center justify-center rounded-full border transition sm:hidden" type="button" aria-label="통합 검색 열기" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
         {open ? <X size={18} aria-hidden /> : <Search size={18} aria-hidden />}
       </button>
-      <form onSubmit={submit} className={`${open ? 'flex' : 'hidden'} border-default-separator bg-default-surface absolute right-0 top-full z-40 mt-2 w-[min(20rem,calc(100vw-2rem))] items-center gap-2 border p-2 shadow-xl sm:static sm:mt-0 sm:flex sm:w-[min(22rem,28vw)] sm:border-0 sm:p-0 sm:shadow-none`}>
+      <form onSubmit={submit} className={`${open ? 'flex' : 'hidden'} border-default-separator bg-default-surface absolute right-0 top-full z-40 mt-2 w-[min(20rem,calc(100vw-2rem))] items-center gap-2 border p-2 shadow-xl sm:static sm:mt-0 sm:flex sm:w-[min(26rem,32vw)] sm:border-0 sm:p-0 sm:shadow-none`}>
         <Search size={16} className="text-default-tertiary-label shrink-0" aria-hidden />
         <input ref={inputRef} value={keyword} onChange={(event) => setKeyword(event.target.value)} className="text-default-label placeholder:text-default-tertiary-label focus:border-default-label min-w-0 flex-1 border-b border-transparent bg-transparent px-1 py-2 text-sm outline-none transition" placeholder="콘텐츠 검색" aria-label="통합 검색어" />
+        <button className="bg-default-label text-default-background hover:bg-default-secondary-label inline-flex h-8 shrink-0 items-center justify-center px-3 text-xs font-semibold transition" type="submit">검색</button>
       </form>
       {resultPanel}
     </div>
