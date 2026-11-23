@@ -43,6 +43,7 @@ import { openNaverOAuth2Popup, openNaverOAuth2UnlinkPopup } from '@/lib/naver-oa
 import { authorizedFetch } from '@/lib/api-fetch';
 import { removeMyRoleMapping } from '@/lib/role-mappings';
 import { useToast } from '@/components/ui/toast';
+import { GlobalSearch } from '@/components/search/global-search';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -674,6 +675,8 @@ export function GlobalShell({
             {SITE_CONTEXT.domainName}
           </p>
         </div>
+
+        <GlobalSearch />
 
         <button
           className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition"
