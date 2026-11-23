@@ -173,18 +173,11 @@ export function toArticleDetailHref(
   id: string,
   search: SearchArticleDetailRequest
 ): string {
-  const params = new URLSearchParams();
-  appendOptional(params, 'categoryId', search.categoryId);
-  appendOptional(params, 'categoryType', search.categoryType);
-  appendOptional(params, 'keyField', search.keyField);
-  appendOptional(params, 'keyWord', search.keyWord);
-  const query = params.toString();
-
-  return `/articles/${encodeURIComponent(id)}${query ? `?${query}` : ''}`;
+  return `/articles/${encodeURIComponent(id)}`;
 }
 
 export function toArticleHref(article: ArticleResponse): string {
-  return `/articles/${article.id}?categoryId=${encodeURIComponent(article.categoryId)}`;
+  return `/articles/${article.id}`;
 }
 
 export type ArticleFieldError = Readonly<{

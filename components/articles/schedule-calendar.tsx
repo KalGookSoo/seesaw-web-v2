@@ -67,7 +67,7 @@ function dayToneClass(dayOfWeek: number): string {
 
 function eventHref(event: VEventResponse): string | null {
   if (!event.articleId) return null;
-  return `/articles/${encodeURIComponent(event.articleId)}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}`;
+  return `/articles/${encodeURIComponent(event.articleId)}`;
 }
 
 function EventRow({ event }: Readonly<{ event: VEventResponse }>) {

@@ -56,7 +56,7 @@ function toCategoryHref(category: CategoryResponse): string {
 function toArticleHref(article: ArticleResponse): string {
   return (
     article.url ??
-    `/articles/${article.id}?categoryId=${encodeURIComponent(article.categoryId)}`
+    `/articles/${article.id}`
   );
 }
 
@@ -340,7 +340,7 @@ function EventTicketCard({ event }: Readonly<{ event: VEventResponse }>) {
     <Link
       href={
         event.articleId
-          ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}`
+          ? `/articles/${event.articleId}`
           : '#'
       }
       className="group border-default-separator bg-default-surface hover:border-default-blue-muted flex w-full flex-col overflow-hidden border transition"
@@ -406,7 +406,7 @@ function MonthlyCalendar({
             <div key={dateKey(day)} className={`min-h-24 border-r border-b border-default-separator p-2 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/45'}`}>
               <span className={`text-xs ${currentMonth ? 'text-default-label' : 'text-default-tertiary-label'}`}>{day.getDate()}</span>
               <div className="mt-2 space-y-1">
-                {dayEvents.slice(0, 2).map((event) => <a key={event.id} href={event.articleId ? `/articles/${event.articleId}?categoryId=${encodeURIComponent(event.article?.categoryId ?? '')}` : '#'} className="block truncate border-l-2 border-default-blue bg-default-blue-soft px-1.5 py-1 text-left text-[0.65rem] font-medium text-default-blue-contrast hover:bg-default-fill">{event.title}</a>)}
+                {dayEvents.slice(0, 2).map((event) => <a key={event.id} href={event.articleId ? `/articles/${event.articleId}` : '#'} className="block truncate border-l-2 border-default-blue bg-default-blue-soft px-1.5 py-1 text-left text-[0.65rem] font-medium text-default-blue-contrast hover:bg-default-fill">{event.title}</a>)}
               </div>
             </div>
           );
