@@ -1,7 +1,7 @@
 import { authorizedFetch } from '@/lib/api-fetch';
 
-export async function removeMyRoleMapping(): Promise<void> {
-  const response = await authorizedFetch('/api/role-mappings/me', {
+export async function removeMyRoleMapping(siteId: string): Promise<void> {
+  const response = await authorizedFetch(`/api/role-mappings/me?siteId=${encodeURIComponent(siteId)}`, {
     method: 'DELETE'
   });
 

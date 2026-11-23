@@ -577,7 +577,7 @@ export function GlobalShell({
     setWithdrawPending(true);
     try {
       await openNaverOAuth2UnlinkPopup();
-      await removeMyRoleMapping();
+      await removeMyRoleMapping(SITE_CONTEXT.id);
       showToast('네이버 연동이 해제되었습니다.', 'success');
       setMyPageOpen(false);
       await logout();
