@@ -20,9 +20,17 @@ type SearchArticle = {
 
 type SearchResponse = {
   keyword: string;
-  categories: SearchCategory[];
-  articles: SearchArticle[];
+  categories?: SearchCategory[] | null;
+  articles?: SearchArticle[] | null;
 };
+
+function normalizeSearchResponse(response: Partial<SearchResponse> | null | undefined): SearchResponse {
+  return {
+    keyword: response?.keyword ?? '',
+    categories: Array.isArray(response?.categories) ? response.categories : [],
+    articles: Array.isArray(response?.articles) ? response.articles : []
+  };
+}
 
 function buildSearchUrl(keyword: string, limit = 5): string {
   return `/api/search?${new URLSearchParams({ keyword, limit: String(limit) })}`;
@@ -61,7 +69,7 @@ export function GlobalSearch() {
           if (!response.ok) {
             throw new Error('검색 결과를 불러오지 못했습니다.');
           }
-          return (await response.json()) as SearchResponse;
+          return normalizeSearchResponse(await response.json() as Partial<SearchResponse>);
         })
         .then(setResult)
         .catch((error: unknown) => {
@@ -98,16 +106,16 @@ export function GlobalSearch() {
       {!loading && result && result.categories.length === 0 && result.articles.length === 0 ? (
         <p className="text-default-tertiary-label px-3 py-5 text-sm">검색 결과가 없습니다.</p>
       ) : null}
-      {result?.categories.length ? (
+      {result?.categories?.length ? (
         <section aria-labelledby="global-search-categories">
           <h2 id="global-search-categories" className="text-default-tertiary-label px-3 pb-2 text-[0.65rem] font-semibold tracking-[0.16em] uppercase">카테고리</h2>
-          {result.categories.map((category) => <Link key={category.id} href={category.url} onClick={close} className="hover:bg-default-fill block px-3 py-2 transition"><span className="text-default-label block text-sm font-medium">{category.name}</span><span className="text-default-tertiary-label block truncate text-xs">{category.description || '카테고리'}</span></Link>)}
+          {result.categories.map((category) => <Link key={category.id} href={category.url || '#'} onClick={close} className="hover:bg-default-fill block px-3 py-2 transition"><span className="text-default-label block text-sm font-medium">{category.name || '이름 없는 카테고리'}</span><span className="text-default-tertiary-label block truncate text-xs">{category.description || '카테고리'}</span></Link>)}
         </section>
       ) : null}
-      {result?.articles.length ? (
+      {result?.articles?.length ? (
         <section aria-labelledby="global-search-articles" className="border-default-separator mt-3 border-t pt-3">
           <h2 id="global-search-articles" className="text-default-tertiary-label px-3 pb-2 text-[0.65rem] font-semibold tracking-[0.16em] uppercase">게시글</h2>
-          {result.articles.map((article) => <Link key={article.id} href={article.url} onClick={close} className="hover:bg-default-fill block px-3 py-2 transition"><span className="text-default-label block text-sm font-medium">{article.title}</span><span className="text-default-tertiary-label block truncate text-xs">{article.preview || '본문 미리보기 없음'}</span></Link>)}
+          {result.articles.map((article) => <Link key={article.id} href={article.url || '#'} onClick={close} className="hover:bg-default-fill block px-3 py-2 transition"><span className="text-default-label block text-sm font-medium">{article.title || '제목 없는 게시글'}</span><span className="text-default-tertiary-label block truncate text-xs">{article.preview || '본문 미리보기 없음'}</span></Link>)}
         </section>
       ) : null}
       <Link href={`/search?keyword=${encodeURIComponent(keyword.trim())}`} onClick={close} className="border-default-separator text-default-secondary-label hover:text-default-label mt-3 flex items-center justify-between border-t px-3 pt-3 text-xs transition"><span>전체 결과 보기</span><ArrowUpRight size={14} aria-hidden /></Link>

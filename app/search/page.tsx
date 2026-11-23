@@ -8,9 +8,17 @@ import { ArrowLeft, ArrowUpRight, Search } from 'lucide-react';
 
 type SearchResponse = {
   keyword: string;
-  categories: { id: string; name: string; description?: string | null; url: string }[];
-  articles: { id: string; title: string; preview?: string | null; url: string }[];
+  categories?: { id: string; name: string; description?: string | null; url?: string | null }[] | null;
+  articles?: { id: string; title: string; preview?: string | null; url?: string | null }[] | null;
 };
+
+function normalizeSearchResponse(response: Partial<SearchResponse> | null | undefined): SearchResponse {
+  return {
+    keyword: response?.keyword ?? '',
+    categories: Array.isArray(response?.categories) ? response.categories : [],
+    articles: Array.isArray(response?.articles) ? response.articles : []
+  };
+}
 
 function SearchPageContent() {
   const params = useSearchParams();
@@ -26,7 +34,8 @@ function SearchPageContent() {
     const controller = new AbortController();
     setLoading(true);
     fetch(`/api/search?${new URLSearchParams({ keyword, limit: '20' })}`, { signal: controller.signal })
-      .then((response) => response.json() as Promise<SearchResponse>)
+      .then((response) => response.json() as Promise<Partial<SearchResponse>>)
+      .then(normalizeSearchResponse)
       .then(setResult)
       .finally(() => setLoading(false));
     return () => controller.abort();
@@ -39,7 +48,7 @@ function SearchPageContent() {
         <header className="border-default-separator mt-8 border-b pb-6"><p className="text-default-tertiary-label text-xs font-semibold tracking-[0.2em] uppercase">Search</p><h1 className="text-default-label mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">“{keyword}” 검색 결과</h1></header>
         {loading ? <p className="text-default-secondary-label py-16 text-sm">검색 결과를 불러오는 중입니다.</p> : null}
         {!loading && !keyword ? <p className="text-default-secondary-label py-16 text-sm">검색어를 입력해주세요.</p> : null}
-        {!loading && result ? <div className="grid gap-10 py-8 md:grid-cols-2"><SearchResultGroup title="카테고리" count={result.categories.length}><ul className="divide-default-separator divide-y">{result.categories.map((item) => <li key={item.id}><Link href={item.url} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.name}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul></SearchResultGroup><SearchResultGroup title="게시글" count={result.articles.length}><ul className="divide-default-separator divide-y">{result.articles.map((item) => <li key={item.id}><Link href={item.url} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.title}</span><span className="text-default-secondary-label mt-1 block line-clamp-2 text-sm leading-6">{item.preview || '본문 미리보기 없음'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul></SearchResultGroup></div> : null}
+        {!loading && result ? <div className="grid gap-10 py-8 md:grid-cols-2"><SearchResultGroup title="카테고리" count={result.categories?.length ?? 0}><ul className="divide-default-separator divide-y">{result.categories?.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.name || '이름 없는 카테고리'}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul></SearchResultGroup><SearchResultGroup title="게시글" count={result.articles?.length ?? 0}><ul className="divide-default-separator divide-y">{result.articles?.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill group block py-4 transition"><span className="text-default-label block font-medium">{item.title || '제목 없는 게시글'}</span><span className="text-default-secondary-label mt-1 block line-clamp-2 text-sm leading-6">{item.preview || '본문 미리보기 없음'}</span><ArrowUpRight size={15} className="text-default-tertiary-label mt-3 transition group-hover:translate-x-0.5" aria-hidden /></Link></li>)}</ul></SearchResultGroup></div> : null}
       </div>
     </div>
   );
