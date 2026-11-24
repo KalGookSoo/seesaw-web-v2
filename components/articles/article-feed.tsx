@@ -68,7 +68,7 @@ function buildFeedQuery(search: SearchArticlesParams, page: number): string {
 
 function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
   const thumbnail = article.inlineImages?.[0];
-  const content = article.plainContent ?? toPlainText(article.content);
+  const content = toPlainText(article.plainContent ?? article.content);
 
   return (
     <article className="border-default-separator bg-default-surface hover:border-default-label border p-3 transition-colors sm:p-4">
