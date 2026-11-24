@@ -46,7 +46,7 @@ export default function EnvironmentPage() {
           <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">
             Seesaw Actuator
           </p>
-          <h1 className="text-3xl font-semibold">Environment</h1>
+          <h1 className="text-xl font-semibold">Environment</h1>
           <p className="max-w-3xl text-base leading-7 text-zinc-600">
             현재 Next.js 프로세스에서 확인되는 애플리케이션 설정입니다.
             민감정보는 제외하고 애플리케이션 식별, 버전, 실행 환경, API 연결

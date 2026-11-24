@@ -533,7 +533,7 @@ export function ArticlePageContent({
           <p className={`${editorial.label} text-[var(--editorial-primary)]`}>
             {category.type === 'SCHEDULE' ? 'Schedule · Calendar' : 'Board · Articles'}
           </p>
-          <h1 className={`${editorial.display} mt-4 text-3xl sm:text-5xl`} style={{ lineHeight: 0.95 }}>
+          <h1 className={`${editorial.display} mt-4 text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>
             {category.name}
           </h1>
           <p className={`${editorial.body} mt-4 text-base leading-7 text-[var(--editorial-ink-soft)]`}>

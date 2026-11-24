@@ -69,7 +69,7 @@ export default async function Home() {
             <div className="grid gap-10 border-b py-14 sm:py-20 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-end lg:gap-16" style={{ borderColor: 'var(--editorial-line-soft)' }}>
               <div>
                 <p className={`${editorial.label} text-[var(--editorial-primary)]`}>Editorial archive · Home</p>
-                <h1 className={`${editorial.display} mt-5 max-w-5xl text-[clamp(2.5rem,7vw,5.5rem)]`} style={{ lineHeight: 0.95 }}>{site.name}</h1>
+                <h1 className={`${editorial.display} mt-5 max-w-5xl text-[clamp(2rem,6vw,4.5rem)]`} style={{ lineHeight: 0.95 }}>{site.name}</h1>
               </div>
               <div className="flex flex-col gap-6 lg:pb-2">
                 {site.description ? <p className={`${editorial.body} max-w-md text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.description}</p> : null}
@@ -85,16 +85,16 @@ export default async function Home() {
 
         {site.intro || site.content || site.backgroundImage ? (
           <section
-            className="relative overflow-hidden border-b bg-cover bg-center"
+            className="group relative overflow-hidden border-b"
             style={{
-              ...(site.backgroundImage ? { backgroundImage: `url(${toAttachmentUrl(site.backgroundImage.id)})` } : {}),
               borderColor: 'var(--editorial-line-soft)'
             }}
           >
-            <ContentContainer className="relative grid min-h-80 gap-8 py-10 lg:grid-cols-[0.35fr_1fr] lg:py-14">
+            {site.backgroundImage ? <div className="absolute inset-0 z-0 bg-cover bg-center grayscale transition duration-500 group-hover:grayscale-0" style={{ backgroundImage: `url(${toAttachmentUrl(site.backgroundImage.id)})` }} aria-hidden="true" /> : null}
+            <ContentContainer className="relative z-10 grid min-h-80 gap-8 py-10 lg:grid-cols-[0.35fr_1fr] lg:py-14">
               <p className={`${editorial.label} ${editorial.introText} text-[var(--editorial-primary)]`}>About this archive</p>
               <div className="max-w-3xl py-6 sm:py-8">
-                {site.intro ? <h2 className={`${editorial.display} ${editorial.introText} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
+                {site.intro ? <h2 className={`${editorial.display} ${editorial.introText} text-2xl sm:text-4xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
                 {site.content ? <p className={`${editorial.body} ${editorial.introText} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
               </div>
             </ContentContainer>
@@ -118,7 +118,7 @@ export default async function Home() {
                     className="group min-h-36 border-r border-b p-5 transition-colors hover:bg-[var(--editorial-ink)] hover:text-[var(--editorial-surface)] sm:p-6"
                   >
                     <span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span>
-                    <span className="mt-12 flex items-center justify-between gap-3 text-lg font-black tracking-tight">
+                    <span className="mt-12 flex items-center justify-between gap-3 text-xl font-black tracking-tight">
                       <span className="truncate">{category.name}</span>
                       <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">↗</span>
                     </span>
@@ -144,6 +144,6 @@ export default async function Home() {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-    return <main className="bg-default-background px-5 py-10 text-default-label"><section className="mx-auto max-w-3xl space-y-5 border border-default-red-muted bg-default-surface p-6"><p className="text-sm font-medium tracking-wide text-default-red uppercase">Site API Error</p><h1 className="text-2xl font-semibold">사이트 정보를 조회하지 못했습니다.</h1><p className="text-base leading-7 text-default-secondary-label">{message}</p></section></main>;
+    return <main className="bg-default-background px-5 py-10 text-default-label"><section className="mx-auto max-w-3xl space-y-5 border border-default-red-muted bg-default-surface p-6"><p className="text-sm font-medium tracking-wide text-default-red uppercase">Site API Error</p><h1 className="text-base font-semibold">사이트 정보를 조회하지 못했습니다.</h1><p className="text-base leading-7 text-default-secondary-label">{message}</p></section></main>;
   }
 }

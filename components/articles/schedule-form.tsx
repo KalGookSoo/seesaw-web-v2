@@ -140,7 +140,7 @@ export function ScheduleForm({
         </div>
         <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-end">
           <div>
-            <h1 className="text-default-label text-3xl font-black tracking-[-0.05em] sm:text-4xl">{mode === 'create' ? '새 일정 작성' : '일정 수정'}</h1>
+            <h1 className="text-default-label text-xl font-black tracking-[-0.05em] sm:text-2xl">{mode === 'create' ? '새 일정 작성' : '일정 수정'}</h1>
             <p className="text-default-secondary-label mt-4 max-w-xl text-sm leading-7">모임의 시간과 장소, 함께 볼 내용을 작성해주세요.</p>
           </div>
           <span className="border-default-separator border-l pl-4 text-xs text-default-tertiary-label">일정 정보</span>

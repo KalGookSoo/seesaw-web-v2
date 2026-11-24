@@ -13,7 +13,7 @@ export default function Page() {
       <header className="border-neutral-200/50 bg-white/70 border-b backdrop-blur py-8 dark:border-neutral-800/50 dark:bg-neutral-900/70">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <p className="text-neutral-500 text-xs font-bold tracking-widest uppercase dark:text-neutral-400">Seesaw Web v2</p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight lg:text-4xl">Style Guide Portal</h1>
+          <h1 className="mt-2 text-xl font-extrabold tracking-tight lg:text-2xl">Style Guide Portal</h1>
           <p className="text-neutral-600 mt-2 max-w-2xl text-sm leading-6 dark:text-neutral-400">
             Seesaw Web의 단일 디자인 언어인 Editorial의 컴포넌트 조합과 룩앤필 사양을 확인하세요.
           </p>

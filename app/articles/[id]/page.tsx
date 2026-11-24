@@ -223,7 +223,7 @@ function ArticleDetailError({
         <p className="text-default-orange mt-6 text-xs font-bold tracking-[0.18em] uppercase">
           {content.eyebrow} · {status}
         </p>
-        <h1 className="mt-2 text-2xl font-semibold text-balance">
+        <h1 className="mt-2 text-base font-semibold text-balance">
           {content.title}
         </h1>
         <p className="text-default-secondary-label mt-3 text-sm leading-6">

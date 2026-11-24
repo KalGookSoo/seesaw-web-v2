@@ -65,7 +65,7 @@
   max-width: 44rem;
   margin: 0;
   color: var(--default-label);
-  font-size: clamp(1.875rem, 3vw, 2.25rem);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
   font-weight: 850;
   letter-spacing: -0.07em;
   line-height: 1.05;
@@ -168,7 +168,7 @@
   }
 
   .articleTitle {
-    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    font-size: clamp(1.25rem, 7vw, 1.5rem);
   }
 
   .articleContent {

@@ -78,7 +78,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <Link href="/" className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)] inline-flex items-center gap-2 transition`}><ArrowLeft size={16} aria-hidden /> 홈으로 돌아가기</Link>
         <header className="mt-8 border-b pb-8" style={{ borderColor: 'var(--editorial-line-soft)' }}>
           <p className={`${editorial.label} text-[var(--editorial-primary)]`}>Search · Index</p>
-          <h1 className={`${editorial.display} mt-4 text-3xl sm:text-5xl`} style={{ lineHeight: 0.95 }}>{keyword ? `“${keyword}” 검색 결과` : '통합검색'}</h1>
+          <h1 className={`${editorial.display} mt-4 text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{keyword ? `“${keyword}” 검색 결과` : '통합검색'}</h1>
           <p className={`${editorial.body} mt-4 text-base leading-7 text-[var(--editorial-ink-soft)]`}>{keyword ? '카테고리와 게시글에서 검색어를 찾았습니다.' : '찾고 싶은 콘텐츠를 검색해보세요.'}</p>
         </header>
         {!keyword ? <div className="py-8"><SearchEmptyState title="검색어를 입력해주세요" description="상단 검색창에서 키워드를 입력하면 카테고리와 게시글을 함께 찾아드립니다." /></div> : null}
