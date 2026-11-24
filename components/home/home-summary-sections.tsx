@@ -217,7 +217,7 @@ function MagazineArticleTile({
           {hasImage ? <span className="text-[0.65rem] tracking-[0.16em] text-white/60 uppercase">Image</span> : <span className="text-[0.65rem] tracking-[0.16em] text-default-tertiary-label uppercase">Text</span>}
         </div>
         <div className="mt-12">
-          <h3 className={`line-clamp-3 text-xl font-bold tracking-tight text-balance sm:text-2xl ${hasImage ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}>
+          <h3 className={`line-clamp-3 text-lg font-bold tracking-tight text-balance sm:text-xl ${hasImage ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}>
             {article.title || '제목 없는 게시글'}
           </h3>
           <p className={`mt-3 line-clamp-3 text-sm leading-6 ${hasImage ? 'text-white/80' : 'text-default-secondary-label'}`}>
@@ -460,7 +460,7 @@ function UpcomingScheduleList({ events }: Readonly<{ events: readonly VEventResp
           <p className="mt-1 text-xs tracking-[0.16em] text-white/60 uppercase">
             {featuredStart ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', weekday: 'short' }).format(featuredStart) : '일정 미정'}
           </p>
-          <h3 className="mt-5 line-clamp-2 text-xl font-bold tracking-tight text-balance">
+          <h3 className="mt-5 line-clamp-2 text-lg font-bold tracking-tight text-balance">
             {featuredEvent.title || '제목 없는 일정'}
           </h3>
           <p className="mt-2 line-clamp-1 text-sm text-white/70">
@@ -571,7 +571,7 @@ function SectionHeader({
     <header className="grid gap-4 border-b border-default-separator pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
       <div className="min-w-0">
         <p className={`${editorial.label} text-default-primary`}>{category.type === 'SCHEDULE' ? '일정 · Schedule' : '게시판 · Board'}</p>
-        <h2 className={`${editorial.display} text-default-label mt-3 truncate text-3xl sm:text-5xl`}>{category.name}</h2>
+        <h2 className={`${editorial.display} text-default-label mt-3 truncate text-2xl sm:text-4xl`}>{category.name}</h2>
         {suffix ? <p className={`${editorial.body} text-default-secondary-label mt-3 text-base`}>{suffix}</p> : null}
       </div>
       <Link
