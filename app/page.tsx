@@ -90,7 +90,7 @@ export default async function Home() {
               borderColor: 'var(--editorial-line-soft)'
             }}
           >
-            {site.backgroundImage ? <div className="absolute inset-0 z-0 bg-cover bg-center grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0" style={{ backgroundImage: `url(${toAttachmentUrl(site.backgroundImage.id)})` }} aria-hidden="true" /> : null}
+            {site.backgroundImage ? <div className="image-filter-transition absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: `url(${toAttachmentUrl(site.backgroundImage.id)})` }} aria-hidden="true" /> : null}
             <ContentContainer className="relative z-10 grid min-h-80 gap-8 py-10 lg:grid-cols-[0.35fr_1fr] lg:py-14">
               <p className={`${editorial.label} ${editorial.introText} text-[var(--editorial-primary)]`}>About this archive</p>
               <div className="max-w-3xl py-6 sm:py-8">
@@ -115,14 +115,14 @@ export default async function Home() {
                   <CategoryAnchorLink
                     key={category.id}
                     href={onPage ? `#${category.id}` : toCategoryHref(category)}
-                    className="group min-h-36 border-r border-b p-5 transition-colors hover:bg-[var(--editorial-ink)] hover:text-[var(--editorial-surface)] sm:p-6"
+                    className="group min-h-36 border-r border-b p-5 transition-colors hover:bg-[#eeeeeb] hover:text-[var(--editorial-ink)] sm:p-6"
                   >
                     <span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span>
                     <span className="mt-12 flex items-center justify-between gap-3 text-xl font-black tracking-tight">
                       <span className="truncate">{category.name}</span>
                       <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">↗</span>
                     </span>
-                    <span className={`${editorial.label} mt-2 block text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-surface)]`}>{category.type === 'SCHEDULE' ? 'Schedule' : 'Board'}</span>
+                    <span className={`${editorial.label} mt-2 block text-[var(--editorial-ink-muted)]`}>{category.type === 'SCHEDULE' ? 'Schedule' : 'Board'}</span>
                   </CategoryAnchorLink>
                 );
               })}

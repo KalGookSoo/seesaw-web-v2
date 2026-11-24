@@ -81,7 +81,7 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
           <>
             <span
               aria-hidden
-              className="bg-default-label absolute inset-0 bg-contain bg-center bg-no-repeat brightness-75 grayscale transition-[filter] duration-700 ease-out group-hover:brightness-100 group-hover:grayscale-0"
+              className="image-filter-transition bg-default-label absolute inset-0 bg-contain bg-center bg-no-repeat brightness-75"
               style={{
                 backgroundImage: `url(${toAttachmentUrl(thumbnail.id)})`
               }}

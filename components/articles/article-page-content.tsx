@@ -347,7 +347,7 @@ function ArchiveTimelineEntry({
         {thumbnail ? (
           <MonochromeImage
             className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} w-full`}
-            imageClassName="object-cover grayscale transition-[filter] duration-500 ease-out group-hover:grayscale-0"
+            imageClassName="image-filter-transition object-cover"
             src={toAttachmentUrl(thumbnail.id)}
             alt={thumbnail.originalName ?? article.title}
           />

@@ -202,7 +202,7 @@ function MagazineArticleTile({
         <div className="absolute inset-0">
           <MonochromeImage
             className="size-full"
-            imageClassName="object-cover grayscale transition-[filter] duration-700 ease-out group-hover:grayscale-0 group-focus-visible:grayscale-0"
+            imageClassName="image-filter-transition object-cover"
             src={toAttachmentUrl(thumbnail.id)}
             alt={thumbnail.originalName ?? article.title ?? '게시글 이미지'}
           />

@@ -64,12 +64,26 @@ button {
   transition-timing-function: ease;
 }
 
+.image-filter-transition {
+  filter: grayscale(1);
+  transition: filter 700ms ease-out;
+}
+
+.group:hover .image-filter-transition,
+.group:focus-visible .image-filter-transition {
+  filter: grayscale(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   :where(a, button, [role='button'], input, select, textarea, summary) {
+    transition-duration: 0ms;
+  }
+
+  .image-filter-transition {
     transition-duration: 0ms;
   }
 }
