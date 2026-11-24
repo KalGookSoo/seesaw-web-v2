@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
-  CalendarDays,
   ChevronLeft,
-  ChevronRight,
-  Newspaper
+  ChevronRight
 } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
@@ -19,6 +17,7 @@ import {
   toAttachmentUrl
 } from '@/lib/home-summary';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
+import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 type LoadState<T> =
   | Readonly<{
@@ -149,32 +148,32 @@ function getRandomMagazinePattern(): MagazinePattern {
 function getMagazineTileClass(pattern: MagazinePattern, index: number): string {
   const patternClasses: Record<MagazinePattern, readonly string[]> = {
     'lead-left': [
-      'sm:col-span-2 sm:row-span-2',
+      'sm:col-span-2 sm:min-h-[28rem]',
       'sm:col-span-1',
       'sm:col-span-1',
       'sm:col-span-2',
-      'sm:col-span-1'
+      'sm:col-span-2'
     ],
     'lead-right': [
-      'sm:col-span-2 sm:row-span-2 sm:order-2',
-      'sm:col-span-1 sm:order-1',
+      'sm:col-span-2 sm:min-h-[28rem] sm:order-2',
+      'sm:col-span-2 sm:order-1',
       'sm:col-span-1 sm:order-3',
       'sm:col-span-1 sm:order-4',
-      'sm:col-span-1 sm:order-5'
+      'sm:col-span-2 sm:order-5'
     ],
     split: [
       'sm:col-span-2',
       'sm:col-span-2',
-      'sm:col-span-1',
-      'sm:col-span-1',
-      'sm:col-span-2'
+      'sm:col-span-2',
+      'sm:col-span-2',
+      'sm:col-span-4'
     ],
     diagonal: [
-      'sm:col-span-1 sm:row-span-2',
-      'sm:col-span-2',
+      'sm:col-span-1 sm:min-h-[28rem]',
+      'sm:col-span-3',
       'sm:col-span-1',
-      'sm:col-span-2',
-      'sm:col-span-1'
+      'sm:col-span-3',
+      'sm:col-span-4'
     ]
   };
 
@@ -197,7 +196,7 @@ function MagazineArticleTile({
   return (
     <Link
       href={toArticleHref(article)}
-      className={`group relative flex min-h-64 overflow-hidden transition-colors sm:min-h-0 ${getMagazineTileClass(pattern, index)} ${hasImage ? 'bg-default-label text-white' : 'bg-default-surface text-default-label hover:bg-default-primary-soft'}`}
+      className={`group relative flex min-h-64 overflow-hidden transition-colors sm:min-h-56 ${getMagazineTileClass(pattern, index)} ${hasImage ? 'bg-default-label text-white' : 'bg-default-surface text-default-label hover:bg-default-primary-soft'}`}
     >
       {thumbnail ? (
         <div className="absolute inset-0">
@@ -244,7 +243,7 @@ function ArticleMagazineGrid({
   }, []);
 
   return (
-    <div className="border-default-separator grid grid-cols-1 gap-px overflow-hidden border bg-default-separator sm:grid-cols-4 sm:auto-rows-[minmax(10rem,1fr)]">
+    <div className="border-default-separator grid grid-cols-1 gap-px overflow-hidden border bg-default-separator sm:grid-cols-4">
       {articles.map((article, index) => (
         <MagazineArticleTile
           key={article.id}
@@ -291,12 +290,9 @@ function BoardCategorySection({
   return (
     <section
       id={category.id}
-      className="border-default-separator bg-default-surface/58 scroll-mt-20 border p-5 backdrop-blur sm:p-6"
+      className="scroll-mt-24"
     >
-      <SectionHeader
-        category={category}
-        icon={<Newspaper className="size-5" />}
-      />
+      <SectionHeader category={category} />
       <div className="mt-4">
         {state.status === 'loading' ? <Spinner /> : null}
         {state.status === 'error' ? (
@@ -354,13 +350,9 @@ function ScheduleCategorySection({
   return (
     <section
       id={category.id}
-      className="border-default-separator bg-default-surface/58 scroll-mt-20 border p-5 backdrop-blur sm:p-6"
+      className="scroll-mt-24"
     >
-      <SectionHeader
-        category={category}
-        icon={<CalendarDays className="size-5" />}
-        suffix={scheduleRange.label}
-      />
+      <SectionHeader category={category} suffix={scheduleRange.label} />
       <ScheduleViewTabs value={view} onChange={setView} />
       {view === 'monthly' ? <MonthlyMonthNavigator month={month} onChange={setMonth} /> : null}
       <div className="mt-4">
@@ -570,31 +562,23 @@ function MonthlyDotCalendar({
 
 function SectionHeader({
   category,
-  icon,
   suffix
 }: Readonly<{
   category: CategoryResponse;
-  icon: React.ReactNode;
   suffix?: string;
 }>) {
   return (
-    <header className="flex items-center justify-between gap-4">
+    <header className="grid gap-4 border-b border-default-separator pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
       <div className="min-w-0">
-        <div className="text-default-primary flex items-center gap-2">
-          {icon}
-          <h2 className="text-default-label truncate text-xl font-semibold">
-            {category.name}
-          </h2>
-        </div>
-        {suffix ? (
-          <p className="text-default-secondary-label mt-1 text-sm">{suffix}</p>
-        ) : null}
+        <p className={`${editorial.label} text-default-primary`}>{category.type === 'SCHEDULE' ? '일정 · Schedule' : '게시판 · Board'}</p>
+        <h2 className={`${editorial.display} text-default-label mt-3 truncate text-3xl sm:text-5xl`}>{category.name}</h2>
+        {suffix ? <p className={`${editorial.body} text-default-secondary-label mt-3 text-base`}>{suffix}</p> : null}
       </div>
       <Link
         href={toCategoryHref(category)}
-        className="border-default-separator bg-default-surface text-default-secondary-label hover:border-default-primary-muted hover:text-default-primary inline-flex shrink-0 items-center gap-1 border px-3 py-1.5 text-sm font-medium transition"
+        className="text-default-secondary-label hover:text-default-primary inline-flex shrink-0 items-center gap-2 text-xs font-bold tracking-[0.16em] uppercase transition"
       >
-        더보기
+        열어보기
         <ArrowRight className="size-4" />
       </Link>
     </header>
@@ -602,38 +586,24 @@ function SectionHeader({
 }
 
 export function HomeSummarySections({ categories }: HomeSummarySectionsProps) {
-  const boardCategories = [...categories]
+  const exposedCategories = [...categories]
     .filter(
       (category) =>
         isChildCategory(category) &&
         category.siteExposed &&
-        category.type === 'BOARD'
-    )
-    .sort(bySiteExposedOrder);
-  const scheduleCategories = [...categories]
-    .filter(
-      (category) =>
-        isChildCategory(category) &&
-        category.siteExposed &&
-        category.type === 'SCHEDULE'
+        (category.type === 'BOARD' || category.type === 'SCHEDULE')
     )
     .sort(bySiteExposedOrder);
 
   return (
-    <div className="grid gap-8 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.72fr)] xl:items-start">
-      <div className="space-y-8">
-        {boardCategories.map((category) => (
+    <div className="space-y-16">
+      {exposedCategories.map((category) => (
+        category.type === 'SCHEDULE' ? (
+          <ScheduleCategorySection key={category.id} category={category} />
+        ) : (
           <BoardCategorySection key={category.id} category={category} />
-        ))}
-      </div>
-      <div className="space-y-8 xl:sticky xl:top-6 xl:pt-16">
-        {scheduleCategories.map((category) => (
-          <ScheduleCategorySection
-            key={category.id}
-            category={category}
-          />
-        ))}
-      </div>
+        )
+      ))}
     </div>
   );
 }
