@@ -220,31 +220,32 @@ export function ServiceWorkerRegistration({ siteId, siteName }: ServiceWorkerReg
 
   if (!installPromptVisible || !deferredPrompt) {
     return subscriptionMessage ? (
-      <div className="border-default-separator bg-default-surface text-default-secondary-label fixed right-4 bottom-4 z-50 max-w-sm rounded-lg border px-4 py-3 text-sm shadow-xl">
+      <div className="border-default-separator bg-default-surface text-default-secondary-label fixed right-3 bottom-3 z-50 w-[calc(100vw-1.5rem)] max-w-sm border border-t-2 border-t-default-primary px-4 py-3 text-sm sm:right-4 sm:bottom-4 sm:w-[calc(100vw-2rem)]">
         {subscriptionMessage}
       </div>
     ) : null;
   }
 
   return (
-    <aside className="border-default-separator bg-default-surface text-default-label fixed inset-x-3 bottom-3 z-50 rounded-lg border p-4 shadow-xl sm:right-4 sm:bottom-4 sm:left-auto sm:w-[calc(100vw-2rem)] sm:max-w-sm">
+    <aside className="border-default-separator bg-default-surface text-default-label fixed inset-x-3 bottom-3 z-50 border border-t-2 border-t-default-primary p-4 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[calc(100vw-2rem)] sm:max-w-sm">
       <div className="flex items-start gap-3">
         <div
-          className="bg-default-label text-default-surface flex size-11 shrink-0 items-center justify-center rounded-md"
+          className="bg-default-primary-soft text-default-primary flex size-11 shrink-0 items-center justify-center border border-default-primary"
         >
           <Smartphone className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold">{siteName} 앱으로 열기</p>
+              <p className="text-default-primary text-[0.65rem] font-bold tracking-[0.16em] uppercase">앱 설치 안내</p>
+              <p className="mt-1 text-base font-bold tracking-tight">{siteName} 앱으로 열기</p>
               <p className="text-default-secondary-label mt-1 text-sm leading-6">
                 홈 화면에 추가하면 브라우저 주소창 없이 빠르게 사용할 수 있습니다.
               </p>
             </div>
             <button
               type="button"
-              className="text-default-tertiary-label hover:bg-default-fill hover:text-default-label rounded-md p-1 transition"
+              className="text-default-tertiary-label hover:bg-default-fill hover:text-default-label inline-flex size-8 shrink-0 items-center justify-center border border-transparent transition hover:border-default-separator"
               aria-label="설치 제안 닫기"
               onClick={closeInstallPrompt}
             >
@@ -254,7 +255,7 @@ export function ServiceWorkerRegistration({ siteId, siteName }: ServiceWorkerReg
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="bg-default-label text-default-surface hover:bg-default-secondary-label inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+              className="bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
               disabled={installing}
               onClick={installApplication}
             >
