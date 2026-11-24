@@ -27,7 +27,7 @@ import { toAttachmentUrl } from '@/lib/home-summary';
 import { ArticleFeed } from '@/components/articles/article-feed';
 import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown';
 import { MagazineStaticContent } from '@/components/articles/magazine-static-content';
-import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 import { ContentContainer } from '@/components/layout/content-container';
 import editorial from '@/app/style-guide/editorial/editorial.module.css';
@@ -320,7 +320,7 @@ function ArchiveTimelineEntry({
       </div>
 
       <Link
-        className={`relative min-w-0 border-b border-default-separator pb-6 transition-colors last:border-b-0 hover:border-default-primary-muted ${compact ? 'grid grid-cols-[minmax(0,1fr)_5rem] gap-3 pt-0 sm:grid-cols-[minmax(0,1fr)_7rem]' : 'grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]'}`}
+        className={`relative min-w-0 border-b border-default-separator pb-6 transition-colors last:border-b-0 hover:border-default-primary-muted ${thumbnail ? (compact ? 'grid grid-cols-[minmax(0,1fr)_5rem] gap-3 pt-0 sm:grid-cols-[minmax(0,1fr)_7rem]' : 'grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]') : 'block'}`}
         href={toArticleHref(article)}
       >
         <div className="min-w-0">
@@ -351,9 +351,7 @@ function ArchiveTimelineEntry({
             src={toAttachmentUrl(thumbnail.id)}
             alt={thumbnail.originalName ?? article.title}
           />
-        ) : (
-          <MonochromeImageFallback className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} w-full`} label="NO IMAGE / ARTICLE" />
-        )}
+        ) : null}
       </Link>
     </li>
   );
@@ -569,15 +567,17 @@ export function ArticlePageContent({
 
         <SearchForm search={search} />
 
-        {scheduleView === 'CALENDAR' ? (
-          <ScheduleCalendar categoryId={search.categoryId} query={search.keyWord} />
-        ) : viewType === 'CARD' ? (
-          <ArticleFeed fixedArticles={fixedArticles} initialPage={page} search={search} />
-        ) : (
-          <ArticleTimeline fixedArticles={fixedArticles} page={page} viewType={viewType} />
-        )}
+        <div className="mt-8 space-y-8">
+          {scheduleView === 'CALENDAR' ? (
+            <ScheduleCalendar categoryId={search.categoryId} query={search.keyWord} />
+          ) : viewType === 'CARD' ? (
+            <ArticleFeed fixedArticles={fixedArticles} initialPage={page} search={search} />
+          ) : (
+            <ArticleTimeline fixedArticles={fixedArticles} page={page} viewType={viewType} />
+          )}
 
-        {viewType === 'TABLE' ? <Pagination page={page} search={search} /> : null}
+          {viewType === 'TABLE' ? <Pagination page={page} search={search} /> : null}
+        </div>
       </ContentContainer>
     </main>
   );
