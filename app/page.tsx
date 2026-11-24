@@ -68,7 +68,7 @@ export default async function Home() {
             <div className="grid gap-10 border-b py-14 sm:py-20 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)] lg:items-end lg:gap-16" style={{ borderColor: 'var(--editorial-line-soft)' }}>
               <div>
                 <p className={`${editorial.label} text-[var(--editorial-primary)]`}>Editorial archive · Home</p>
-                <h1 className={`${editorial.display} mt-5 max-w-5xl text-[clamp(3rem,9vw,7rem)]`}>{site.name}</h1>
+                <h1 className={`${editorial.display} mt-5 max-w-5xl text-[clamp(2.5rem,7vw,5.5rem)]`} style={{ lineHeight: 0.95 }}>{site.name}</h1>
               </div>
               <div className="flex flex-col gap-6 lg:pb-2">
                 {site.description ? <p className={`${editorial.body} max-w-md text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.description}</p> : null}
@@ -91,7 +91,7 @@ export default async function Home() {
           <section className="mx-auto grid max-w-7xl gap-8 border-b px-5 py-10 sm:px-8 lg:grid-cols-[0.35fr_1fr] lg:px-10 lg:py-14" style={{ borderColor: 'var(--editorial-line-soft)' }}>
             <p className={`${editorial.label} text-[var(--editorial-primary)]`}>About this archive</p>
             <div className="max-w-3xl">
-              {site.intro ? <h2 className={`${editorial.display} text-2xl sm:text-4xl`}>{site.intro}</h2> : null}
+              {site.intro ? <h2 className={`${editorial.display} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
               {site.content ? <p className={`${editorial.body} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
             </div>
           </section>
