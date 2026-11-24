@@ -79,20 +79,24 @@ export default async function Home() {
               </div>
             </div>
 
-            {site.backgroundImage ? (
-              <div className="mt-6 aspect-[2/1] overflow-hidden border sm:aspect-[3/1]" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-                <MonochromeImage className="size-full" imageClassName="object-cover grayscale transition duration-700 hover:grayscale-0" src={toAttachmentUrl(site.backgroundImage.id)} alt="사이트 대표 이미지" fallbackLabel="IMAGE / UNAVAILABLE" />
-              </div>
-            ) : null}
           </div>
         </section>
 
-        {site.intro || site.content ? (
-          <section className="mx-auto grid max-w-7xl gap-8 border-b px-5 py-10 sm:px-8 lg:grid-cols-[0.35fr_1fr] lg:px-10 lg:py-14" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-            <p className={`${editorial.label} text-[var(--editorial-primary)]`}>About this archive</p>
-            <div className="max-w-3xl">
-              {site.intro ? <h2 className={`${editorial.display} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
-              {site.content ? <p className={`${editorial.body} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
+        {site.intro || site.content || site.backgroundImage ? (
+          <section
+            className="relative overflow-hidden border-b bg-cover bg-center"
+            style={{
+              ...(site.backgroundImage ? { backgroundImage: `url(${toAttachmentUrl(site.backgroundImage.id)})` } : {}),
+              borderColor: 'var(--editorial-line-soft)'
+            }}
+          >
+            <div className="absolute inset-0 bg-[var(--editorial-background)]/78 backdrop-grayscale" aria-hidden="true" />
+            <div className="relative mx-auto grid min-h-80 max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.35fr_1fr] lg:px-10 lg:py-14">
+              <p className={`${editorial.label} text-[var(--editorial-primary)]`}>About this archive</p>
+              <div className="max-w-3xl border border-[var(--editorial-line-soft)] bg-[var(--editorial-background)]/90 p-6 backdrop-blur-sm sm:p-8">
+                {site.intro ? <h2 className={`${editorial.display} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
+                {site.content ? <p className={`${editorial.body} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
+              </div>
             </div>
           </section>
         ) : null}
