@@ -387,43 +387,47 @@ export function ArticleManagementActions({
       </div>
 
       <Modal
-        footer={null}
-        onClose={() => setMoveOpen(false)}
-        open={moveOpen}
-        title="게시글 이동"
-      >
-        <form
-          className="space-y-4"
-          onSubmit={(event) => {
-            event.preventDefault();
-            moveArticle(event.currentTarget);
-          }}
-        >
-          <label className="text-default-label block text-sm font-semibold">
-            이동할 카테고리
-            <DropdownSelect
-              className="mt-2"
-              defaultValue={article.categoryId ?? ''}
-              name="categoryId"
-              options={categories.filter((category) => category.type !== 'NONE').map((category) => ({ label: category.name, value: category.id }))}
-            />
-          </label>
-          <div className="flex justify-end gap-2">
+        footer={
+          <>
             <button
-              className={`${buttonClassName} border-default-separator text-default-secondary-label`}
+              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex h-10 items-center px-4 text-sm font-semibold transition"
               type="button"
               onClick={() => setMoveOpen(false)}
             >
               취소
             </button>
             <button
-              className={`${buttonClassName} border-default-label bg-default-label text-default-background`}
+              className="bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted inline-flex h-10 items-center px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
               disabled={pending}
+              form="move-article-form"
               type="submit"
             >
               이동
             </button>
-          </div>
+          </>
+        }
+        onClose={() => setMoveOpen(false)}
+        open={moveOpen}
+        title="게시글 이동"
+        variant="editorial"
+      >
+        <form
+          id="move-article-form"
+          className="space-y-5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            moveArticle(event.currentTarget);
+          }}
+        >
+          <label className="text-default-label block text-xs font-bold tracking-[0.08em]">
+            이동할 카테고리
+            <DropdownSelect
+              className="mt-3"
+              defaultValue={article.categoryId ?? ''}
+              name="categoryId"
+              options={categories.filter((category) => category.type !== 'NONE').map((category) => ({ label: category.name, value: category.id }))}
+            />
+          </label>
         </form>
       </Modal>
 

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   Bell,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -116,14 +117,7 @@ function isCategoryActive(
   category: CategoryResponse,
   currentCategory: CategoryResponse | null
 ): boolean {
-  if (!currentCategory) {
-    return false;
-  }
-
-  return (
-    category.id === currentCategory.id ||
-    category.id === currentCategory.parentId
-  );
+  return currentCategory?.id === category.id;
 }
 
 function isChildCategoryActive(
@@ -139,8 +133,8 @@ function RecentBadge({ count }: Readonly<{ count: number }>) {
   }
 
   return (
-    <span className="border-default-secondary bg-default-secondary-soft text-default-label inline-flex min-w-5 items-center justify-center border px-1.5 py-0.5 text-[0.625rem] font-bold">
-      {count}
+    <span className="bg-default-secondary-soft text-default-secondary-label inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums">
+      {count}개
     </span>
   );
 }
@@ -158,16 +152,18 @@ function ParentCategoryLink({
 }>) {
   const href = getCategoryHref(category);
   const recentCount = category.recentArticles?.length ?? 0;
-  const className = `flex min-h-11 items-center gap-3 border-l-2 px-3 py-2 text-sm font-semibold transition ${
+  const hasChildren = (category.children?.filter((child) => child.exposed).length ?? 0) > 0;
+  const className = `flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 text-sm font-semibold transition ${
     active
-      ? 'border-default-label bg-default-fill text-default-label'
-      : 'border-transparent text-default-secondary-label hover:border-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
+      ? 'bg-default-fill text-default-label'
+      : 'text-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
   } ${collapsed ? 'justify-center' : 'justify-between'}`;
 
   const content = (
     <>
-      <span className={collapsed ? 'sr-only' : 'truncate'}>
-        {category.name}
+      <span className={collapsed ? 'sr-only' : 'flex min-w-0 items-center gap-2'}>
+        {hasChildren ? <ChevronDown className="size-3.5 shrink-0" aria-hidden /> : <span className="w-3.5 shrink-0" />}
+        <span className="truncate">{category.name}</span>
       </span>
       {collapsed ? (
         <span aria-hidden>{category.name.slice(0, 1)}</span>
@@ -249,7 +245,7 @@ function NavigationCategoryGroup({
         onNavigate={onNavigate}
       />
       {!collapsed && children.length > 0 ? (
-        <ul className="border-default-separator mt-2 space-y-1 border-l pl-3">
+        <ul className="border-default-separator mt-1 ml-[1.15rem] space-y-1 border-l pl-2">
           {children.map((child) => (
             <li key={child.id}>
               <ChildCategoryLink
@@ -353,10 +349,10 @@ function SideNavigation({
         <ul className="space-y-1">
           <li>
             <Link
-              className={`flex min-h-11 items-center border-l-2 px-3 py-2 text-sm font-semibold transition ${
+              className={`flex min-h-11 items-center rounded-sm px-3 py-2 text-sm font-semibold transition ${
                 currentCategory === null
-                  ? 'border-default-label bg-default-fill text-default-label'
-                  : 'border-transparent text-default-secondary-label hover:border-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
+                  ? 'bg-default-fill text-default-label'
+                  : 'text-default-secondary-label hover:bg-default-fill/60 hover:text-default-label'
               } ${collapsed ? 'justify-center' : ''}`}
               href="/"
               title={collapsed ? '홈' : undefined}

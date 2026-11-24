@@ -45,7 +45,7 @@ export function DropdownSelect({
         <span>{selectedOption?.label}</span>
         <ChevronDown aria-hidden className="text-default-tertiary-label size-4 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="border-default-separator bg-default-surface absolute inset-x-0 top-[calc(100%+0.35rem)] z-30 border p-1 shadow-lg">
+      <div className="border-default-separator bg-default-surface absolute inset-x-0 top-[calc(100%+0.35rem)] z-30 max-h-[min(20rem,calc(100dvh-16rem))] overflow-y-auto overscroll-contain border p-1 shadow-lg">
         {options.map((option) => (
           <button
             key={option.value}

@@ -54,6 +54,57 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Editorial scrollbar: reveal the ink rule only while the reading area is active. */
+* {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+}
+
+*:hover,
+*:focus-within {
+  scrollbar-color: var(--default-fill-strong) var(--default-background);
+}
+
+*::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 0.25rem solid transparent;
+  border-radius: 0;
+  background: transparent;
+}
+
+*:hover::-webkit-scrollbar-track,
+*:focus-within::-webkit-scrollbar-track {
+  background: var(--default-background);
+}
+
+*:hover::-webkit-scrollbar-thumb,
+*:focus-within::-webkit-scrollbar-thumb {
+  border-color: var(--default-background);
+  background: var(--default-fill-strong);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover,
+*:focus-within::-webkit-scrollbar-thumb:hover {
+  background: var(--default-secondary-label);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*:hover::-webkit-scrollbar-corner,
+*:focus-within::-webkit-scrollbar-corner {
+  background: var(--default-background);
+}
+
 button {
   cursor: pointer;
 }
