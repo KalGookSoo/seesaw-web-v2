@@ -279,7 +279,7 @@ function SegmentedButton({
     <button
       className={`inline-flex h-10 flex-1 items-center justify-center gap-2 px-3 text-sm font-semibold transition ${
         active
-          ? 'bg-default-label text-default-background'
+          ? 'bg-default-primary text-default-primary-contrast'
           : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
       }`}
       type="button"
