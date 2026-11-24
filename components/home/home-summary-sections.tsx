@@ -18,6 +18,7 @@ import {
   fetchRecentArticles,
   toAttachmentUrl
 } from '@/lib/home-summary';
+import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 type LoadState<T> =
   | Readonly<{
@@ -117,7 +118,7 @@ function Spinner() {
   return (
     <div className="border-default-separator bg-default-fill/70 flex min-h-32 items-center justify-center border border-dashed">
       <span
-        className="border-default-gray-4 border-t-default-blue size-7 animate-spin rounded-full border-2"
+        className="border-default-gray-4 border-t-default-primary size-7 animate-spin rounded-full border-2"
         aria-label="로딩 중"
       />
     </div>
@@ -132,82 +133,127 @@ function EmptyState({ message }: Readonly<{ message: string }>) {
   );
 }
 
-function FeaturedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
-  const thumbnail = article.inlineImages?.[0];
+type MagazinePattern = 'lead-left' | 'lead-right' | 'split' | 'diagonal';
+
+const magazinePatterns: readonly MagazinePattern[] = [
+  'lead-left',
+  'lead-right',
+  'split',
+  'diagonal'
+];
+
+function getRandomMagazinePattern(): MagazinePattern {
+  return magazinePatterns[Math.floor(Math.random() * magazinePatterns.length)];
+}
+
+function getMagazineTileClass(pattern: MagazinePattern, index: number): string {
+  const patternClasses: Record<MagazinePattern, readonly string[]> = {
+    'lead-left': [
+      'sm:col-span-2 sm:row-span-2',
+      'sm:col-span-1',
+      'sm:col-span-1',
+      'sm:col-span-2',
+      'sm:col-span-1'
+    ],
+    'lead-right': [
+      'sm:col-span-2 sm:row-span-2 sm:order-2',
+      'sm:col-span-1 sm:order-1',
+      'sm:col-span-1 sm:order-3',
+      'sm:col-span-1 sm:order-4',
+      'sm:col-span-1 sm:order-5'
+    ],
+    split: [
+      'sm:col-span-2',
+      'sm:col-span-2',
+      'sm:col-span-1',
+      'sm:col-span-1',
+      'sm:col-span-2'
+    ],
+    diagonal: [
+      'sm:col-span-1 sm:row-span-2',
+      'sm:col-span-2',
+      'sm:col-span-1',
+      'sm:col-span-2',
+      'sm:col-span-1'
+    ]
+  };
+
+  return patternClasses[pattern][index] ?? 'sm:col-span-1';
+}
+
+function MagazineArticleTile({
+  article,
+  index,
+  pattern
+}: Readonly<{
+  article: ArticleResponse;
+  index: number;
+  pattern: MagazinePattern;
+}>) {
+  const thumbnail = article.inlineImages?.find((image) => Boolean(image.id));
   const plainContent = article.plainContent ?? toPlainText(article.content);
+  const hasImage = Boolean(thumbnail);
 
   return (
     <Link
       href={toArticleHref(article)}
-      className="group border-default-separator relative flex min-h-80 flex-col justify-end overflow-hidden rounded-lg border bg-cover bg-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:min-h-96"
-      style={
-        thumbnail
-          ? { backgroundImage: `url(${toAttachmentUrl(thumbnail.id)})` }
-          : undefined
-      }
+      className={`group relative flex min-h-64 overflow-hidden transition-colors sm:min-h-0 ${getMagazineTileClass(pattern, index)} ${hasImage ? 'bg-default-label text-white' : 'bg-default-surface text-default-label hover:bg-default-primary-soft'}`}
     >
-      {!thumbnail ? (
-        <div className="from-default-blue-muted to-default-mint-soft absolute inset-0 bg-gradient-to-br" />
+      {thumbnail ? (
+        <div className="absolute inset-0">
+          <MonochromeImage
+            className="size-full"
+            imageClassName="object-cover grayscale transition duration-700 group-hover:grayscale-0 group-focus-visible:grayscale-0"
+            src={toAttachmentUrl(thumbnail.id)}
+            alt={thumbnail.originalName ?? article.title ?? '게시글 이미지'}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgb(0_0_0/0.78))] transition-colors group-hover:bg-[linear-gradient(180deg,rgb(95_111_97/0.08),rgb(0_0_0/0.72))]" />
+        </div>
       ) : null}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgb(0_0_0/0.15)_45%,rgb(0_0_0/0.82))]" />
-      <div className="relative p-6 text-white sm:p-8">
-        <p className="text-xs font-semibold tracking-[0.25em] text-white/75 uppercase">
-          새 글
-        </p>
-        <h3 className="mt-3 line-clamp-3 text-2xl font-semibold text-balance sm:text-3xl">
-          {article.title}
-        </h3>
-        <p className="mt-4 line-clamp-2 max-w-2xl text-sm leading-7 text-white/85 sm:text-base">
-          {plainContent || '본문 미리보기가 없습니다.'}
-        </p>
-        <div className="mt-6 flex items-center justify-between gap-3 text-xs text-white/70">
-          <span className="truncate">
-            {article.maskedAuthor ?? article.createdBy ?? '익명'}
+      <div className={`relative flex min-w-0 flex-1 flex-col justify-between p-5 sm:p-6 ${hasImage ? 'min-h-64 sm:min-h-full' : ''}`}>
+        <div className="flex items-center justify-between gap-3">
+          <span className={`text-[0.65rem] font-bold tracking-[0.18em] uppercase ${hasImage ? 'text-white/70' : 'text-default-primary'}`}>
+            {String(index + 1).padStart(2, '0')} · 기록
           </span>
-          <span className="shrink-0">{formatDate(article.createdDate)}</span>
+          {hasImage ? <span className="text-[0.65rem] tracking-[0.16em] text-white/60 uppercase">Image</span> : <span className="text-[0.65rem] tracking-[0.16em] text-default-tertiary-label uppercase">Text</span>}
+        </div>
+        <div className="mt-12">
+          <h3 className={`line-clamp-3 text-xl font-bold tracking-tight text-balance sm:text-2xl ${hasImage ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}>
+            {article.title || '제목 없는 게시글'}
+          </h3>
+          <p className={`mt-3 line-clamp-3 text-sm leading-6 ${hasImage ? 'text-white/80' : 'text-default-secondary-label'}`}>
+            {plainContent || '본문 미리보기가 없습니다.'}
+          </p>
+          <div className={`mt-6 flex flex-wrap items-center justify-between gap-2 text-xs ${hasImage ? 'text-white/65' : 'text-default-tertiary-label'}`}>
+            <span className="truncate">{article.maskedAuthor ?? article.createdBy ?? '익명'}</span>
+            <span className="shrink-0">{formatDate(article.createdDate)}</span>
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
-function ArticleStoryStack({
+function ArticleMagazineGrid({
   articles
 }: Readonly<{ articles: readonly ArticleResponse[] }>) {
-  const [featuredArticle, ...otherArticles] = articles;
+  const [pattern, setPattern] = useState<MagazinePattern>('lead-left');
+
+  useEffect(() => {
+    setPattern(getRandomMagazinePattern());
+  }, []);
 
   return (
-    <div className="space-y-4">
-      <FeaturedArticle article={featuredArticle} />
-      {otherArticles.length > 0 ? (
-        <div className="divide-y divide-default-separator border-y border-default-separator">
-          {otherArticles.map((article, index) => (
-            <ArticleListRow key={article.id} article={article} index={index + 1} />
-          ))}
-        </div>
-      ) : null}
+    <div className="border-default-separator grid grid-cols-1 gap-px overflow-hidden border bg-default-separator sm:grid-cols-4 sm:auto-rows-[minmax(10rem,1fr)]">
+      {articles.map((article, index) => (
+        <MagazineArticleTile
+          key={article.id}
+          article={article}
+          index={index}
+          pattern={pattern}
+        />
+      ))}
     </div>
-  );
-}
-
-function ArticleListRow({
-  article,
-  index
-}: Readonly<{ article: ArticleResponse; index: number }>) {
-  const plainContent = article.plainContent ?? toPlainText(article.content);
-
-  return (
-    <Link href={toArticleHref(article)} className="group grid gap-2 px-1 py-4 transition-colors hover:bg-default-fill sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4">
-      <span className="text-xs text-default-tertiary-label">{String(index).padStart(2, '0')}</span>
-      <div className="min-w-0">
-        <h3 className="truncate text-sm font-semibold text-default-label group-hover:text-default-blue">{article.title}</h3>
-        <p className="mt-1 line-clamp-1 text-xs leading-5 text-default-secondary-label">{plainContent || '본문 미리보기가 없습니다.'}</p>
-      </div>
-      <div className="flex gap-3 text-xs text-default-tertiary-label sm:flex-col sm:items-end sm:gap-1">
-        <span>{article.maskedAuthor ?? article.createdBy ?? '익명'}</span>
-        <span>{formatDate(article.createdDate)}</span>
-      </div>
-    </Link>
   );
 }
 
@@ -260,7 +306,7 @@ function BoardCategorySection({
           <EmptyState message="아직 게시글이 없습니다." />
         ) : null}
         {state.status === 'success' && state.data.length > 0 ? (
-          <ArticleStoryStack articles={state.data} />
+          <ArticleMagazineGrid articles={state.data} />
         ) : null}
       </div>
     </section>
@@ -402,35 +448,59 @@ function UpcomingScheduleList({ events }: Readonly<{ events: readonly VEventResp
     return <EmptyState message="다가오는 일정이 없습니다." />;
   }
 
-  return (
-    <div className="divide-default-separator border-default-separator divide-y border-y">
-      {upcomingEvents.map((event) => {
-        const start = event.dtStart ? new Date(event.dtStart) : null;
-        const dateLabel = start
-          ? new Intl.DateTimeFormat('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' }).format(start)
-          : '일정 미정';
+  const [featuredEvent, ...otherEvents] = upcomingEvents;
+  const featuredStart = featuredEvent.dtStart ? new Date(featuredEvent.dtStart) : null;
 
-        return (
-          <Link
-            key={event.id}
-            href={event.articleId ? `/articles/${event.articleId}` : '#'}
-            className="group grid gap-2 px-1 py-4 transition hover:bg-default-fill/60 sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:items-center sm:gap-4"
-          >
-            <time className="text-default-secondary-label text-xs font-semibold tracking-wide uppercase">
-              {dateLabel}
-            </time>
-            <span className="min-w-0">
-              <span className="text-default-label block truncate text-sm font-semibold group-hover:underline">
-                {event.title || '제목 없는 일정'}
-              </span>
-              <span className="text-default-tertiary-label mt-1 block truncate text-xs">
-                {[formatDateTime(event.dtStart), event.location].filter(Boolean).join(' · ') || '상세 정보 보기'}
-              </span>
-            </span>
-            <ArrowRight className="text-default-tertiary-label hidden size-4 shrink-0 transition-transform group-hover:translate-x-1 sm:block" />
-          </Link>
-        );
-      })}
+  return (
+    <div className={`grid gap-px border border-default-separator bg-default-separator ${otherEvents.length > 0 ? 'sm:grid-cols-[1.05fr_1fr]' : ''}`}>
+      <Link
+        href={featuredEvent.articleId ? `/articles/${featuredEvent.articleId}` : '#'}
+        className="group bg-default-label text-default-surface flex min-h-56 flex-col justify-between p-5 transition-colors hover:bg-default-primary sm:p-6"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-default-primary-soft text-[0.65rem] font-bold tracking-[0.18em] uppercase">다음 일정</span>
+          <ArrowRight className="size-4 shrink-0 transition-transform group-hover:translate-x-1" />
+        </div>
+        <div className="mt-12">
+          <time className="block text-4xl font-bold tracking-tight sm:text-5xl">
+            {featuredStart ? featuredStart.getDate() : '--'}
+          </time>
+          <p className="mt-1 text-xs tracking-[0.16em] text-white/60 uppercase">
+            {featuredStart ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', weekday: 'short' }).format(featuredStart) : '일정 미정'}
+          </p>
+          <h3 className="mt-5 line-clamp-2 text-xl font-bold tracking-tight text-balance">
+            {featuredEvent.title || '제목 없는 일정'}
+          </h3>
+          <p className="mt-2 line-clamp-1 text-sm text-white/70">
+            {[formatDateTime(featuredEvent.dtStart), featuredEvent.location].filter(Boolean).join(' · ') || '상세 정보 보기'}
+          </p>
+        </div>
+      </Link>
+      {otherEvents.length > 0 ? (
+        <div className="divide-default-separator bg-default-surface divide-y">
+          {otherEvents.map((event) => {
+            const start = event.dtStart ? new Date(event.dtStart) : null;
+            const dateLabel = start
+              ? new Intl.DateTimeFormat('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' }).format(start)
+              : '일정 미정';
+
+            return (
+              <Link
+                key={event.id}
+                href={event.articleId ? `/articles/${event.articleId}` : '#'}
+                className="group grid gap-2 px-4 py-4 transition hover:bg-default-fill sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-3"
+              >
+                <time className="text-default-secondary-label text-xs font-semibold tracking-wide uppercase">{dateLabel}</time>
+                <span className="min-w-0">
+                  <span className="text-default-label block truncate text-sm font-semibold group-hover:text-default-primary">{event.title || '제목 없는 일정'}</span>
+                  <span className="text-default-tertiary-label mt-1 block truncate text-xs">{[formatDateTime(event.dtStart), event.location].filter(Boolean).join(' · ') || '상세 정보 보기'}</span>
+                </span>
+                <ArrowRight className="text-default-tertiary-label hidden size-4 shrink-0 transition-transform group-hover:translate-x-1 sm:block" />
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -466,7 +536,7 @@ function MonthlyDotCalendar({
     <div className="border-default-separator border-t">
       <div className="grid grid-cols-7 border-l border-default-separator text-center text-[0.65rem] font-semibold tracking-[0.12em] uppercase">
         {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-          <span key={day} className={`border-r border-b border-default-separator py-2 ${index === 0 ? 'text-red-700 dark:text-red-300' : index === 6 ? 'text-blue-700 dark:text-blue-300' : 'text-default-tertiary-label'}`}>
+          <span key={day} className={`border-r border-b border-default-separator py-2 ${index === 0 ? 'text-default-danger' : index === 6 ? 'text-default-secondary' : 'text-default-tertiary-label'}`}>
             {day}
           </span>
         ))}
@@ -477,7 +547,7 @@ function MonthlyDotCalendar({
           const currentMonth = day.getMonth() === month.getMonth();
           const today = new Date();
           const isToday = calendarDateKey(day) === calendarDateKey(today);
-          const weekendClass = day.getDay() === 0 ? 'text-red-700 dark:text-red-300' : day.getDay() === 6 ? 'text-blue-700 dark:text-blue-300' : 'text-default-label';
+          const weekendClass = day.getDay() === 0 ? 'text-default-danger' : day.getDay() === 6 ? 'text-default-secondary' : 'text-default-label';
 
           return (
             <div
@@ -485,10 +555,10 @@ function MonthlyDotCalendar({
               className={`flex min-h-12 flex-col items-center justify-center gap-1 border-r border-b border-default-separator p-1.5 sm:min-h-14 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/35'}`}
               aria-label={`${day.getMonth() + 1}월 ${day.getDate()}일${eventCount > 0 ? ` 일정 ${eventCount}건` : ''}`}
             >
-              <span className={`flex size-6 items-center justify-center text-xs ${currentMonth ? weekendClass : 'text-default-tertiary-label'} ${isToday ? 'bg-default-label text-default-surface rounded-full font-bold' : ''}`}>
+              <span className={`flex size-6 items-center justify-center text-xs ${currentMonth ? weekendClass : 'text-default-tertiary-label'} ${isToday ? 'bg-default-label text-default-surface font-bold' : ''}`}>
                 {day.getDate()}
               </span>
-              <span className={`size-1.5 rounded-full ${eventCount > 0 && currentMonth ? 'bg-default-label' : 'bg-transparent'}`} aria-hidden="true" />
+              <span className={`size-1.5 ${eventCount > 0 && currentMonth ? 'bg-default-primary' : 'bg-transparent'}`} aria-hidden="true" />
             </div>
           );
         })}
@@ -510,7 +580,7 @@ function SectionHeader({
   return (
     <header className="flex items-center justify-between gap-4">
       <div className="min-w-0">
-        <div className="text-default-blue flex items-center gap-2">
+        <div className="text-default-primary flex items-center gap-2">
           {icon}
           <h2 className="text-default-label truncate text-xl font-semibold">
             {category.name}
@@ -522,7 +592,7 @@ function SectionHeader({
       </div>
       <Link
         href={toCategoryHref(category)}
-        className="border-default-separator bg-default-surface text-default-secondary-label hover:border-default-blue-muted hover:text-default-blue inline-flex shrink-0 items-center gap-1 border px-3 py-1.5 text-sm font-medium transition"
+        className="border-default-separator bg-default-surface text-default-secondary-label hover:border-default-primary-muted hover:text-default-primary inline-flex shrink-0 items-center gap-1 border px-3 py-1.5 text-sm font-medium transition"
       >
         더보기
         <ArrowRight className="size-4" />

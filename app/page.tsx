@@ -87,7 +87,7 @@ export default async function Home() {
         {site.intro || site.content ? (
           <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
             <div className="max-w-3xl">
-              <p className="text-xs font-semibold tracking-[0.2em] text-default-blue uppercase">About this space</p>
+              <p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">이 공간에 대하여</p>
               {site.intro ? <h2 className="mt-4 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">{site.intro}</h2> : null}
               {site.content ? <p className="mt-5 max-w-2xl text-sm leading-7 text-default-secondary-label sm:text-base">{site.content}</p> : null}
             </div>
@@ -96,7 +96,7 @@ export default async function Home() {
 
         {visibleCategories.length > 0 ? (
           <section className="mx-auto max-w-7xl px-5 pb-10 sm:px-8 lg:px-12">
-            <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-xs font-semibold tracking-[0.2em] text-default-blue uppercase">Explore</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">Browse by topic</h2></div><span className="text-xs text-default-tertiary-label">{visibleCategories.length} sections</span></div>
+            <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">탐색</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">카테고리별 기록</h2></div><span className="text-xs text-default-tertiary-label">{visibleCategories.length}개 섹션</span></div>
             <div className="grid grid-cols-2 border-t border-l border-default-separator sm:grid-cols-3 lg:grid-cols-4">
               {visibleCategories.map((category, index) => {
                 const onPage = category.type === 'BOARD' || category.type === 'SCHEDULE';
@@ -108,7 +108,7 @@ export default async function Home() {
 
         <section className="border-t border-default-separator bg-default-surface-grouped">
           <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
-            <div className="mb-8 flex items-end justify-between gap-5"><div><p className="text-xs font-semibold tracking-[0.2em] text-default-blue uppercase">The latest</p><h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Notes and dates</h2></div><span className="hidden max-w-48 text-right text-xs leading-5 text-default-tertiary-label sm:block">새로운 글과 다가오는 일정을 한 흐름으로 확인하세요.</span></div>
+            <div className="mb-8 flex items-end justify-between gap-5"><div><p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">최근 기록</p><h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">게시글과 일정</h2></div><span className="hidden max-w-48 text-right text-xs leading-5 text-default-tertiary-label sm:block">최근 게시글은 이미지와 텍스트의 리듬으로, 일정은 날짜의 흐름으로 보여줍니다.</span></div>
             <HomeSummarySections categories={categories} />
           </div>
         </section>

@@ -27,7 +27,7 @@ export async function fetchRecentArticles(
     categoryId,
     categoryType: 'BOARD',
     page: '0',
-    size: '3',
+    size: '5',
     sort: 'article.createdDate,desc'
   });
 
