@@ -43,11 +43,11 @@ export default async function RootLayout({
   const initialNavigationCollapsed = navigationCollapsedCookie === 'true';
 
   return (
-    <html lang="ko" className={`${plexMono.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="ko" className={`${plexMono.variable} h-full overflow-hidden antialiased`} suppressHydrationWarning>
       <head>
         <title>{`홈 | ${site.name}`}</title>
       </head>
-      <body className="flex min-h-full flex-col">
+      <body className="flex h-full min-h-0 flex-col overflow-hidden">
         <ToastProvider>
           <SiteContextProvider siteContext={siteContext}>
             <GlobalShell initialNavigationCollapsed={initialNavigationCollapsed} initialNavigationPosition={initialNavigationPosition}>

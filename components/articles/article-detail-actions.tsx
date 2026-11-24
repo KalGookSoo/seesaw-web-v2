@@ -15,7 +15,7 @@ import { useToast } from '@/components/ui/toast';
 import { DropdownSelect } from '@/components/ui/dropdown-select';
 
 const buttonClassName =
-  'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex h-9 items-center justify-center gap-1.5 border px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
 
 async function responseMessage(
   response: Response,
@@ -248,7 +248,7 @@ export function ArticleReplies({
               required
             />
             <button
-              className={`${buttonClassName} !h-12 w-full border-default-label bg-default-label text-default-background self-end sm:w-auto sm:self-stretch`}
+              className={`${buttonClassName} !h-12 w-full border-default-primary bg-default-primary text-white hover:bg-default-primary-muted self-end sm:w-auto sm:self-stretch`}
               disabled={pending}
               type="submit"
             >

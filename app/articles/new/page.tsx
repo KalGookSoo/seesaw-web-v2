@@ -53,7 +53,7 @@ export default function NewArticlePage() {
   }
 
   return (
-      <main className="bg-default-background text-default-label min-h-full">
+      <main className="bg-default-surface-grouped text-default-label min-h-full">
       <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         {category.type === 'SCHEDULE' ? (
           <ScheduleForm

@@ -21,7 +21,7 @@ import { Modal } from '@/components/ui/modal';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 const actionClassName =
-  'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition';
+  'inline-flex h-9 items-center justify-center gap-1.5 border px-3 text-sm font-semibold transition focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-[-2px]';
 
 function toPreviewUrl(id: string): string {
   return `/api/attachments/${encodeURIComponent(id)}`;
@@ -237,7 +237,7 @@ export function AttachmentList({
                 닫기
               </button>
               <a
-                className={`${actionClassName} border-default-blue bg-default-blue text-white hover:brightness-95`}
+                className={`${actionClassName} border-default-primary bg-default-primary text-white hover:bg-default-primary-muted`}
                 href={toDownloadUrl(previewAttachment.id)}
               >
                 <Download aria-hidden className="size-4" />

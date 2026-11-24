@@ -84,7 +84,7 @@ export function Modal({
         </header>
         <div className={`${variant === 'editorial' ? 'px-6 py-6' : 'px-5 py-5'}`}>{children}</div>
         {footer ? (
-          <footer className={`border-default-separator bg-default-surface-grouped flex justify-end gap-2 border-t px-5 py-4 ${variant === 'editorial' ? 'px-6 py-5' : ''}`}>{footer}</footer>
+          <footer className={`border-default-separator bg-default-surface-grouped flex flex-wrap justify-end gap-3 border-t px-5 py-4 ${variant === 'editorial' ? 'px-6 py-5' : ''}`}>{footer}</footer>
         ) : null}
       </section>
     </div>
