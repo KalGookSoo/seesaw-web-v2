@@ -720,7 +720,7 @@ export function GlobalShell({
 
   return (
     <div
-      className={`bg-default-surface-grouped text-default-label h-dvh min-h-0 overflow-hidden transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
+      className={`bg-default-surface-grouped text-default-label grid h-dvh min-h-0 grid-rows-[minmax(0,1fr)] overflow-hidden transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
     >
       {navigationPosition === 'left' ? (
         <>
