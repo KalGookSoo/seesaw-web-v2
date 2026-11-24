@@ -91,12 +91,11 @@ export default async function Home() {
               borderColor: 'var(--editorial-line-soft)'
             }}
           >
-            <div className="absolute inset-0 bg-[var(--editorial-background)]/78 backdrop-grayscale" aria-hidden="true" />
             <ContentContainer className="relative grid min-h-80 gap-8 py-10 lg:grid-cols-[0.35fr_1fr] lg:py-14">
-              <p className={`${editorial.label} text-[var(--editorial-primary)]`}>About this archive</p>
-              <div className="max-w-3xl border border-[var(--editorial-line-soft)] bg-[var(--editorial-background)]/90 p-6 backdrop-blur-sm sm:p-8">
-                {site.intro ? <h2 className={`${editorial.display} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
-                {site.content ? <p className={`${editorial.body} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
+              <p className={`${editorial.label} ${editorial.introText} text-[var(--editorial-primary)]`}>About this archive</p>
+              <div className="max-w-3xl py-6 sm:py-8">
+                {site.intro ? <h2 className={`${editorial.display} ${editorial.introText} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
+                {site.content ? <p className={`${editorial.body} ${editorial.introText} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
               </div>
             </ContentContainer>
           </section>

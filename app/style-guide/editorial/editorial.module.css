@@ -60,6 +60,12 @@
   font-family: Georgia, 'Times New Roman', 'Apple SD Gothic Neo', serif;
 }
 
+.introText {
+  text-shadow:
+    0 1px 8px color-mix(in srgb, var(--editorial-background) 96%, transparent),
+    0 0 18px color-mix(in srgb, var(--editorial-background) 88%, transparent);
+}
+
 .imagePlaceholder {
   background: linear-gradient(135deg, #d7d7d2 0%, #8e8e88 100%);
   filter: grayscale(1);
