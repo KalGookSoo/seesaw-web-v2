@@ -393,8 +393,8 @@ export default async function ArticleDetailPage({
             <div className="flex items-center justify-between gap-3">
               <p className={styles.articleEyebrow}>게시글 · 상세</p>
             </div>
-            <div className="mt-5 grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-end">
-              <div className="min-w-0">
+            <div className="mt-5 min-w-0">
+              <div>
                 <h1 className={styles.articleTitle}>{article.title}</h1>
                 <div className={styles.articleMeta}>
                 <span className="inline-flex items-center gap-1.5">
@@ -410,9 +410,6 @@ export default async function ArticleDetailPage({
                   조회 {article.views?.length ?? 0}
                 </span>
                 </div>
-                <div className="mt-5 flex justify-end border-t border-default-separator pt-4">
-                  <VoteButton referenceId={article.id} />
-                </div>
               </div>
             </div>
           </header>
@@ -424,6 +421,10 @@ export default async function ArticleDetailPage({
               ) : (
                 <p className="text-default-tertiary-label py-10 text-center">표시할 본문이 없습니다.</p>
               )}
+              <div className="border-default-separator mt-10 flex flex-col items-center border-t pt-8 text-center">
+                <p className="text-default-secondary-label text-sm">이 게시물 좋아요</p>
+                <VoteButton className="mt-3" referenceId={article.id} />
+              </div>
             </div>
           </div>
 
