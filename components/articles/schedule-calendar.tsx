@@ -158,8 +158,8 @@ export function ScheduleCalendar({ categoryId, query }: ScheduleCalendarProps) {
   }
 
   return (
-    <section className="border-default-separator bg-default-surface overflow-hidden border">
-      <header className="border-default-separator flex flex-wrap items-center justify-between gap-4 border-b px-4 py-4 sm:px-6">
+    <section className="overflow-hidden border border-[var(--editorial-line-soft)] bg-[var(--editorial-surface)]">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--editorial-line-soft)] px-4 py-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <CalendarDays className="text-default-secondary-label size-5" />
           <div>

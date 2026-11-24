@@ -30,6 +30,7 @@ import { MagazineStaticContent } from '@/components/articles/magazine-static-con
 import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 import { ContentContainer } from '@/components/layout/content-container';
+import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -44,9 +45,6 @@ type StaticContentPageProps = Readonly<{
   articles: readonly ArticleResponse[];
   category: CategoryResponse;
 }>;
-
-const mattePanelClassName =
-  'border-default-separator bg-default-surface border';
 
 const controlClassName =
   'inline-flex h-9 items-center justify-center gap-2 px-3 text-sm font-medium transition focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-[-2px]';
@@ -156,23 +154,23 @@ function ViewSwitcher({
 }>) {
   if (search.categoryType === 'SCHEDULE') {
     return (
-      <div className="bg-default-fill grid grid-cols-3 gap-1 border border-default-separator p-1">
+      <div className="flex border border-[var(--editorial-line-soft)]">
         <Link
-          className={`${controlClassName} ${scheduleView === 'CALENDAR' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'CALENDAR' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CALENDAR', viewType: 'TABLE' })}
         >
           <CalendarDays className="size-4" />
           캘린더
         </Link>
         <Link
-          className={`${controlClassName} ${scheduleView === 'TABLE' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'TABLE' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'TABLE', viewType: 'TABLE' })}
         >
           <List className="size-4" />
           목록
         </Link>
         <Link
-          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CARD', viewType: 'CARD' })}
         >
           <Grid2X2 className="size-4" />
@@ -183,12 +181,12 @@ function ViewSwitcher({
   }
 
   return (
-    <div className="tab-group grid-cols-2">
+    <div className="flex border border-[var(--editorial-line-soft)]">
       <Link
-        className={`${controlClassName} ${
+        className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${
           viewType === 'TABLE'
-            ? 'bg-default-surface text-default-label font-semibold'
-            : 'text-default-secondary-label hover:text-default-label'
+            ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold'
+            : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'TABLE' })}
       >
@@ -198,8 +196,8 @@ function ViewSwitcher({
       <Link
         className={`${controlClassName} ${
           viewType === 'CARD'
-            ? 'bg-default-surface text-default-label font-semibold'
-            : 'text-default-secondary-label hover:text-default-label'
+            ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold'
+            : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'CARD' })}
       >
@@ -214,7 +212,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
   return (
     <form
       action="/articles"
-      className="border-default-separator bg-default-surface grid gap-2 border p-2 sm:grid-cols-[12rem_1fr_auto]"
+      className="grid gap-2 border-b border-[var(--editorial-line-soft)] py-4 sm:grid-cols-[12rem_minmax(0,1fr)_auto]"
     >
       <input name="categoryId" type="hidden" value={search.categoryId} />
       {search.categoryType ? (
@@ -238,7 +236,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
         aria-label="검색어"
       />
       <button
-        className="form-submit border-default-label bg-default-label text-default-background inline-flex items-center justify-center gap-2 border transition hover:bg-default-secondary-label"
+        className="inline-flex h-10 items-center justify-center gap-2 border border-[var(--editorial-ink)] bg-[var(--editorial-ink)] px-4 text-sm font-semibold text-[var(--editorial-surface)] transition hover:bg-[var(--editorial-primary)]"
         type="submit"
       >
         <Search className="size-4" />
@@ -250,14 +248,14 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
 
 function EmptyState() {
   return (
-    <div className={`${mattePanelClassName} px-5 py-14 text-center`}>
-      <div className="bg-default-fill text-default-tertiary-label mx-auto flex size-12 items-center justify-center border border-default-separator">
+    <div className="border-y border-[var(--editorial-line-soft)] px-5 py-20 text-center">
+      <div className="mx-auto flex size-12 items-center justify-center border border-[var(--editorial-line-soft)] bg-[var(--editorial-surface-muted)] text-[var(--editorial-ink-muted)]">
         <Inbox className="size-6" />
       </div>
-      <p className="text-default-label mt-4 text-base font-medium">
+      <p className="mt-4 text-base font-semibold text-[var(--editorial-ink)]">
         게시물이 없습니다.
       </p>
-      <p className="text-default-secondary-label mt-2 text-sm">
+      <p className="mt-2 text-sm text-[var(--editorial-ink-soft)]">
         새로운 글이 올라오면 이곳에 표시됩니다.
       </p>
     </div>
@@ -380,17 +378,17 @@ function ArticleTimeline({
   let previousMonth = '';
 
   return (
-    <section className={`${mattePanelClassName} p-5 sm:p-7`}>
+    <section>
       <header className="mb-8 flex items-end justify-between gap-4 border-b border-default-separator pb-4">
         <div>
-          <p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">
+          <p className={`${editorial.label} text-[var(--editorial-primary)]`}>
             Archive timeline
           </p>
-          <h2 className="text-default-label mt-2 text-xl font-semibold tracking-tight">
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-[var(--editorial-ink)]">
             게시글의 흐름
           </h2>
         </div>
-        <span className="text-default-tertiary-label text-xs">
+        <span className={`${editorial.label} text-[var(--editorial-ink-muted)]`}>
           {page.page?.totalElements ?? page.content.length} entries
         </span>
       </header>
@@ -452,19 +450,19 @@ function Pagination({
 
   return (
     <nav
-      className={`${mattePanelClassName} flex flex-col items-center justify-between gap-3 px-3 py-3 sm:flex-row`}
+      className="flex flex-col items-center justify-between gap-3 border-y border-[var(--editorial-line-soft)] py-4 sm:flex-row"
       aria-label="페이지 이동"
     >
-      <p className="text-default-secondary-label text-sm">
+      <p className="text-sm text-[var(--editorial-ink-soft)]">
         총{' '}
-        <span className="text-default-label font-semibold">
+        <span className="font-semibold text-[var(--editorial-ink)]">
           {totalElements}
         </span>
         개 · {current + 1} / {totalPages}
       </p>
       <div className="flex items-center justify-center gap-1">
         <Link
-          className={`bg-default-fill text-default-secondary-label hover:bg-default-fill-strong inline-flex size-9 items-center justify-center transition ${
+          className={`inline-flex size-9 items-center justify-center border border-[var(--editorial-line-soft)] text-[var(--editorial-ink-soft)] transition hover:bg-[var(--editorial-surface-muted)] ${
             isFirst ? 'pointer-events-none opacity-40' : ''
           }`}
           href={buildArticlesHref(search, { page: Math.max(current - 1, 0) })}
@@ -478,8 +476,8 @@ function Pagination({
               key={pageNumber}
               className={`inline-flex size-9 items-center justify-center text-sm font-semibold transition ${
                 pageNumber === current
-                  ? 'bg-default-primary text-white'
-                  : 'bg-default-fill text-default-secondary-label hover:bg-default-fill-strong'
+                  ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)]'
+                  : 'border border-[var(--editorial-line-soft)] text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)]'
               }`}
               href={buildArticlesHref(search, { page: pageNumber })}
             >
@@ -488,7 +486,7 @@ function Pagination({
           ))}
         </div>
         <Link
-          className={`bg-default-fill text-default-secondary-label hover:bg-default-fill-strong inline-flex size-9 items-center justify-center transition ${
+          className={`inline-flex size-9 items-center justify-center border border-[var(--editorial-line-soft)] text-[var(--editorial-ink-soft)] transition hover:bg-[var(--editorial-surface-muted)] ${
             isLast ? 'pointer-events-none opacity-40' : ''
           }`}
           href={buildArticlesHref(search, {
@@ -527,48 +525,47 @@ export function ArticlePageContent({
   viewType
 }: ArticlePageContentProps) {
   return (
-    <main className="bg-default-background min-h-full">
-      <ContentContainer className="space-y-5 py-6 sm:py-8">
-        <header className={mattePanelClassName}>
-          <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="min-w-0">
-              <p className="text-default-secondary-label text-sm font-medium">
-                {category.type ?? 'BOARD'}
-              </p>
-              <h1 className="text-default-label mt-2 truncate text-3xl font-semibold">
-                {category.name}
-              </h1>
-              {category.description ? (
-                <p className="text-default-secondary-label mt-3 text-base leading-7">
-                  {category.description}
-                </p>
-              ) : null}
-            </div>
-            <ViewSwitcher search={search} scheduleView={scheduleView} viewType={viewType} />
-          </div>
-          <div className="border-default-separator/70 bg-default-fill/40 flex flex-col gap-3 border-t px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                className={`${controlClassName} bg-default-surface text-default-secondary-label hover:bg-default-gray-6 hover:text-default-label`}
-                href={buildArticlesHref(search, {
-                  keyField: 'createdBy',
-                  keyWord: '',
-                  page: 0
-                })}
-              >
-                <UserRound className="size-4" />
-                내가 쓴 글
-              </Link>
-              <Link
-                className={`${controlClassName} bg-default-primary font-semibold text-white hover:bg-default-primary-muted`}
-                href={`/articles/new?categoryId=${encodeURIComponent(search.categoryId)}&categoryType=${encodeURIComponent(search.categoryType ?? category.type ?? 'BOARD')}`}
-              >
-                <Pencil className="size-4" />
-                글쓰기
-              </Link>
-            </div>
-          </div>
+    <main className={`${editorial.theme} min-h-full`}>
+      <ContentContainer className="py-10">
+        <Link href="/" className={`${editorial.label} inline-flex items-center gap-2 text-[var(--editorial-ink-muted)] transition hover:text-[var(--editorial-ink)]`}>
+          <ChevronLeft size={16} aria-hidden />
+          홈으로 돌아가기
+        </Link>
+        <header className="mt-8 border-b pb-8" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+          <p className={`${editorial.label} text-[var(--editorial-primary)]`}>
+            {category.type === 'SCHEDULE' ? 'Schedule · Calendar' : 'Board · Articles'}
+          </p>
+          <h1 className={`${editorial.display} mt-4 text-3xl sm:text-5xl`} style={{ lineHeight: 0.95 }}>
+            {category.name}
+          </h1>
+          <p className={`${editorial.body} mt-4 text-base leading-7 text-[var(--editorial-ink-soft)]`}>
+            {category.description || (category.type === 'SCHEDULE' ? '다가오는 일정과 월별 일정을 확인하세요.' : '게시판에 공유된 기록을 확인하세요.')}
+          </p>
         </header>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b py-4" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              className={`${controlClassName} border border-[var(--editorial-line-soft)] text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]`}
+              href={buildArticlesHref(search, {
+                keyField: 'createdBy',
+                keyWord: '',
+                page: 0
+              })}
+            >
+              <UserRound className="size-4" />
+              내가 쓴 글
+            </Link>
+            <Link
+              className={`${controlClassName} bg-[var(--editorial-primary)] font-semibold text-[var(--editorial-surface)] hover:bg-[var(--editorial-ink)]`}
+              href={`/articles/new?categoryId=${encodeURIComponent(search.categoryId)}&categoryType=${encodeURIComponent(search.categoryType ?? category.type ?? 'BOARD')}`}
+            >
+              <Pencil className="size-4" />
+              글쓰기
+            </Link>
+          </div>
+          <ViewSwitcher search={search} scheduleView={scheduleView} viewType={viewType} />
+        </div>
 
         <SearchForm search={search} />
 
