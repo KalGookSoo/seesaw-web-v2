@@ -447,23 +447,23 @@ function UpcomingScheduleList({ events }: Readonly<{ events: readonly VEventResp
     <div className={`grid gap-px border border-default-separator bg-default-separator ${otherEvents.length > 0 ? 'sm:grid-cols-[1.05fr_1fr]' : ''}`}>
       <Link
         href={featuredEvent.articleId ? `/articles/${featuredEvent.articleId}` : '#'}
-        className="group bg-default-label text-default-surface flex min-h-56 flex-col justify-between p-5 transition-colors hover:bg-default-primary sm:p-6"
+        className="group bg-default-surface text-default-label flex min-h-56 flex-col justify-between p-5 transition-colors hover:bg-default-fill sm:p-6"
       >
         <div className="flex items-start justify-between gap-3">
-          <span className="text-default-primary-soft text-[0.65rem] font-bold tracking-[0.18em] uppercase">다음 일정</span>
+          <span className="text-default-primary text-[0.65rem] font-bold tracking-[0.18em] uppercase">다음 일정</span>
           <ArrowRight className="size-4 shrink-0 transition-transform group-hover:translate-x-1" />
         </div>
         <div className="mt-12">
           <time className="block text-4xl font-bold tracking-tight sm:text-5xl">
             {featuredStart ? featuredStart.getDate() : '--'}
           </time>
-          <p className="mt-1 text-xs tracking-[0.16em] text-white/60 uppercase">
+          <p className="text-default-secondary-label mt-1 text-xs tracking-[0.16em] uppercase">
             {featuredStart ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', weekday: 'short' }).format(featuredStart) : '일정 미정'}
           </p>
           <h3 className="mt-5 line-clamp-2 text-xl font-bold tracking-tight text-balance">
             {featuredEvent.title || '제목 없는 일정'}
           </h3>
-          <p className="mt-2 line-clamp-1 text-sm text-white/70">
+          <p className="text-default-secondary-label mt-2 line-clamp-1 text-sm">
             {[formatDateTime(featuredEvent.dtStart), featuredEvent.location].filter(Boolean).join(' · ') || '상세 정보 보기'}
           </p>
         </div>
