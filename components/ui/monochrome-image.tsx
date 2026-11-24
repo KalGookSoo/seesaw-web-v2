@@ -42,7 +42,7 @@ export function MonochromeImage({
       ) : (
         <img
           alt={alt}
-          className={`size-full transition-opacity duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'} ${imageClassName}`}
+          className={`size-full transition-[opacity,filter] duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'} ${imageClassName}`}
           src={src}
           onError={() => setStatus('error')}
           onLoad={() => setStatus('loaded')}

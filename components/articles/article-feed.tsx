@@ -9,7 +9,6 @@ import type { PagedModel } from '@/types/common';
 import type { SearchArticlesParams } from '@/lib/articles';
 import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
 
 type ArticleFeedProps = Readonly<{
   fixedArticles: readonly ArticleResponse[];
@@ -80,11 +79,12 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
       >
         {thumbnail ? (
           <>
-            <MonochromeImage
-              className="absolute inset-0 size-full"
-              imageClassName="object-cover grayscale brightness-75 transition duration-700 group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"
-              src={toAttachmentUrl(thumbnail.id)}
-              alt={thumbnail.originalName ?? article.title}
+            <span
+              aria-hidden
+              className="bg-default-label absolute inset-0 bg-contain bg-center bg-no-repeat brightness-75 grayscale transition-[filter] duration-700 ease-out group-hover:brightness-100 group-hover:grayscale-0"
+              style={{
+                backgroundImage: `url(${toAttachmentUrl(thumbnail.id)})`
+              }}
             />
             <span className="absolute inset-0 bg-linear-to-t from-black/85 via-black/35 to-black/20 transition-colors duration-700 group-hover:from-black/70 group-hover:via-black/20" />
           </>
@@ -103,7 +103,7 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
             <span>{formatDate(article.createdDate)}</span>
           </div>
           <h2
-            className={`mt-3 line-clamp-2 text-2xl font-black tracking-[-0.05em] text-balance break-words transition-colors sm:text-3xl ${thumbnail ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}
+            className={`mt-3 line-clamp-2 text-lg font-black tracking-[-0.04em] text-balance break-words transition-colors sm:text-xl ${thumbnail ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}
           >
             {article.title}
           </h2>

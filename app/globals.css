@@ -38,6 +38,7 @@
    -------------------------------------------------------------------------- */
 html {
   font-size: 14px;
+  scroll-behavior: smooth;
 }
 
 @media (min-width: 1024px) {
@@ -55,6 +56,22 @@ body {
 
 button {
   cursor: pointer;
+}
+
+:where(a, button, [role='button'], input, select, textarea, summary) {
+  transition-duration: 180ms;
+  transition-property: background-color, border-color, box-shadow, color, filter, opacity, transform;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  :where(a, button, [role='button'], input, select, textarea, summary) {
+    transition-duration: 0ms;
+  }
 }
 
 /* Editorial focus treatment: keep keyboard navigation crisp against paper-like surfaces. */
