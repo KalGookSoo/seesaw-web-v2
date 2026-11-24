@@ -1,13 +1,14 @@
 import { Settings } from 'lucide-react';
 
 import { NotificationSettings } from '@/components/notifications/notification-settings';
+import { ContentContainer } from '@/components/layout/content-container';
 
 export const dynamic = 'force-dynamic';
 
 export default function NotificationSettingsPage() {
   return (
-    <main className="min-h-full bg-default-background px-4 py-8 text-default-label sm:px-6 lg:px-10 lg:py-12">
-      <div className="mx-auto max-w-4xl">
+    <main className="min-h-full bg-default-background text-default-label">
+      <ContentContainer className="py-8 lg:py-12">
         <header className="mb-8 flex items-end justify-between gap-6 border-b border-default-separator pb-6">
           <div>
             <p className="text-default-primary text-xs font-bold tracking-[0.2em] uppercase">Delivery channels</p>
@@ -16,7 +17,7 @@ export default function NotificationSettingsPage() {
           <Settings aria-hidden className="text-default-primary hidden size-8 sm:block" />
         </header>
         <NotificationSettings />
-      </div>
+      </ContentContainer>
     </main>
   );
 }

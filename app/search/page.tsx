@@ -7,6 +7,7 @@ import { decode } from 'entities';
 import { APPLICATION_API_BASE_URL, APPLICATION_NAME } from '@/lib/application-constants';
 import { getSiteContext } from '@/lib/site';
 import { SearchEmptyState, SearchErrorState } from '@/components/search/search-empty-state';
+import { ContentContainer } from '@/components/layout/content-container';
 import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
@@ -70,8 +71,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const meta = result?.meta;
 
   return (
-    <div className={`${editorial.theme} min-h-full px-4 py-10 sm:px-8 lg:px-12`}>
-      <main className="mx-auto max-w-5xl">
+    <div className={`${editorial.theme} min-h-full`}>
+      <ContentContainer className="py-10">
+        <main>
         <Link href="/" className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)] inline-flex items-center gap-2 transition`}><ArrowLeft size={16} aria-hidden /> 홈으로 돌아가기</Link>
         <header className="mt-8 border-b pb-8" style={{ borderColor: 'var(--editorial-line-soft)' }}>
           <p className={`${editorial.label} text-[var(--editorial-primary)]`}>Search · Index</p>
@@ -81,7 +83,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         {!keyword ? <div className="py-8"><SearchEmptyState title="검색어를 입력해주세요" description="상단 검색창에서 키워드를 입력하면 카테고리와 게시글을 함께 찾아드립니다." /></div> : null}
         {keyword && !result ? <div className="py-8"><SearchErrorState /></div> : null}
         {keyword && result ? <div className="py-6 sm:py-8"><div className="mb-4 flex items-end justify-between gap-4 border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}><p className={editorial.label}>Result index</p><span className={`${editorial.label} text-[var(--editorial-ink-muted)]`}>각 그룹 최대 {PAGE_SIZE}건 · 전체 {meta?.categoryTotalCount ?? 0}개 카테고리 · {meta?.articleTotalCount ?? 0}개 게시글</span></div><div className="grid gap-8 md:grid-cols-2"><SearchResultGroup title="카테고리" count={meta?.categoryTotalCount ?? categories.length} hasMore={meta?.categoryHasMore ?? false} moreHref={buildSearchHref(keyword, 'categories', page)}>{categories.length ? <ul className="border-y" style={{ borderColor: 'var(--editorial-line)' }}>{categories.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition-[background-color,box-shadow,transform] last:border-b-0 hover:translate-x-0.5 hover:bg-[var(--editorial-surface-muted)] hover:shadow-[inset_3px_0_0_var(--editorial-primary)]" style={{ borderColor: 'var(--editorial-line)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-6 block text-lg font-black tracking-tight">{item.name || '이름 없는 카테고리'}</span><span className={`${editorial.body} mt-2 block text-sm leading-6 text-[var(--editorial-ink-soft)]`}>{item.description || '카테고리'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="카테고리 결과가 없습니다" description="검색어와 일치하는 카테고리를 찾지 못했습니다." />}</SearchResultGroup><SearchResultGroup title="게시글" count={meta?.articleTotalCount ?? articles.length} hasMore={meta?.articleHasMore ?? false} moreHref={buildSearchHref(keyword, 'articles', page)}>{articles.length ? <ul className="border-y" style={{ borderColor: 'var(--editorial-line)' }}>{articles.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition-[background-color,box-shadow,transform] last:border-b-0 hover:translate-x-0.5 hover:bg-[var(--editorial-surface-muted)] hover:shadow-[inset_3px_0_0_var(--editorial-primary)]" style={{ borderColor: 'var(--editorial-line)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-6 block text-lg font-black tracking-tight">{item.title || '제목 없는 게시글'}</span><span className={`${editorial.body} mt-2 block line-clamp-3 text-sm leading-6 text-[var(--editorial-ink-soft)]`}>{toPlainText(item.preview) || '본문 미리보기 없음'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="게시글 결과가 없습니다" description="검색어와 일치하는 게시글을 찾지 못했습니다." />}</SearchResultGroup></div></div> : null}
-      </main>
+        </main>
+      </ContentContainer>
     </div>
   );
 }

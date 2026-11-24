@@ -29,6 +29,7 @@ import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown
 import { MagazineStaticContent } from '@/components/articles/magazine-static-content';
 import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
+import { ContentContainer } from '@/components/layout/content-container';
 
 type ArticlePageContentProps = Readonly<{
   category: CategoryResponse;
@@ -526,8 +527,8 @@ export function ArticlePageContent({
   viewType
 }: ArticlePageContentProps) {
   return (
-    <main className="bg-default-background min-h-full px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-6xl space-y-5">
+    <main className="bg-default-background min-h-full">
+      <ContentContainer className="space-y-5 py-6 sm:py-8">
         <header className={mattePanelClassName}>
           <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
@@ -580,7 +581,7 @@ export function ArticlePageContent({
         )}
 
         {viewType === 'TABLE' ? <Pagination page={page} search={search} /> : null}
-      </div>
+      </ContentContainer>
     </main>
   );
 }

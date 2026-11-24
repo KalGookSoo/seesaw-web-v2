@@ -35,7 +35,7 @@
 .reader {
   position: relative;
   z-index: 2;
-  width: min(100% - 2rem, 68rem);
+  width: min(100% - 2rem, 1200px);
   margin: 0 auto;
   padding: 1.5rem 0 5rem;
 }
@@ -283,7 +283,7 @@
 
 @media (min-width: 768px) {
   .reader {
-    width: min(100% - 4rem, 54rem);
+    width: min(100% - 4rem, 1200px);
     padding-top: 7rem;
   }
 

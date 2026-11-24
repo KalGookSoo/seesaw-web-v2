@@ -4,6 +4,7 @@ import { toAttachmentUrl } from '@/lib/home-summary';
 import { getSiteContext } from '@/lib/site';
 import { CategoryAnchorLink } from '@/components/home/category-anchor-link';
 import { HomeSummarySections } from '@/components/home/home-summary-sections';
+import { ContentContainer } from '@/components/layout/content-container';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
 import editorial from './style-guide/editorial/editorial.module.css';
 
@@ -45,8 +46,8 @@ export default async function Home() {
 
     return (
       <main className={`${editorial.theme} min-h-dvh`}>
-        <section className="border-b px-5 py-5 sm:px-8 lg:px-10" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-          <div className="mx-auto max-w-7xl">
+        <section className="border-b py-5" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+          <ContentContainer>
             <header className="flex items-start justify-between gap-6">
               <div className="flex min-w-0 items-center gap-3">
                 {site.profileImage ? (
@@ -79,7 +80,7 @@ export default async function Home() {
               </div>
             </div>
 
-          </div>
+          </ContentContainer>
         </section>
 
         {site.intro || site.content || site.backgroundImage ? (
@@ -91,18 +92,19 @@ export default async function Home() {
             }}
           >
             <div className="absolute inset-0 bg-[var(--editorial-background)]/78 backdrop-grayscale" aria-hidden="true" />
-            <div className="relative mx-auto grid min-h-80 max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.35fr_1fr] lg:px-10 lg:py-14">
+            <ContentContainer className="relative grid min-h-80 gap-8 py-10 lg:grid-cols-[0.35fr_1fr] lg:py-14">
               <p className={`${editorial.label} text-[var(--editorial-primary)]`}>About this archive</p>
               <div className="max-w-3xl border border-[var(--editorial-line-soft)] bg-[var(--editorial-background)]/90 p-6 backdrop-blur-sm sm:p-8">
                 {site.intro ? <h2 className={`${editorial.display} text-xl sm:text-3xl`} style={{ lineHeight: 0.95 }}>{site.intro}</h2> : null}
                 {site.content ? <p className={`${editorial.body} mt-5 max-w-2xl text-lg leading-8 text-[var(--editorial-ink-soft)]`}>{site.content}</p> : null}
               </div>
-            </div>
+            </ContentContainer>
           </section>
         ) : null}
 
         {visibleCategories.length > 0 ? (
-          <section id="index" className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+          <section id="index">
+            <ContentContainer className="py-10 lg:py-14">
             <div className="mb-5 flex items-end justify-between border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}>
               <p className={editorial.label}>Index · Contents</p>
               <span className={editorial.label}>{String(visibleCategories.length).padStart(2, '0')} sections</span>
@@ -126,17 +128,18 @@ export default async function Home() {
                 );
               })}
             </nav>
+            </ContentContainer>
           </section>
         ) : null}
 
         <section id="archive" className="border-t" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-          <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+          <ContentContainer className="py-10 lg:py-14">
             <div className="mb-10 flex items-end justify-between border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}>
               <p className={editorial.label}>Archive · Latest records</p>
               <span className={editorial.label}>Scroll to read</span>
             </div>
             <HomeSummarySections categories={categories} />
-          </div>
+          </ContentContainer>
         </section>
       </main>
     );

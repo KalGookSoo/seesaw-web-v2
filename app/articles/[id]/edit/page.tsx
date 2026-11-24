@@ -7,6 +7,7 @@ import { fetchEventsByCategory } from '@/lib/events';
 import { ArticleEditPageContent } from '@/components/articles/article-edit-page-content';
 import { ScheduleForm } from '@/components/articles/schedule-form';
 import { getSiteContext } from '@/lib/site';
+import { ContentContainer } from '@/components/layout/content-container';
 
 type EditArticlePageProps = Readonly<{
   params: Promise<{ id: string }>;
@@ -66,7 +67,7 @@ export default async function EditArticlePage({
     if (event) {
       return (
         <main className="bg-default-surface-grouped text-default-label min-h-full">
-          <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+          <ContentContainer className="py-8 lg:py-12">
             <ScheduleForm
               categoryId={categoryId}
               categoryName={category.name ?? ''}
@@ -77,7 +78,7 @@ export default async function EditArticlePage({
               mode="edit"
               successHref={detailHref}
             />
-          </div>
+          </ContentContainer>
         </main>
       );
     }
@@ -85,14 +86,14 @@ export default async function EditArticlePage({
 
   return (
     <main className="bg-default-surface-grouped text-default-label min-h-full">
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <ContentContainer className="py-8 lg:py-12">
         <ArticleEditPageContent
           article={article}
           articleId={id}
           categoryId={categoryId}
           detailHref={detailHref}
         />
-      </div>
+      </ContentContainer>
     </main>
   );
 }

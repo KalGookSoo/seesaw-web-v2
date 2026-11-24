@@ -5,6 +5,7 @@ import { decode } from 'entities';
 
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 import { SearchEmptyState, SearchErrorState } from '@/components/search/search-empty-state';
+import { ContentContainer } from '@/components/layout/content-container';
 import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 const PAGE_SIZE = 10;
@@ -44,8 +45,9 @@ export async function renderSearchScopePage(scope: SearchScope, siteId: string, 
   const title = scope === 'categories' ? '카테고리 전체 검색' : '게시글 전체 검색';
 
   return (
-    <div className={`${editorial.theme} min-h-full px-4 py-10 sm:px-8 lg:px-12`}>
-      <main className="mx-auto max-w-4xl">
+    <div className={`${editorial.theme} min-h-full`}>
+      <ContentContainer className="py-10">
+        <main>
         <Link href={`/search?keyword=${encodeURIComponent(keyword)}`} className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)] inline-flex items-center gap-2 transition`}><ArrowLeft size={16} aria-hidden /> 통합검색으로 돌아가기</Link>
         <header className="mt-8 border-b pb-8" style={{ borderColor: 'var(--editorial-line-soft)' }}><p className={`${editorial.label} text-[var(--editorial-primary)]`}>{scope === 'categories' ? 'Search · Categories' : 'Search · Articles'}</p><h1 className={`${editorial.display} mt-4 text-3xl sm:text-5xl`} style={{ lineHeight: 0.95 }}>“{keyword}” {title}</h1><p className={`${editorial.body} mt-4 text-base leading-7 text-[var(--editorial-ink-soft)]`}>전체 {totalCount}건 · 페이지 {page} / {totalPages}</p></header>
         {!keyword ? <div className="py-8"><SearchEmptyState title="검색어를 입력해주세요" description="통합검색으로 돌아가 검색어를 입력하면 결과를 확인할 수 있습니다." /></div> : null}
@@ -56,7 +58,8 @@ export async function renderSearchScopePage(scope: SearchScope, siteId: string, 
           <ul className="border-y" style={{ borderColor: 'var(--editorial-line)' }}>{scope === 'categories' ? items.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition-[background-color,box-shadow,transform] last:border-b-0 hover:translate-x-0.5 hover:bg-[var(--editorial-surface-muted)] hover:shadow-[inset_3px_0_0_var(--editorial-primary)] sm:p-7" style={{ borderColor: 'var(--editorial-line)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-6 block text-xl font-black tracking-tight">{item.name || '이름 없는 카테고리'}</span><span className={`${editorial.body} mt-2 block text-sm leading-6 text-[var(--editorial-ink-soft)]`}>{item.description || '카테고리'}</span></Link></li>) : items.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition-[background-color,box-shadow,transform] last:border-b-0 hover:translate-x-0.5 hover:bg-[var(--editorial-surface-muted)] hover:shadow-[inset_3px_0_0_var(--editorial-primary)] sm:p-7" style={{ borderColor: 'var(--editorial-line)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-6 block text-xl font-black tracking-tight">{item.title || '제목 없는 게시글'}</span><span className={`${editorial.body} mt-2 block line-clamp-3 text-sm leading-7 text-[var(--editorial-ink-soft)]`}>{toPlainText(item.preview) || '본문 미리보기 없음'}</span></Link></li>)}</ul>
           <nav aria-label="검색 결과 페이지 이동" className="mt-6 flex flex-wrap items-center justify-center gap-1"><PaginationLink href={page > 1 ? buildPageHref(scope, keyword, page - 1) : undefined} label="이전" />{Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => <PaginationLink key={pageNumber} href={pageNumber === page ? undefined : buildPageHref(scope, keyword, pageNumber)} label={String(pageNumber)} active={pageNumber === page} />)}<PaginationLink href={page < totalPages ? buildPageHref(scope, keyword, page + 1) : undefined} label="다음" /></nav>
         </> : null}
-      </main>
+        </main>
+      </ContentContainer>
     </div>
   );
 }

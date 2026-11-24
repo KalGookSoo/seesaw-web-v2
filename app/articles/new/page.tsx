@@ -7,6 +7,7 @@ import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
 import { ArticleForm } from '@/components/articles/article-form';
 import { ScheduleForm } from '@/components/articles/schedule-form';
+import { ContentContainer } from '@/components/layout/content-container';
 
 export default function NewArticlePage() {
   const searchParams = useSearchParams();
@@ -54,7 +55,7 @@ export default function NewArticlePage() {
 
   return (
       <main className="bg-default-surface-grouped text-default-label min-h-full">
-      <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <ContentContainer className="py-8 lg:py-12">
         {category.type === 'SCHEDULE' ? (
           <ScheduleForm
             categoryId={categoryId}
@@ -72,7 +73,7 @@ export default function NewArticlePage() {
             successHref={listHref}
           />
         )}
-      </div>
+      </ContentContainer>
     </main>
   );
 }

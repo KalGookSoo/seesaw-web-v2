@@ -177,7 +177,7 @@ export function ArticleFeed({ fixedArticles, initialPage, search }: ArticleFeedP
         </div>
         <span className="text-default-tertiary-label text-xs">{feedLabel}</span>
       </header>
-      <div className="mx-auto max-w-3xl space-y-6">
+      <div className="w-full space-y-6">
         {articles.map((article) => <FeedArticle key={article.id} article={article} />)}
       </div>
       <div ref={sentinelRef} className="flex min-h-24 items-center justify-center" aria-live="polite">
