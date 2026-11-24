@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { decode } from 'entities';
 
 import { APPLICATION_API_BASE_URL, APPLICATION_NAME } from '@/lib/application-constants';
 import { getSiteContext } from '@/lib/site';
 import { SearchEmptyState, SearchErrorState } from '@/components/search/search-empty-state';
+import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
 const PAGE_SIZE = 5;
@@ -69,18 +70,22 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const meta = result?.meta;
 
   return (
-    <div className="bg-default-surface-grouped min-h-full px-4 py-10 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-5xl">
-        <Link href="/" className="text-default-tertiary-label hover:text-default-label inline-flex items-center gap-2 text-sm transition"><ArrowLeft size={16} aria-hidden /> 돌아가기</Link>
-        <header className="border-default-separator mt-8 border-b pb-6"><p className="text-default-tertiary-label text-xs font-semibold tracking-[0.2em] uppercase">Search</p><h2 className="text-default-label mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{keyword ? `“${keyword}” 검색 결과` : '통합검색'}</h2><p className="text-default-secondary-label mt-3 text-sm">{keyword ? '카테고리와 게시글에서 검색어를 찾았습니다.' : '찾고 싶은 콘텐츠를 검색해보세요.'}</p></header>
+    <div className={`${editorial.theme} min-h-full px-4 py-10 sm:px-8 lg:px-12`}>
+      <main className="mx-auto max-w-5xl">
+        <Link href="/" className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)] inline-flex items-center gap-2 transition`}><ArrowLeft size={16} aria-hidden /> 홈으로 돌아가기</Link>
+        <header className="mt-8 border-b pb-8" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+          <p className={`${editorial.label} text-[var(--editorial-primary)]`}>Search · Index</p>
+          <h1 className={`${editorial.display} mt-4 text-3xl sm:text-5xl`} style={{ lineHeight: 0.95 }}>{keyword ? `“${keyword}” 검색 결과` : '통합검색'}</h1>
+          <p className={`${editorial.body} mt-4 text-base leading-7 text-[var(--editorial-ink-soft)]`}>{keyword ? '카테고리와 게시글에서 검색어를 찾았습니다.' : '찾고 싶은 콘텐츠를 검색해보세요.'}</p>
+        </header>
         {!keyword ? <div className="py-8"><SearchEmptyState title="검색어를 입력해주세요" description="상단 검색창에서 키워드를 입력하면 카테고리와 게시글을 함께 찾아드립니다." /></div> : null}
         {keyword && !result ? <div className="py-8"><SearchErrorState /></div> : null}
-        {keyword && result ? <div className="py-8"><div className="text-default-tertiary-label mb-4 text-xs">각 그룹 최대 {PAGE_SIZE}건 · 전체 카테고리 {meta?.categoryTotalCount ?? 0}건 · 전체 게시글 {meta?.articleTotalCount ?? 0}건</div><div className="grid gap-5 md:grid-cols-2"><SearchResultGroup title="카테고리" count={meta?.categoryTotalCount ?? categories.length} hasMore={meta?.categoryHasMore ?? false} moreHref={buildSearchHref(keyword, 'categories', page)}>{categories.length ? <ul className="-mx-5 divide-default-separator divide-y sm:-mx-7">{categories.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill block px-5 py-4 transition sm:px-7"><span className="text-default-label block font-medium">{item.name || '이름 없는 카테고리'}</span><span className="text-default-secondary-label mt-1 block text-sm">{item.description || '카테고리'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="카테고리 결과가 없습니다" description="검색어와 일치하는 카테고리를 찾지 못했습니다." />}</SearchResultGroup><SearchResultGroup title="게시글" count={meta?.articleTotalCount ?? articles.length} hasMore={meta?.articleHasMore ?? false} moreHref={buildSearchHref(keyword, 'articles', page)}>{articles.length ? <ul className="-mx-5 divide-default-separator divide-y sm:-mx-7">{articles.map((item) => <li key={item.id}><Link href={item.url || '#'} className="hover:bg-default-fill block px-5 py-4 transition sm:px-7"><span className="text-default-label block font-medium">{item.title || '제목 없는 게시글'}</span><span className="text-default-secondary-label mt-1 block line-clamp-2 text-sm leading-6">{toPlainText(item.preview) || '본문 미리보기 없음'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="게시글 결과가 없습니다" description="검색어와 일치하는 게시글을 찾지 못했습니다." />}</SearchResultGroup></div></div> : null}
-      </div>
+        {keyword && result ? <div className="py-8"><div className="mb-5 flex items-end justify-between gap-4 border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}><p className={editorial.label}>Result index</p><span className={`${editorial.label} text-[var(--editorial-ink-muted)]`}>각 그룹 최대 {PAGE_SIZE}건 · 전체 {meta?.categoryTotalCount ?? 0}개 카테고리 · {meta?.articleTotalCount ?? 0}개 게시글</span></div><div className="grid gap-10 md:grid-cols-2"><SearchResultGroup title="카테고리" count={meta?.categoryTotalCount ?? categories.length} hasMore={meta?.categoryHasMore ?? false} moreHref={buildSearchHref(keyword, 'categories', page)}>{categories.length ? <ul className="border-y" style={{ borderColor: 'var(--editorial-line-soft)' }}>{categories.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition last:border-b-0 hover:bg-[var(--editorial-ink)] hover:text-[var(--editorial-surface)]" style={{ borderColor: 'var(--editorial-line-soft)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-8 block text-lg font-black tracking-tight">{item.name || '이름 없는 카테고리'}</span><span className={`${editorial.body} mt-2 block text-sm leading-6 text-[var(--editorial-ink-soft)] group-hover:text-[var(--editorial-surface)]`}>{item.description || '카테고리'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="카테고리 결과가 없습니다" description="검색어와 일치하는 카테고리를 찾지 못했습니다." />}</SearchResultGroup><SearchResultGroup title="게시글" count={meta?.articleTotalCount ?? articles.length} hasMore={meta?.articleHasMore ?? false} moreHref={buildSearchHref(keyword, 'articles', page)}>{articles.length ? <ul className="border-y" style={{ borderColor: 'var(--editorial-line-soft)' }}>{articles.map((item, index) => <li key={item.id}><Link href={item.url || '#'} className="group block border-b p-5 transition last:border-b-0 hover:bg-[var(--editorial-ink)] hover:text-[var(--editorial-surface)]" style={{ borderColor: 'var(--editorial-line-soft)' }}><span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span><span className="mt-8 block text-lg font-black tracking-tight">{item.title || '제목 없는 게시글'}</span><span className={`${editorial.body} mt-2 block line-clamp-3 text-sm leading-6 text-[var(--editorial-ink-soft)] group-hover:text-[var(--editorial-surface)]`}>{toPlainText(item.preview) || '본문 미리보기 없음'}</span></Link></li>)}</ul> : <SearchEmptyState compact title="게시글 결과가 없습니다" description="검색어와 일치하는 게시글을 찾지 못했습니다." />}</SearchResultGroup></div></div> : null}
+      </main>
     </div>
   );
 }
 
 function SearchResultGroup({ title, count, hasMore, moreHref, children }: { title: string; count: number; hasMore: boolean; moreHref: string; children: ReactNode }) {
-  return <section className="border-default-separator bg-default-surface border p-5 sm:p-7"><div className="border-default-separator flex items-center justify-between border-b pb-4"><h2 className="text-default-label flex items-center gap-2 font-semibold"><Search size={16} aria-hidden />{title}</h2><span className="text-default-tertiary-label text-xs">{count}건{hasMore ? '+' : ''}</span></div><div className="mt-2">{children}</div>{hasMore ? <Link href={moreHref} className="border-default-separator text-default-secondary-label hover:text-default-label mt-3 flex items-center justify-between border-t pt-4 text-xs transition"><span>{title} 더 보기</span></Link> : null}</section>;
+  return <section><header className="flex items-end justify-between gap-4 border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}><h2 className={`${editorial.label} text-[var(--editorial-ink)]`}>{title}</h2><span className={`${editorial.label} text-[var(--editorial-ink-muted)]`}>{count}건{hasMore ? '+' : ''}</span></header><div className="mt-4">{children}</div>{hasMore ? <Link href={moreHref} className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)] mt-4 inline-flex items-center gap-2 transition`}>{title} 전체 보기 ↗</Link> : null}</section>;
 }
