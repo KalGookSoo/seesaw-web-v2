@@ -139,7 +139,7 @@ function RecentBadge({ count }: Readonly<{ count: number }>) {
   }
 
   return (
-    <span className="border-default-secondary bg-default-secondary-soft text-default-secondary-contrast inline-flex min-w-5 items-center justify-center border px-1.5 py-0.5 text-[0.625rem] font-bold">
+    <span className="border-default-secondary bg-default-secondary-soft text-default-label inline-flex min-w-5 items-center justify-center border px-1.5 py-0.5 text-[0.625rem] font-bold">
       {count}
     </span>
   );
