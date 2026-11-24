@@ -57,23 +57,23 @@ a:focus-visible,
 [role='button']:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--default-label);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 1px var(--default-surface);
+  outline-offset: -2px;
+  box-shadow: none;
 }
 
 input:focus,
 textarea:focus,
 select:focus,
 summary:focus-visible {
-  outline: none;
-  border-color: var(--default-label);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--default-label) 16%, transparent);
+  outline: 2px solid var(--default-label);
+  outline-offset: -2px;
+  box-shadow: none;
 }
 
 input[type='checkbox']:focus-visible,
 input[type='radio']:focus-visible {
   outline: 2px solid var(--default-label);
-  outline-offset: 3px;
+  outline-offset: -2px;
   box-shadow: none;
 }
 
@@ -157,7 +157,7 @@ input[type='radio']:focus-visible {
 
 .form-choice:focus-visible {
   outline: 2px solid var(--default-label);
-  outline-offset: 2px;
+  outline-offset: -2px;
   box-shadow: none;
 }
 
@@ -180,7 +180,7 @@ input[type='radio']:focus-visible {
 
 .form-submit:focus-visible {
   outline: 2px solid var(--default-label);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .tab-group,

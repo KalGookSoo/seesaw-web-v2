@@ -34,7 +34,7 @@ export function ArticleEditPageContent({
           로그인 후 게시글을 수정할 수 있습니다.
         </p>
         <Link
-          className="bg-default-blue rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          className="bg-default-primary px-4 py-2 text-sm font-semibold text-white hover:bg-default-primary-muted"
           href={detailHref}
         >
           게시글로 돌아가기
@@ -50,7 +50,7 @@ export function ArticleEditPageContent({
           이 게시글을 수정할 권한이 없습니다.
         </p>
         <Link
-          className="bg-default-blue rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          className="bg-default-primary px-4 py-2 text-sm font-semibold text-white hover:bg-default-primary-muted"
           href={detailHref}
         >
           게시글로 돌아가기

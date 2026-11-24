@@ -53,9 +53,9 @@ export function AttachmentUpload({
   return (
     <div className="space-y-3">
       <div
-        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 text-center transition ${
+        className={`flex min-w-0 cursor-pointer items-center justify-between gap-4 border border-dashed px-4 py-4 text-left transition ${
           dragging
-            ? 'border-default-blue bg-default-blue-soft'
+            ? 'border-default-primary bg-default-primary-soft'
           : 'border-default-separator bg-default-fill/40 hover:bg-default-fill focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-2'
         }`}
         role="button"
@@ -78,13 +78,20 @@ export function AttachmentUpload({
           addFiles(event.dataTransfer.files);
         }}
       >
-        <Upload aria-hidden className="text-default-tertiary-label size-6" />
-        <p className="text-default-secondary-label text-sm">
-          파일을 드래그하거나 클릭하여 첨부하세요
-        </p>
-        <p className="text-default-tertiary-label text-xs">
-          여러 파일을 한 번에 추가할 수 있습니다.
-        </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <Upload aria-hidden className="text-default-secondary-label size-4 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-default-secondary-label truncate text-sm">
+              파일을 드래그하거나 선택하세요
+            </p>
+            <p className="text-default-tertiary-label mt-1 text-xs">
+              여러 파일 · 파일당 최대 50MB
+            </p>
+          </div>
+        </div>
+        <span className="bg-default-fill text-default-label shrink-0 px-3 py-2 text-xs font-semibold">
+          파일 선택
+        </span>
         <input
           ref={inputRef}
           className="sr-only"

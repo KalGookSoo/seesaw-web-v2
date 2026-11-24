@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import {
   Download,
-  ChevronDown,
   Eye,
   File,
   FileArchive,
@@ -153,21 +152,17 @@ export function AttachmentList({
   }
 
   return (
-    <details className="group border-default-separator border-b">
-      <summary className="text-default-label hover:bg-default-fill/60 flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 text-sm font-semibold transition-colors [&::-webkit-details-marker]:hidden sm:px-5">
-        <span className="flex min-w-0 items-center gap-2">
-          <span className="border-default-separator bg-default-fill text-default-secondary-label flex size-8 shrink-0 items-center justify-center border">
-            <FileText aria-hidden className="size-4" />
-          </span>
-          <span>첨부파일</span>
-          <span className="text-default-tertiary-label tabular-nums">{attachments.length}</span>
-        </span>
-        <ChevronDown aria-hidden className="text-default-tertiary-label size-4 shrink-0 transition-transform group-open:rotate-180" />
-      </summary>
-
-      <div className="border-default-separator bg-default-surface-grouped/30 border-t px-4 py-4 sm:px-5 sm:py-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <section className="border-default-separator bg-default-surface border px-5 py-5 sm:px-8 sm:py-6" aria-labelledby="article-attachment-title">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p id="article-attachment-title" className="text-default-primary text-[0.65rem] font-bold tracking-[0.18em] uppercase">첨부파일</p>
           <p className="text-default-tertiary-label text-xs">파일을 선택해 미리보거나 다운로드할 수 있습니다.</p>
+        </div>
+        <span className="text-default-secondary-label text-xs">{attachments.length}개 첨부</span>
+      </div>
+
+      <div className="mt-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <a
             className={`${actionClassName} border-default-separator bg-default-surface text-default-label hover:bg-default-fill w-full sm:w-auto`}
             href={`/api/attachments/download-zip?articleId=${encodeURIComponent(articleId)}`}
@@ -254,7 +249,7 @@ export function AttachmentList({
         onClose={() => setPreviewAttachment(null)}
         open={previewAttachment !== null}
         size="lg"
-        variant="monochrome"
+        variant="editorial"
         title={
           previewAttachment?.originalName ??
           previewAttachment?.name ??
@@ -265,6 +260,6 @@ export function AttachmentList({
           <AttachmentPreview attachment={previewAttachment} />
         ) : null}
       </Modal>
-    </details>
+    </section>
   );
 }

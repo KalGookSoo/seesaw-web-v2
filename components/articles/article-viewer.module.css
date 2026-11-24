@@ -88,13 +88,12 @@
   display: flex;
   width: fit-content;
   max-width: 100%;
-  min-height: 8rem;
   align-items: center;
   justify-content: center;
   margin: 1.5em auto;
   overflow: hidden;
-  background: var(--default-fill);
-  border: 1px solid var(--default-separator);
+  background: transparent;
+  border: 0;
 }
 
 .viewerImageFrame > .viewerImage {

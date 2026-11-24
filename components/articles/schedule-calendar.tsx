@@ -61,7 +61,7 @@ function formatTime(value: string | null | undefined): string {
 
 function dayToneClass(dayOfWeek: number): string {
   if (dayOfWeek === 0) return 'text-default-red';
-  if (dayOfWeek === 6) return 'text-default-blue';
+  if (dayOfWeek === 6) return 'text-default-primary';
   return 'text-default-tertiary-label';
 }
 
@@ -196,7 +196,7 @@ export function ScheduleCalendar({ categoryId, query }: ScheduleCalendarProps) {
                   <button
                     aria-label={`${key} 일정 ${dayEvents.length}개`}
                     aria-pressed={selected}
-                    className={`min-h-20 border-r border-b border-default-separator p-2 text-left transition sm:min-h-28 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/45'} ${selected ? 'bg-default-fill ring-2 ring-inset ring-default-label' : 'hover:bg-default-fill'}`}
+                    className={`min-h-20 border-r border-b border-default-separator p-2 text-left transition sm:min-h-28 ${currentMonth ? 'bg-default-surface' : 'bg-default-fill/45'} ${selected ? 'bg-default-fill ring-2 ring-inset ring-default-primary' : 'hover:bg-default-fill'}`}
                     key={key}
                     type="button"
                     onClick={() => setSelectedDay(key)}
@@ -225,16 +225,16 @@ export function ScheduleCalendar({ categoryId, query }: ScheduleCalendarProps) {
       ) : null}
       <Modal
         description="외부 캘린더 앱의 URL 구독 기능에 아래 주소를 등록하면 이 카테고리의 일정을 구독할 수 있습니다."
-        footer={<button className="bg-default-label text-default-surface hover:bg-default-secondary-label focus-visible:outline-default-label inline-flex h-10 items-center px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2" type="button" onClick={() => setSubscriptionOpen(false)}>닫기</button>}
+        footer={<button className="bg-default-primary text-white hover:bg-default-primary-muted focus-visible:outline-default-label inline-flex h-10 items-center px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]" type="button" onClick={() => setSubscriptionOpen(false)}>닫기</button>}
         open={subscriptionOpen}
         title="캘린더 구독 URL"
-        variant="monochrome"
+        variant="editorial"
         onClose={() => setSubscriptionOpen(false)}
       >
         <label className="text-default-label block text-sm font-medium" htmlFor="schedule-subscription-url">구독 URL</label>
         <div className="mt-2 flex min-w-0 items-stretch">
           <input id="schedule-subscription-url" className="form-control min-h-11 min-w-0 flex-1 text-base" readOnly value={subscriptionUrl} />
-          <button aria-label="구독 URL 복사" className="border-default-label bg-default-label text-default-surface inline-flex min-h-11 shrink-0 items-center gap-1.5 border px-4 text-sm font-semibold transition hover:bg-default-secondary-label focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-2" type="button" onClick={copySubscriptionUrl}>
+          <button aria-label="구독 URL 복사" className="border-default-primary bg-default-primary text-white inline-flex min-h-11 shrink-0 items-center gap-1.5 border px-4 text-sm font-semibold transition hover:bg-default-primary-muted focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-[-2px]" type="button" onClick={copySubscriptionUrl}>
             {copied ? <Check className="size-3.5" /> : <Clipboard className="size-3.5" />}
             {copied ? '복사됨' : '복사'}
           </button>

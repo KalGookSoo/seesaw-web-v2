@@ -43,7 +43,7 @@ export default function NewArticlePage() {
           로그인 후 게시글을 작성할 수 있습니다.
         </p>
         <Link
-          className="bg-default-blue rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          className="bg-default-primary px-4 py-2 text-sm font-semibold text-white hover:bg-default-primary-muted"
           href={listHref}
         >
           목록으로 돌아가기
@@ -53,8 +53,8 @@ export default function NewArticlePage() {
   }
 
   return (
-    <main className="bg-default-surface-grouped text-default-label min-h-full">
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <main className="bg-default-background text-default-label min-h-full">
+      <div className="mx-auto w-full min-w-0 max-w-5xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         {category.type === 'SCHEDULE' ? (
           <ScheduleForm
             categoryId={categoryId}

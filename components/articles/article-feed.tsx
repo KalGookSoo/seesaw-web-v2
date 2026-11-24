@@ -69,21 +69,21 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
   const content = article.plainContent ?? toPlainText(article.content);
 
   return (
-    <article className="border-default-separator bg-default-surface overflow-hidden border shadow-[0_1px_2px_rgb(0_0_0_/_0.04)]">
+    <article className="border-default-separator bg-default-surface overflow-hidden border">
       <Link href={toArticleHref(article)} className="group block">
-        <div className="bg-default-fill relative aspect-[4/3] overflow-hidden sm:aspect-[16/9]">
-          {thumbnail ? <MonochromeImage className="size-full" imageClassName="object-cover grayscale transition duration-700 group-hover:scale-[1.02] group-hover:grayscale-0" src={toAttachmentUrl(thumbnail.id)} alt={thumbnail.originalName ?? article.title} /> : <MonochromeImageFallback className="border-0" label="NO IMAGE / ARTICLE" />}
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent p-5 pt-20 text-white sm:p-7 sm:pt-24">
-            <div className="flex items-center gap-2 text-xs text-white/75">
-              {article.fixed ? <Pin className="size-3.5" /> : null}
-              <span>{article.fixed ? '공지' : 'Feed'}</span>
-              <span aria-hidden>·</span>
-              <span>{formatDate(article.createdDate)}</span>
-            </div>
-            <h2 className="mt-2 line-clamp-3 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-              {article.title}
-            </h2>
+        <div className="bg-default-fill aspect-[4/3] overflow-hidden sm:aspect-[16/9]">
+          {thumbnail ? <MonochromeImage className="size-full" imageClassName="object-cover grayscale transition duration-700 group-hover:grayscale-0" src={toAttachmentUrl(thumbnail.id)} alt={thumbnail.originalName ?? article.title} /> : <MonochromeImageFallback className="border-0" label="NO IMAGE / ARTICLE" />}
+        </div>
+        <div className="border-t p-5 sm:p-7">
+          <div className="flex items-center gap-2 text-xs text-default-tertiary-label">
+            {article.fixed ? <Pin className="size-3.5" /> : null}
+            <span className="font-semibold tracking-[0.16em] uppercase">{article.fixed ? '공지' : 'Feed'}</span>
+            <span aria-hidden>·</span>
+            <span>{formatDate(article.createdDate)}</span>
           </div>
+          <h2 className="text-default-label group-hover:text-default-primary mt-3 line-clamp-3 text-2xl font-black tracking-[-0.05em] text-balance transition-colors sm:text-3xl">
+            {article.title}
+          </h2>
         </div>
       </Link>
       <div className="p-5 sm:p-7">
@@ -172,7 +172,7 @@ export function ArticleFeed({ fixedArticles, initialPage, search }: ArticleFeedP
     <section aria-label="게시글 피드">
       <header className="mb-5 flex items-end justify-between gap-4 border-b border-default-separator pb-4">
         <div>
-          <p className="text-default-blue text-xs font-semibold tracking-[0.2em] uppercase">Visual feed</p>
+          <p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">Visual feed</p>
           <h2 className="text-default-label mt-2 text-xl font-semibold tracking-tight">피드</h2>
         </div>
         <span className="text-default-tertiary-label text-xs">{feedLabel}</span>
@@ -181,7 +181,7 @@ export function ArticleFeed({ fixedArticles, initialPage, search }: ArticleFeedP
         {articles.map((article) => <FeedArticle key={article.id} article={article} />)}
       </div>
       <div ref={sentinelRef} className="flex min-h-24 items-center justify-center" aria-live="polite">
-        {loading ? <span className="border-default-fill-strong border-t-default-label size-6 animate-spin rounded-full border-2" aria-label="피드 불러오는 중" /> : null}
+        {loading ? <span className="border-default-fill-strong border-t-default-primary size-6 animate-spin border-2" aria-label="피드 불러오는 중" /> : null}
         {!loading && error ? <button className="text-default-secondary-label hover:text-default-label text-sm underline underline-offset-4" type="button" onClick={() => { setHasMore(true); setError(null); }}>다시 불러오기</button> : null}
         {!loading && !error && !hasMore ? <span className="text-default-tertiary-label text-xs">모든 게시글을 확인했습니다.</span> : null}
       </div>

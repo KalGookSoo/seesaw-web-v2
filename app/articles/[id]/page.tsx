@@ -28,6 +28,7 @@ import {
 } from '@/components/articles/article-detail-actions';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { AttachmentList } from '@/components/attachments/attachment-list';
+import styles from './article-detail.module.css';
 
 type ArticleDetailPageProps = Readonly<{
   params: Promise<{ id: string }>;
@@ -211,7 +212,7 @@ function ArticleDetailError({
   };
 
   return (
-    <main className="bg-default-surface-grouped text-default-label flex min-h-[60vh] items-center px-4 py-12 sm:px-6">
+    <main className={`${styles.page} text-default-label flex min-h-[60vh] items-center px-4 py-12 sm:px-6`}>
       <section
         className={`${panelClassName} mx-auto w-full max-w-xl p-7 sm:p-9`}
       >
@@ -360,23 +361,23 @@ export default async function ArticleDetailPage({
   const canonicalUrl = `https://${domainName}/articles/${article.id}`;
 
   return (
-    <main className="bg-default-surface-grouped text-default-label min-h-full">
+    <main className={`${styles.page} text-default-label min-h-full`}>
       <script
         dangerouslySetInnerHTML={{
           __html: toArticleJsonLd(article, canonicalUrl)
         }}
         type="application/ld+json"
       />
-      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+      <div className={`${styles.shell} space-y-8`}>
         <nav
           aria-label="현재 위치"
-          className="text-default-tertiary-label flex flex-wrap items-center gap-2 text-xs"
+          className={styles.breadcrumb}
         >
-          <Link className="hover:text-default-blue transition" href="/">
+          <Link className="hover:text-default-primary transition" href="/">
             홈
           </Link>
           <ChevronRight aria-hidden className="size-3.5" />
-          <Link className="hover:text-default-blue transition" href={listHref}>
+          <Link className="hover:text-default-primary transition" href={listHref}>
             {category?.name ?? '게시글'}
           </Link>
           <ChevronRight aria-hidden className="size-3.5" />
@@ -385,17 +386,16 @@ export default async function ArticleDetailPage({
           </span>
         </nav>
 
-        <article className={panelClassName}>
-          <header className="border-default-separator grid gap-8 border-b px-5 py-7 sm:px-8 sm:py-9 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-12 lg:px-10 lg:py-12">
-            <div>
-              <p className="text-default-tertiary-label text-[0.65rem] font-semibold tracking-[0.2em] uppercase">Article / {category?.type ?? 'Content'}</p>
-              <p className="text-default-secondary-label mt-4 text-sm leading-6">{category?.name ?? '게시글'}</p>
+        <div className="space-y-4">
+        <article className={`${styles.article} space-y-4`}>
+          <header className={styles.articleHeader}>
+            <div className="flex items-center justify-between gap-3">
+              <p className={styles.articleEyebrow}>게시글 · 상세</p>
             </div>
-            <div>
-              <h1 className="text-default-label max-w-3xl text-xl leading-[1.25] font-semibold tracking-tight text-balance sm:text-2xl">
-                {article.title}
-              </h1>
-              <div className="text-default-tertiary-label mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+            <div className="mt-5 grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-end">
+              <div className="min-w-0">
+                <h1 className={styles.articleTitle}>{article.title}</h1>
+                <div className={styles.articleMeta}>
                 <span className="inline-flex items-center gap-1.5">
                   <UserRound aria-hidden className="size-3.5" />
                   {article.maskedAuthor ?? article.createdBy ?? '익명'}
@@ -408,14 +408,13 @@ export default async function ArticleDetailPage({
                   <Eye aria-hidden className="size-3.5" />
                   조회 {article.views?.length ?? 0}
                 </span>
+                </div>
               </div>
             </div>
           </header>
 
-          <AttachmentList articleId={article.id} attachments={attachments} />
-
-          <div className="min-w-0 px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-            <div className="mx-auto max-w-4xl">
+          <div className={`${styles.articleContent} border-default-separator bg-default-surface border`}>
+            <div className={styles.articleBody}>
               {article.content ? (
                 <ArticleViewer content={article.content} />
               ) : (
@@ -423,9 +422,12 @@ export default async function ArticleDetailPage({
               )}
             </div>
           </div>
+
+          <AttachmentList articleId={article.id} attachments={attachments} />
         </article>
 
         <ArticleReplies article={article} />
+        </div>
 
         <footer className={`${panelClassName}`}>
           <div className="grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">

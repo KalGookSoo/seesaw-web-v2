@@ -140,7 +140,7 @@ function RecentBadge({ count }: Readonly<{ count: number }>) {
   }
 
   return (
-    <span className="bg-default-orange-soft text-default-orange-contrast ring-default-orange-muted/50 rounded-full px-1.5 py-0.5 text-[0.625rem] font-bold ring-1">
+    <span className="border-default-secondary bg-default-secondary-soft text-default-secondary-contrast inline-flex min-w-5 items-center justify-center border px-1.5 py-0.5 text-[0.625rem] font-bold">
       {count}
     </span>
   );
@@ -277,7 +277,7 @@ function SegmentedButton({
 }>) {
   return (
     <button
-      className={`inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold transition ${
+      className={`inline-flex h-10 flex-1 items-center justify-center gap-2 px-3 text-sm font-semibold transition ${
         active
           ? 'bg-default-label text-default-background'
           : 'text-default-secondary-label hover:bg-default-fill hover:text-default-label'
@@ -315,26 +315,26 @@ function SideNavigation({
   categories: readonly CategoryResponse[];
 }>) {
   return (
-    <aside className="border-default-separator bg-default-surface flex h-full min-h-0 w-full flex-col lg:sticky lg:top-0 lg:h-dvh">
+    <aside className="border-default-separator bg-default-background flex h-full min-h-0 w-full flex-col lg:sticky lg:top-0 lg:h-dvh">
       <header className="border-default-separator flex h-16 flex-none items-center justify-between gap-2 border-b px-4">
         <Link className="min-w-0" href="/" onClick={onNavigate}>
           <span
             className={
               collapsed
                 ? 'sr-only'
-                : 'text-default-label block truncate text-base font-semibold'
+                : 'text-default-label block truncate text-sm font-bold leading-5 tracking-tight'
             }
           >
             {siteName}
           </span>
           {collapsed ? (
-            <span className="text-default-label block text-lg font-semibold">
+            <span className="text-default-label block text-lg font-black">
               {siteName.slice(0, 1)}
             </span>
           ) : null}
         </Link>
         <button
-          className="text-default-secondary-label hover:bg-default-fill hover:text-default-label hidden size-8 items-center justify-center rounded-full transition lg:inline-flex"
+          className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label hidden size-8 items-center justify-center border transition lg:inline-flex"
           type="button"
           aria-label={collapsed ? '내비게이션 펼치기' : '내비게이션 접기'}
           onClick={onToggleCollapsed}
@@ -348,10 +348,10 @@ function SideNavigation({
       </header>
 
       <nav
-        className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-5"
         aria-label="글로벌 내비게이션"
       >
-        <ul className="space-y-2">
+        <ul className="space-y-1">
           <li>
             <Link
               className={`flex min-h-11 items-center border-l-2 px-3 py-2 text-sm font-semibold transition ${
@@ -380,9 +380,9 @@ function SideNavigation({
       </nav>
 
       <footer className="border-default-separator flex-none space-y-4 border-t px-4 py-4">
-        <div className="grid grid-cols-3 gap-1">
+        <div className="grid grid-cols-3 gap-0 border-y py-2" style={{ borderColor: 'var(--default-separator)' }}>
           <button
-            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 rounded-md text-xs font-medium transition"
+            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 text-xs font-medium transition"
             type="button"
             onClick={onOpenPolicy}
           >
@@ -390,7 +390,7 @@ function SideNavigation({
             정책
           </button>
           <button
-            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 rounded-md text-xs font-medium transition"
+            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 text-xs font-medium transition"
             type="button"
             onClick={onOpenReport}
           >
@@ -398,7 +398,7 @@ function SideNavigation({
             신고
           </button>
           <button
-            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 rounded-md text-xs font-medium transition"
+            className="text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex h-9 items-center justify-center gap-1.5 text-xs font-medium transition"
             type="button"
             onClick={onOpenInquiry}
           >
@@ -655,10 +655,10 @@ export function GlobalShell({
   );
 
   const main = (
-    <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
-      <header className="border-default-separator bg-default-surface/90 sticky top-0 z-30 flex h-16 items-center gap-3 border-b px-4 backdrop-blur lg:px-6">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <header className="border-default-separator bg-default-background z-30 flex h-16 flex-none items-center gap-3 border-b px-4 lg:px-6">
         <button
-          className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition lg:hidden"
+          className="border-default-separator bg-default-background text-default-label hover:bg-default-fill inline-flex size-10 shrink-0 items-center justify-center border transition lg:hidden"
           type="button"
           aria-label="글로벌 내비게이션 열기"
           aria-expanded={mobileNavigationOpen}
@@ -668,10 +668,10 @@ export function GlobalShell({
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="text-default-label truncate text-sm font-semibold">
+          <p className="text-default-label truncate text-sm font-semibold leading-5">
             {SITE_CONTEXT.name}
           </p>
-          <p className="text-default-secondary-label truncate text-xs">
+          <p className="text-default-secondary-label truncate text-xs leading-4">
             {SITE_CONTEXT.domainName}
           </p>
         </div>
@@ -679,7 +679,7 @@ export function GlobalShell({
         <GlobalSearch />
 
         <button
-          className="border-default-separator bg-default-surface text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition"
+          className="border-default-separator bg-default-background text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 shrink-0 items-center justify-center border transition"
           type="button"
           aria-label="환경설정 열기"
           onClick={() => setSettingsOpen(true)}
@@ -689,7 +689,7 @@ export function GlobalShell({
         {isAuthenticated ? (
           <>
             <button
-              className="bg-default-fill text-default-label hover:bg-default-gray-5 hidden h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition sm:inline-flex"
+              className="border-default-separator bg-default-background text-default-label hover:bg-default-fill hidden h-10 items-center gap-1.5 border px-3 py-2 text-sm font-medium transition sm:inline-flex"
               type="button"
               onClick={() => setMyPageOpen(true)}
             >
@@ -697,7 +697,7 @@ export function GlobalShell({
               마이페이지
             </button>
             <button
-              className="bg-default-fill text-default-label hover:bg-default-gray-5 inline-flex h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition"
+              className="border-default-separator bg-default-background text-default-label hover:bg-default-fill inline-flex h-10 items-center gap-1.5 border px-3 py-2 text-sm font-medium transition"
               type="button"
               onClick={signOut}
             >
@@ -707,7 +707,7 @@ export function GlobalShell({
           </>
         ) : (
           <button
-            className="bg-default-blue hover:bg-default-blue/90 inline-flex h-9 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-white transition"
+            className="bg-default-primary hover:bg-default-primary-muted inline-flex h-10 items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white transition"
             type="button"
             onClick={() => setLoginOpen(true)}
           >
@@ -717,7 +717,7 @@ export function GlobalShell({
         )}
       </header>
 
-      <main className="min-w-0 flex-1">
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         {children}
       </main>
     </div>
@@ -725,7 +725,7 @@ export function GlobalShell({
 
   return (
     <div
-      className={`bg-default-surface-grouped text-default-label min-h-dvh transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
+      className={`bg-default-surface-grouped text-default-label h-dvh min-h-0 overflow-hidden transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
     >
       {navigationPosition === 'left' ? (
         <>
@@ -757,7 +757,7 @@ export function GlobalShell({
 
       {navigationCollapsed ? (
         <button
-          className={`border-default-separator bg-default-surface text-default-label hover:bg-default-fill fixed top-20 z-40 hidden size-11 items-center justify-center rounded-full border text-xl font-semibold shadow-lg transition lg:inline-flex ${
+          className={`border-default-separator bg-default-background text-default-label hover:bg-default-fill fixed top-20 z-40 hidden size-11 items-center justify-center border text-xl font-semibold transition lg:inline-flex ${
             navigationPosition === 'left' ? 'left-4' : 'right-4'
           }`}
           type="button"
@@ -777,7 +777,7 @@ export function GlobalShell({
         title="네이버 계정으로 계속하기"
         description="로그인이 필요한 기능입니다."
         size="sm"
-        variant="monochrome"
+        variant="editorial"
         onClose={() => setLoginOpen(false)}
         footer={
           <>
@@ -817,7 +817,7 @@ export function GlobalShell({
 
       {mobileNavigationOpen ? (
         <div
-          className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-50 bg-black/20 lg:hidden"
           role="presentation"
         >
           <button
@@ -827,7 +827,7 @@ export function GlobalShell({
             onClick={() => setMobileNavigationOpen(false)}
           />
           <div
-            className={`border-default-separator absolute top-0 h-full w-[min(20rem,88vw)] overflow-hidden shadow-2xl ${
+            className={`border-default-separator bg-default-background absolute top-0 h-full w-[min(20rem,88vw)] overflow-hidden ${
               navigationPosition === 'left'
                 ? 'left-0 border-r'
                 : 'right-0 border-l'
@@ -854,7 +854,7 @@ export function GlobalShell({
         title="환경설정"
         description="화면 표시, 글로벌 내비게이션 위치, 언어 설정을 변경합니다."
         size="md"
-        variant="monochrome"
+        variant="editorial"
         onClose={() => setSettingsOpen(false)}
       >
         <div className="space-y-7">
@@ -940,7 +940,7 @@ export function GlobalShell({
         title="마이페이지"
         description="계정 정보와 알림 수신 설정을 확인합니다."
         size="md"
-        variant="monochrome"
+        variant="editorial"
         onClose={() => setMyPageOpen(false)}
         footer={
           <>
@@ -1099,6 +1099,7 @@ export function GlobalShell({
         title="운영정책"
         description="SEESAW 서비스 이용을 위한 기본 운영 기준입니다."
         size="lg"
+        variant="editorial"
         onClose={() => setPolicyOpen(false)}
       >
         <div className="text-default-secondary-label max-h-[60vh] space-y-5 overflow-y-auto pr-2 text-sm leading-7">
@@ -1143,18 +1144,19 @@ export function GlobalShell({
             : '신고 기능은 로그인 후 이용할 수 있습니다.'
         }
         size="md"
+        variant="editorial"
         onClose={() => setReportOpen(false)}
         footer={
           <>
             <button
-              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill rounded-md border px-4 py-2 text-sm font-semibold transition"
+              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill border px-4 py-2 text-sm font-semibold transition"
               type="button"
               onClick={() => setReportOpen(false)}
             >
               닫기
             </button>
             <button
-              className="bg-default-label text-default-background inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-default-primary text-white inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold transition hover:bg-default-primary-muted disabled:cursor-not-allowed disabled:opacity-50"
               form="reportForm"
               type="submit"
               disabled={feedbackPending}
@@ -1240,18 +1242,19 @@ export function GlobalShell({
             : '문의 기능은 로그인 후 이용할 수 있습니다.'
         }
         size="md"
+        variant="editorial"
         onClose={() => setInquiryOpen(false)}
         footer={
           <>
             <button
-              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill rounded-md border px-4 py-2 text-sm font-semibold transition"
+              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill border px-4 py-2 text-sm font-semibold transition"
               type="button"
               onClick={() => setInquiryOpen(false)}
             >
               닫기
             </button>
             <button
-              className="bg-default-label text-default-background inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-default-primary text-white inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold transition hover:bg-default-primary-muted disabled:cursor-not-allowed disabled:opacity-50"
               form="inquiryForm"
               type="submit"
               disabled={feedbackPending}

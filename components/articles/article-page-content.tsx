@@ -26,7 +26,7 @@ import { toArticleHref } from '@/lib/articles';
 import { toAttachmentUrl } from '@/lib/home-summary';
 import { ArticleFeed } from '@/components/articles/article-feed';
 import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown';
-import { MosaicStaticContent } from '@/components/articles/mosaic-static-content';
+import { MagazineStaticContent } from '@/components/articles/magazine-static-content';
 import { MonochromeImage, MonochromeImageFallback } from '@/components/ui/monochrome-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 
@@ -45,10 +45,10 @@ type StaticContentPageProps = Readonly<{
 }>;
 
 const mattePanelClassName =
-  'border-default-separator bg-default-surface/85 rounded-lg border shadow-[0_1px_2px_rgb(0_0_0_/_0.04),inset_0_1px_0_rgb(255_255_255_/_0.35)] backdrop-blur';
+  'border-default-separator bg-default-surface border';
 
 const controlClassName =
-  'inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition focus-visible:ring-default-blue/15 focus-visible:ring-4 focus-visible:outline-none';
+  'inline-flex h-9 items-center justify-center gap-2 px-3 text-sm font-medium transition focus-visible:outline-default-label focus-visible:outline-2 focus-visible:outline-offset-[-2px]';
 
 function isRecentlyGenerated(createdDate: string | null | undefined): boolean {
   if (!createdDate) {
@@ -157,21 +157,21 @@ function ViewSwitcher({
     return (
       <div className="bg-default-fill grid grid-cols-3 gap-1 border border-default-separator p-1">
         <Link
-          className={`${controlClassName} ${scheduleView === 'CALENDAR' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} ${scheduleView === 'CALENDAR' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CALENDAR', viewType: 'TABLE' })}
         >
           <CalendarDays className="size-4" />
           캘린더
         </Link>
         <Link
-          className={`${controlClassName} ${scheduleView === 'TABLE' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} ${scheduleView === 'TABLE' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'TABLE', viewType: 'TABLE' })}
         >
           <List className="size-4" />
           목록
         </Link>
         <Link
-          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]' : 'text-default-secondary-label hover:text-default-label'}`}
+          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-default-surface text-default-label font-semibold' : 'text-default-secondary-label hover:text-default-label'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CARD', viewType: 'CARD' })}
         >
           <Grid2X2 className="size-4" />
@@ -186,7 +186,7 @@ function ViewSwitcher({
       <Link
         className={`${controlClassName} ${
           viewType === 'TABLE'
-            ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]'
+            ? 'bg-default-surface text-default-label font-semibold'
             : 'text-default-secondary-label hover:text-default-label'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'TABLE' })}
@@ -197,7 +197,7 @@ function ViewSwitcher({
       <Link
         className={`${controlClassName} ${
           viewType === 'CARD'
-            ? 'bg-default-surface text-default-label shadow-[0_1px_2px_rgb(0_0_0_/_0.12)]'
+            ? 'bg-default-surface text-default-label font-semibold'
             : 'text-default-secondary-label hover:text-default-label'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'CARD' })}
@@ -250,7 +250,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
 function EmptyState() {
   return (
     <div className={`${mattePanelClassName} px-5 py-14 text-center`}>
-      <div className="bg-default-fill text-default-tertiary-label mx-auto flex size-12 items-center justify-center rounded-lg">
+      <div className="bg-default-fill text-default-tertiary-label mx-auto flex size-12 items-center justify-center border border-default-separator">
         <Inbox className="size-6" />
       </div>
       <p className="text-default-label mt-4 text-base font-medium">
@@ -321,7 +321,7 @@ function ArchiveTimelineEntry({
       </div>
 
       <Link
-        className={`relative min-w-0 border-b border-default-separator pb-6 transition-colors last:border-b-0 hover:border-default-blue-muted ${compact ? 'grid grid-cols-[minmax(0,1fr)_5rem] gap-3 pt-0 sm:grid-cols-[minmax(0,1fr)_7rem]' : 'grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]'}`}
+        className={`relative min-w-0 border-b border-default-separator pb-6 transition-colors last:border-b-0 hover:border-default-primary-muted ${compact ? 'grid grid-cols-[minmax(0,1fr)_5rem] gap-3 pt-0 sm:grid-cols-[minmax(0,1fr)_7rem]' : 'grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem]'}`}
         href={toArticleHref(article)}
       >
         <div className="min-w-0">
@@ -335,7 +335,7 @@ function ArchiveTimelineEntry({
               </span>
             ) : null}
           </div>
-          <h2 className="text-default-label group-hover:text-default-blue mt-2 line-clamp-2 text-base font-semibold transition-colors sm:text-lg">
+          <h2 className="text-default-label group-hover:text-default-primary mt-2 line-clamp-2 text-base font-semibold transition-colors sm:text-lg">
             {article.title}
           </h2>
           {!compact ? (
@@ -382,7 +382,7 @@ function ArticleTimeline({
     <section className={`${mattePanelClassName} p-5 sm:p-7`}>
       <header className="mb-8 flex items-end justify-between gap-4 border-b border-default-separator pb-4">
         <div>
-          <p className="text-default-blue text-xs font-semibold tracking-[0.2em] uppercase">
+          <p className="text-default-primary text-xs font-semibold tracking-[0.2em] uppercase">
             Archive timeline
           </p>
           <h2 className="text-default-label mt-2 text-xl font-semibold tracking-tight">
@@ -463,7 +463,7 @@ function Pagination({
       </p>
       <div className="flex items-center justify-center gap-1">
         <Link
-          className={`bg-default-fill text-default-secondary-label hover:bg-default-gray-5 inline-flex size-9 items-center justify-center rounded-md transition ${
+          className={`bg-default-fill text-default-secondary-label hover:bg-default-fill-strong inline-flex size-9 items-center justify-center transition ${
             isFirst ? 'pointer-events-none opacity-40' : ''
           }`}
           href={buildArticlesHref(search, { page: Math.max(current - 1, 0) })}
@@ -475,10 +475,10 @@ function Pagination({
           {pages.map((pageNumber) => (
             <Link
               key={pageNumber}
-              className={`inline-flex size-9 items-center justify-center rounded-md text-sm font-semibold transition ${
+              className={`inline-flex size-9 items-center justify-center text-sm font-semibold transition ${
                 pageNumber === current
-                  ? 'bg-default-blue text-white shadow-sm'
-                  : 'bg-default-fill text-default-secondary-label hover:bg-default-gray-5'
+                  ? 'bg-default-primary text-white'
+                  : 'bg-default-fill text-default-secondary-label hover:bg-default-fill-strong'
               }`}
               href={buildArticlesHref(search, { page: pageNumber })}
             >
@@ -487,7 +487,7 @@ function Pagination({
           ))}
         </div>
         <Link
-          className={`bg-default-fill text-default-secondary-label hover:bg-default-gray-5 inline-flex size-9 items-center justify-center rounded-md transition ${
+          className={`bg-default-fill text-default-secondary-label hover:bg-default-fill-strong inline-flex size-9 items-center justify-center transition ${
             isLast ? 'pointer-events-none opacity-40' : ''
           }`}
           href={buildArticlesHref(search, {
@@ -508,32 +508,11 @@ export function StaticContentPage({
 }: StaticContentPageProps) {
   return (
     <main className="bg-default-background text-default-label min-h-full">
-      <header className="bg-default-background relative z-10 mx-auto flex max-w-6xl items-end justify-between gap-6 px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-        <div className="min-w-0">
-          <Link
-            className="text-default-tertiary-label hover:text-default-label text-xs font-semibold tracking-[0.18em] uppercase transition"
-            href="/"
-          >
-            ← Back to space
-          </Link>
-          <p className="text-default-blue mt-8 text-xs font-semibold tracking-[0.2em] uppercase">
-            Static content / Exhibition
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
-            {category.name}
-          </h1>
-          {category.description ? (
-            <p className="text-default-secondary-label mt-4 max-w-2xl text-sm leading-7 sm:text-base">
-              {category.description}
-            </p>
-          ) : null}
-        </div>
-        <span className="text-default-tertiary-label shrink-0 pb-1 text-xs tracking-[0.16em] uppercase">
-          {String(articles.length).padStart(2, '0')} entries
-        </span>
-      </header>
-
-      <MosaicStaticContent articles={articles} />
+      <MagazineStaticContent
+        articles={articles}
+        categoryDescription={category.description}
+        categoryName={category.name}
+      />
     </main>
   );
 }
@@ -547,7 +526,7 @@ export function ArticlePageContent({
   viewType
 }: ArticlePageContentProps) {
   return (
-    <main className="bg-default-surface-grouped min-h-full px-4 py-6 sm:px-6">
+    <main className="bg-default-background min-h-full px-4 py-6 sm:px-6">
       <div className="mx-auto max-w-6xl space-y-5">
         <header className={mattePanelClassName}>
           <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-end sm:justify-between">
@@ -580,7 +559,7 @@ export function ArticlePageContent({
                 내가 쓴 글
               </Link>
               <Link
-                className={`${controlClassName} bg-default-blue font-semibold text-white hover:brightness-95`}
+                className={`${controlClassName} bg-default-primary font-semibold text-white hover:bg-default-primary-muted`}
                 href={`/articles/new?categoryId=${encodeURIComponent(search.categoryId)}&categoryType=${encodeURIComponent(search.categoryType ?? category.type ?? 'BOARD')}`}
               >
                 <Pencil className="size-4" />

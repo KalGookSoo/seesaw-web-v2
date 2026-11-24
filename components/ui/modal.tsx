@@ -28,7 +28,7 @@ export function Modal({
   open: boolean;
   size?: ModalSize;
   title: string;
-  variant?: 'default' | 'monochrome';
+  variant?: 'default' | 'editorial';
 }>) {
   const titleId = useId();
   const descriptionId = useId();
@@ -53,18 +53,18 @@ export function Modal({
   }
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center px-4 py-6 backdrop-blur-sm ${variant === 'monochrome' ? 'bg-black/40' : 'bg-black/30'}`} role="presentation">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center px-4 py-6 ${variant === 'editorial' ? 'bg-black/40' : 'bg-black/30'}`} role="presentation">
       <button className="absolute inset-0 cursor-default" type="button" aria-label="모달 닫기" onClick={onClose} />
       <section
         aria-describedby={description ? descriptionId : undefined}
         aria-labelledby={titleId}
         aria-modal="true"
-        className={`relative w-full ${modalSizeClassNames[size]} border-default-separator bg-default-surface overflow-hidden border shadow-2xl ${variant === 'monochrome' ? 'rounded-none shadow-[12px_12px_0_rgb(0_0_0_/_0.16)]' : 'rounded-xl'}`}
+        className={`relative w-full ${modalSizeClassNames[size]} border-default-separator bg-default-surface overflow-hidden border ${variant === 'editorial' ? 'rounded-none' : 'rounded-xl shadow-2xl'}`}
         role="dialog"
       >
-        <header className={`border-default-separator flex items-start justify-between gap-4 border-b px-5 py-4 ${variant === 'monochrome' ? 'px-6 py-6' : ''}`}>
+        <header className={`border-default-separator flex items-start justify-between gap-4 border-b px-5 py-4 ${variant === 'editorial' ? 'px-6 py-6' : ''}`}>
           <div>
-            <h2 id={titleId} className={`text-default-label font-semibold ${variant === 'monochrome' ? 'text-lg tracking-tight' : 'text-base'}`}>
+            <h2 id={titleId} className={`text-default-label font-semibold ${variant === 'editorial' ? 'text-lg tracking-tight' : 'text-base'}`}>
               {title}
             </h2>
             {description ? (
@@ -82,9 +82,9 @@ export function Modal({
             ×
           </button>
         </header>
-        <div className={`${variant === 'monochrome' ? 'px-6 py-6' : 'px-5 py-5'}`}>{children}</div>
+        <div className={`${variant === 'editorial' ? 'px-6 py-6' : 'px-5 py-5'}`}>{children}</div>
         {footer ? (
-          <footer className={`border-default-separator bg-default-surface-grouped flex justify-end gap-2 border-t px-5 py-4 ${variant === 'monochrome' ? 'px-6 py-5' : ''}`}>{footer}</footer>
+          <footer className={`border-default-separator bg-default-surface-grouped flex justify-end gap-2 border-t px-5 py-4 ${variant === 'editorial' ? 'px-6 py-5' : ''}`}>{footer}</footer>
         ) : null}
       </section>
     </div>

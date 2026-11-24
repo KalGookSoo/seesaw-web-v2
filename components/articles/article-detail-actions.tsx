@@ -112,7 +112,7 @@ export function ArticleReplies({
       <header className="border-default-separator bg-default-surface flex items-center justify-between border-b px-4 py-4 sm:px-5">
         <div className="flex items-center gap-2.5">
           <MessageCircle aria-hidden className="text-default-secondary-label size-4" />
-          <h2 className="text-default-label text-sm font-semibold sm:text-base">댓글</h2>
+          <h2 className="text-default-primary text-sm font-bold tracking-[0.16em] uppercase sm:text-base">댓글</h2>
         </div>
         <span className="border-default-separator bg-default-fill text-default-label inline-flex min-w-7 items-center justify-center border px-2 py-1 text-xs font-bold tabular-nums">
           {replies.length}

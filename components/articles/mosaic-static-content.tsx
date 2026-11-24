@@ -1,25 +1,29 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { X } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
 import styles from './mosaic-static-content.module.css';
 
-type BackgroundImage = Readonly<{
+type GalleryImage = Readonly<{
   id: string;
   src: string;
   alt: string;
+  articleId: string;
 }>;
 
 type MosaicStaticContentProps = Readonly<{
   articles: readonly ArticleResponse[];
+  categoryName: string;
+  categoryDescription?: string | null;
 }>;
 
-function extractImages(articles: readonly ArticleResponse[]): BackgroundImage[] {
+function extractImages(articles: readonly ArticleResponse[]): GalleryImage[] {
   return articles.flatMap((article) => {
-    const images: BackgroundImage[] = [];
+    const images: GalleryImage[] = [];
     const imagePattern = /<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi;
     let match: RegExpExecArray | null;
     let imageIndex = 0;
@@ -29,7 +33,8 @@ function extractImages(articles: readonly ArticleResponse[]): BackgroundImage[] 
       images.push({
         id: `${article.id}-${imageIndex}`,
         src: match[1],
-        alt: altMatch?.[1] || article.title || '모임 이미지'
+        alt: altMatch?.[1] || article.title || '전시 이미지',
+        articleId: article.id
       });
       imageIndex += 1;
     }
@@ -48,133 +53,255 @@ function hasReadableContent(article: ArticleResponse): boolean {
   return Boolean(article.title || text);
 }
 
-export function MosaicStaticContent({ articles }: MosaicStaticContentProps) {
-  const backgroundImages = useMemo(() => extractImages(articles), [articles]);
+export function MosaicStaticContent({ articles, categoryName, categoryDescription }: MosaicStaticContentProps) {
+  const images = useMemo(() => extractImages(articles), [articles]);
   const chapters = useMemo(() => articles.filter(hasReadableContent), [articles]);
+  const galleryItems = useMemo(
+    () => images
+      .map((image) => ({
+        ...image,
+        chapterIndex: chapters.findIndex((article) => article.id === image.articleId)
+      }))
+      .filter((image) => image.chapterIndex >= 0),
+    [chapters, images]
+  );
   const experienceRef = useRef<HTMLDivElement | null>(null);
-  const [activeBackground, setActiveBackground] = useState(0);
   const [activeChapter, setActiveChapter] = useState(0);
-  const [navigatorOpen, setNavigatorOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'gallery' | 'feed'>('gallery');
+  const [pendingChapter, setPendingChapter] = useState<number | null>(null);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
+  const [selectedColumnIndex, setSelectedColumnIndex] = useState<number | null>(null);
   const chapterRefs = useRef<Array<HTMLElement | null>>([]);
-  const displayedBackground = backgroundImages[activeBackground];
+
+  const selectedGalleryImage = selectedGalleryIndex === null ? null : galleryItems[selectedGalleryIndex];
+  const selectedColumn = selectedColumnIndex === null ? null : chapters[selectedColumnIndex];
 
   useEffect(() => {
-    function updateBackground() {
-      const experience = experienceRef.current;
-      if (!experience || backgroundImages.length === 0) return;
+    const isModalOpen = selectedGalleryIndex !== null || selectedColumnIndex !== null;
+    if (!isModalOpen) return;
 
-      const scrollableHeight = Math.max(experience.offsetHeight - window.innerHeight, 1);
-      const progress = Math.min(Math.max(-experience.getBoundingClientRect().top / scrollableHeight, 0), 0.999999);
-      setActiveBackground(Math.min(Math.floor(progress * backgroundImages.length), backgroundImages.length - 1));
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setSelectedGalleryIndex(null);
+        setSelectedColumnIndex(null);
+      }
+      if (selectedGalleryIndex !== null && event.key === 'ArrowLeft') {
+        setSelectedGalleryIndex((current) => current === null ? null : (current - 1 + galleryItems.length) % galleryItems.length);
+      }
+      if (selectedGalleryIndex !== null && event.key === 'ArrowRight') {
+        setSelectedGalleryIndex((current) => current === null ? null : (current + 1) % galleryItems.length);
+      }
     }
 
-    updateBackground();
-    window.addEventListener('scroll', updateBackground, { passive: true });
-    window.addEventListener('resize', updateBackground);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('scroll', updateBackground);
-      window.removeEventListener('resize', updateBackground);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [backgroundImages]);
+  }, [galleryItems.length, selectedColumnIndex, selectedGalleryIndex]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((left, right) => right.intersectionRatio - left.intersectionRatio);
-        const index = visible[0]?.target.getAttribute('data-chapter-index');
-        if (index) setActiveChapter(Number(index));
-      },
-      { threshold: [0.35, 0.65], rootMargin: '-18% 0px -18% 0px' }
-    );
-
-    chapterRefs.current.forEach((chapter) => {
-      if (chapter) observer.observe(chapter);
-    });
-
-    return () => observer.disconnect();
-  }, [chapters.length]);
+    if (pendingChapter === null) return;
+    chapterRefs.current[pendingChapter]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setPendingChapter(null);
+  }, [pendingChapter]);
 
   function moveToChapter(index: number) {
     setActiveChapter(index);
-    chapterRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setNavigatorOpen(false);
+    setPendingChapter(index);
+    setViewMode('feed');
+  }
+
+  function openGalleryFromFeed() {
+    setViewMode('gallery');
+  }
+
+  function openColumn(index: number) {
+    setSelectedColumnIndex(index);
+  }
+
+  function openRelatedColumn() {
+    if (!selectedGalleryImage) return;
+    const columnIndex = selectedGalleryImage.chapterIndex;
+    setSelectedGalleryIndex(null);
+    setSelectedColumnIndex(null);
+    moveToChapter(columnIndex);
   }
 
   return (
     <div className={styles.experience} ref={experienceRef}>
-      <div className={styles.background} aria-hidden="true">
-        {displayedBackground ? (
-          <MonochromeImage
-            className="size-full"
-            imageClassName="object-cover"
-            key={displayedBackground.id}
-            src={displayedBackground.src}
-            alt=""
-          />
-        ) : null}
-      </div>
-
-      <div className={styles.wallShade} aria-hidden="true" />
-
       <div className={styles.reader}>
-        <div className={styles.readerIntro}>
-          <span>About the space</span>
-          <span>{String(chapters.length).padStart(2, '0')} chapters</span>
-        </div>
+        <section className={styles.cover} aria-labelledby="static-content-cover-title">
+          <div className={styles.coverMeta}>
+            <span>전시관</span>
+            <span>게시글 {String(chapters.length).padStart(2, '0')}개 · 이미지 {String(galleryItems.length).padStart(2, '0')}개</span>
+          </div>
+          <p className={styles.coverKicker}>편집된 기록의 모음</p>
+          <h1 id="static-content-cover-title">{categoryName}</h1>
+          {categoryDescription ? <p className={styles.coverLead}>{categoryDescription}</p> : null}
+          <div className={styles.coverActions} aria-label="감상 방식 선택">
+            <button className={viewMode === 'gallery' ? styles.viewModeActive : undefined} type="button" onClick={() => setViewMode('gallery')}>
+              갤러리
+              <span>이미지 중심으로 감상</span>
+            </button>
+            <button className={viewMode === 'feed' ? styles.viewModeActive : undefined} type="button" onClick={() => setViewMode('feed')}>
+              칼럼
+              <span>게시글을 순서대로 읽기</span>
+            </button>
+          </div>
+        </section>
 
-        {chapters.map((article, index) => (
-          <article
-            className={styles.chapter}
-            data-chapter-index={index}
-            key={article.id}
-            ref={(element) => {
-              chapterRefs.current[index] = element;
-            }}
-          >
-            <div className={styles.chapterMeta}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-              {article.createdDate ? (
-                <time dateTime={article.createdDate}>
-                  {new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(article.createdDate))}
-                </time>
-              ) : null}
+        {viewMode === 'gallery' ? (
+          <section className={styles.gallery} aria-labelledby="gallery-title">
+            <div className={styles.sectionHeading}>
+              <div>
+                <span>01 · 갤러리</span>
+                <h2 id="gallery-title">이미지로 보는 전시</h2>
+              </div>
+              <p>이미지를 선택하면 해당 게시글로 이동합니다.</p>
             </div>
-            {article.title ? <h2>{article.title}</h2> : null}
-            <ArticleViewer content={article.content ?? ''} variant="text" />
-          </article>
-        ))}
-
-        <footer className={styles.readerFooter}>End of introduction</footer>
+            {galleryItems.length > 0 ? (
+              <div className={styles.galleryGrid}>
+                {galleryItems.map((image, index) => {
+                  const article = chapters[image.chapterIndex];
+                  return (
+                    <button
+                      className={`${styles.galleryItem} ${index % 5 === 0 ? styles.galleryItemFeatured : ''}`}
+                      key={image.id}
+                      type="button"
+                      onClick={() => setSelectedGalleryIndex(index)}
+                    >
+                      <span className={styles.galleryImage}>
+                        <MonochromeImage className="size-full" imageClassName="object-cover" src={image.src} alt={image.alt} />
+                      </span>
+                      <span className={styles.galleryCaption}>
+                        <span>{String(image.chapterIndex + 1).padStart(2, '0')} · {String(index + 1).padStart(2, '0')}</span>
+                        <strong>{article.title || '제목 없는 게시글'}</strong>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className={styles.emptyGallery}>본문에 포함된 전시 이미지가 없습니다. 칼럼에서 게시글을 읽어보세요.</div>
+            )}
+          </section>
+        ) : (
+          <section className={styles.feed} aria-labelledby="feed-title">
+            <div className={styles.sectionHeading}>
+              <div>
+                <span>02 · 칼럼</span>
+                <h2 id="feed-title">칼럼으로 읽는 전시</h2>
+              </div>
+              <button className={styles.textAction} type="button" onClick={openGalleryFromFeed}>갤러리로 돌아가기 →</button>
+            </div>
+            {chapters.map((article, index) => (
+              <article
+                className={`${styles.chapter} ${index === activeChapter ? styles.chapterActive : ''}`}
+                data-chapter-index={index}
+                id={`chapter-${article.id}`}
+                key={article.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openColumn(index)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openColumn(index);
+                  }
+                }}
+                ref={(element) => {
+                  chapterRefs.current[index] = element;
+                }}
+              >
+                {images.find((image) => image.articleId === article.id) ? (
+                  <div className={styles.columnImage}>
+                    <MonochromeImage
+                      className="size-full"
+                      imageClassName="object-cover"
+                      src={images.find((image) => image.articleId === article.id)?.src ?? ''}
+                      alt={article.title || '칼럼 이미지'}
+                    />
+                  </div>
+                ) : null}
+                <div className={styles.chapterMeta}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {article.createdDate ? (
+                    <time dateTime={article.createdDate}>
+                      {new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(article.createdDate))}
+                    </time>
+                  ) : null}
+                </div>
+                {article.title ? <h3>{article.title}</h3> : null}
+                <ArticleViewer content={article.content ?? ''} variant="text" />
+              </article>
+            ))}
+            <footer className={styles.readerFooter}>전시의 끝</footer>
+          </section>
+        )}
       </div>
 
-      <aside className={`${styles.navigator} ${navigatorOpen ? styles.navigatorOpen : ''}`} aria-label="현재 카테고리 아티클 탐색">
-        <button
-          className={styles.navigatorToggle}
-          type="button"
-          aria-expanded={navigatorOpen}
-          onClick={() => setNavigatorOpen((current) => !current)}
-        >
-          <span><b>{String(activeChapter + 1).padStart(2, '0')}</b> / {String(chapters.length).padStart(2, '0')}</span>
-          <span>{navigatorOpen ? '닫기' : '아티클 탐색'}</span>
-        </button>
-        {navigatorOpen ? (
-          <nav className={styles.chapterList}>
-            {chapters.map((article, index) => (
-              <button
-                className={index === activeChapter ? styles.activeChapter : undefined}
-                key={article.id}
-                type="button"
-                onClick={() => moveToChapter(index)}
-              >
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <strong>{article.title || `아티클 ${index + 1}`}</strong>
-              </button>
-            ))}
-          </nav>
-        ) : null}
-      </aside>
+      {selectedGalleryImage ? (
+        <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => {
+          if (event.currentTarget === event.target) setSelectedGalleryIndex(null);
+        }}>
+          <section className={styles.modalPanel} role="dialog" aria-modal="true" aria-labelledby="gallery-modal-title">
+            <div className={styles.modalHeader}>
+              <span>갤러리 · {String((selectedGalleryIndex ?? 0) + 1).padStart(2, '0')} / {String(galleryItems.length).padStart(2, '0')}</span>
+              <button className={styles.modalClose} type="button" aria-label="갤러리 닫기" onClick={() => setSelectedGalleryIndex(null)}><X /></button>
+            </div>
+            <div className={styles.modalImage}>
+              <MonochromeImage className="size-full" imageClassName="object-contain" src={selectedGalleryImage.src} alt={selectedGalleryImage.alt} />
+            </div>
+            <div className={styles.modalCaption}>
+              <div>
+                <span>{String(selectedGalleryImage.chapterIndex + 1).padStart(2, '0')} · 칼럼</span>
+                <h2 id="gallery-modal-title">{chapters[selectedGalleryImage.chapterIndex]?.title || '제목 없는 게시글'}</h2>
+              </div>
+              <button className={styles.modalAction} type="button" onClick={openRelatedColumn}>칼럼에서 읽기 →</button>
+            </div>
+            <div className={styles.modalPager}>
+              <button type="button" onClick={() => setSelectedGalleryIndex((current) => current === null ? null : (current - 1 + galleryItems.length) % galleryItems.length)}>← 이전 작품</button>
+              <button type="button" onClick={() => setSelectedGalleryIndex((current) => current === null ? null : (current + 1) % galleryItems.length)}>다음 작품 →</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {selectedColumn ? (
+        <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => {
+          if (event.currentTarget === event.target) setSelectedColumnIndex(null);
+        }}>
+          <article className={`${styles.modalPanel} ${styles.columnModal}`} role="dialog" aria-modal="true" aria-labelledby="column-modal-title">
+            <div className={styles.modalHeader}>
+              <span>칼럼 · {String((selectedColumnIndex ?? 0) + 1).padStart(2, '0')} / {String(chapters.length).padStart(2, '0')}</span>
+              <button className={styles.modalClose} type="button" aria-label="칼럼 닫기" onClick={() => setSelectedColumnIndex(null)}><X /></button>
+            </div>
+            {images.find((image) => image.articleId === selectedColumn.id) ? (
+              <div className={styles.modalArticleImage}>
+                <MonochromeImage
+                  className="size-full"
+                  imageClassName="object-cover"
+                  src={images.find((image) => image.articleId === selectedColumn.id)?.src ?? ''}
+                  alt={selectedColumn.title || '칼럼 이미지'}
+                />
+              </div>
+            ) : null}
+            <div className={styles.columnModalBody}>
+              <span>{String((selectedColumnIndex ?? 0) + 1).padStart(2, '0')} · 칼럼</span>
+              <h2 id="column-modal-title">{selectedColumn.title || '제목 없는 게시글'}</h2>
+              <ArticleViewer content={selectedColumn.content ?? ''} />
+            </div>
+            <button className={styles.modalAction} type="button" onClick={() => {
+              setSelectedColumnIndex(null);
+              setPendingChapter(selectedColumnIndex);
+            }}>본문 위치로 이동 →</button>
+          </article>
+        </div>
+      ) : null}
+
     </div>
   );
 }

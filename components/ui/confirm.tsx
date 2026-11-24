@@ -7,8 +7,8 @@ import { Modal, type ModalSize } from '@/components/ui/modal';
 export type ConfirmTone = 'default' | 'danger';
 
 const confirmButtonClassNames: Record<ConfirmTone, string> = {
-  default: 'bg-default-blue text-white hover:bg-default-blue/90',
-  danger: 'bg-default-red text-white hover:bg-default-red/90'
+  default: 'bg-default-primary text-white hover:bg-default-primary-muted',
+  danger: 'bg-default-danger text-white hover:bg-default-danger-muted'
 };
 
 export function Confirm({
@@ -37,18 +37,19 @@ export function Confirm({
       open={open}
       title={title}
       size={size}
+      variant="editorial"
       onClose={onCancel}
       footer={
         <>
           <button
-            className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill rounded-md border px-4 py-2 text-sm font-semibold transition"
+            className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill border px-4 py-2 text-sm font-semibold transition"
             type="button"
             onClick={onCancel}
           >
             {cancelLabel}
           </button>
           <button
-            className={`rounded-md px-4 py-2 text-sm font-semibold transition ${confirmButtonClassNames[tone]}`}
+            className={`px-4 py-2 text-sm font-semibold transition ${confirmButtonClassNames[tone]}`}
             type="button"
             onClick={onConfirm}
           >
