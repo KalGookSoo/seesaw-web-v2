@@ -71,27 +71,30 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
   const content = toPlainText(article.plainContent ?? article.content);
 
   return (
-    <article className="border-default-separator bg-default-surface hover:border-default-label border p-3 transition-colors sm:p-4">
+    <article
+      className={`border-default-separator bg-default-surface hover:border-default-label overflow-hidden border transition-colors ${thumbnail ? 'aspect-square' : ''}`}
+    >
       <Link
         href={toArticleHref(article)}
-        className="group flex h-full flex-col"
+        className={`group relative flex flex-col ${thumbnail ? 'size-full' : 'bg-default-surface min-h-72'}`}
       >
         {thumbnail ? (
-          <div className="border-default-label bg-default-fill border p-2">
-            <div className="aspect-[4/5] overflow-hidden">
-              <MonochromeImage
-                className="size-full"
-                imageClassName="object-cover grayscale transition duration-700 group-hover:grayscale-0"
-                src={toAttachmentUrl(thumbnail.id)}
-                alt={thumbnail.originalName ?? article.title}
-              />
-            </div>
-          </div>
+          <>
+            <MonochromeImage
+              className="absolute inset-0 size-full"
+              imageClassName="object-cover grayscale brightness-75 transition duration-700 group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"
+              src={toAttachmentUrl(thumbnail.id)}
+              alt={thumbnail.originalName ?? article.title}
+            />
+            <span className="absolute inset-0 bg-linear-to-t from-black/85 via-black/35 to-black/20 transition-colors duration-700 group-hover:from-black/70 group-hover:via-black/20" />
+          </>
         ) : null}
         <div
-          className={`flex flex-1 flex-col ${thumbnail ? 'pt-5 sm:pt-6' : 'min-h-72 p-2 sm:p-4'}`}
+          className={`relative z-10 flex h-full flex-col p-5 sm:p-6 ${thumbnail ? 'text-white' : ''}`}
         >
-          <div className="text-default-tertiary-label flex items-center gap-2 text-xs">
+          <div
+            className={`flex items-center gap-2 text-xs ${thumbnail ? 'text-white/75' : 'text-default-tertiary-label'}`}
+          >
             {article.fixed ? <Pin className="size-3.5" /> : null}
             <span className="font-semibold tracking-[0.16em] uppercase">
               {article.fixed ? '공지' : 'Feed'}
@@ -99,13 +102,19 @@ function FeedArticle({ article }: Readonly<{ article: ArticleResponse }>) {
             <span aria-hidden>·</span>
             <span>{formatDate(article.createdDate)}</span>
           </div>
-          <h2 className="text-default-label group-hover:text-default-primary mt-3 line-clamp-2 text-2xl font-black tracking-[-0.05em] text-balance break-words transition-colors sm:text-3xl">
+          <h2
+            className={`mt-3 line-clamp-2 text-2xl font-black tracking-[-0.05em] text-balance break-words transition-colors sm:text-3xl ${thumbnail ? 'text-white' : 'text-default-label group-hover:text-default-primary'}`}
+          >
             {article.title}
           </h2>
-          <p className="text-default-secondary-label mt-4 line-clamp-4 text-sm leading-7 break-words">
+          <p
+            className={`mt-4 line-clamp-4 text-sm leading-7 break-words ${thumbnail ? 'text-white/85' : 'text-default-secondary-label'}`}
+          >
             {content || '본문 미리보기가 없습니다.'}
           </p>
-          <div className="border-default-separator text-default-tertiary-label mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 border-t pt-4 text-xs">
+          <div
+            className={`mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 border-t pt-4 text-xs ${thumbnail ? 'border-white/30 text-white/75' : 'border-default-separator text-default-tertiary-label'}`}
+          >
             <span>{article.maskedAuthor ?? article.createdBy ?? '익명'}</span>
             <span aria-hidden>|</span>
             <span>{formatDate(article.createdDate)}</span>
