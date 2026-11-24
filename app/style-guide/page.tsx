@@ -1,45 +1,9 @@
 import Link from 'next/link';
 
-const styleGuides = [
-  {
-    href: '/style-guide/default',
-    label: 'Default',
-    desc: '기본적인 스타일의 디자인 기준선입니다.'
-  },
-  {
+const styleGuides = [{
     href: '/style-guide/editorial',
     label: 'Editorial',
-    desc: '강한 보더 라인과 세리프 서체를 조합한 지면 매거진 스타일입니다.'
-  },
-  {
-    href: '/style-guide/minimalism',
-    label: 'Minimalism',
-    desc: '불필요한 요소를 극도로 절제한 중립적 레이아웃입니다.'
-  },
-  {
-    href: '/style-guide/monochrome',
-    label: 'Modern Metal',
-    desc: '차분한 회색조와 낮은 대비로 콘텐츠에 집중하는 제품형 인터페이스입니다.'
-  },
-  {
-    href: '/style-guide/neo-brutalism',
-    label: 'Neo Brutalism',
-    desc: '고대비의 원색과 단단한 하드 섀도우를 조합한 트렌디한 디자인입니다.'
-  },
-  {
-    href: '/style-guide/neumorphism',
-    label: 'Neumorphism',
-    desc: '이중 부드러운 그림자를 통해 부드러운 입체감을 주는 스타일입니다.'
-  },
-  {
-    href: '/style-guide/retro-web',
-    label: 'Retro Web',
-    desc: '고전 PC 베젤 감성 혹은 CLI 터미널 느낌의 레트로 테마입니다.'
-  },
-  {
-    href: '/style-guide/windows-98-fluent',
-    label: 'Windows 98 Fluent',
-    desc: '아크릴릭 블러와 컴팩트한 레이어드 설정창 스타일입니다.'
+    desc: '강한 타이포그래피, 얇은 규칙선, 모듈형 그리드로 콘텐츠를 잡지처럼 편집하는 시스템입니다.'
   }
 ] as const;
 
@@ -51,7 +15,7 @@ export default function Page() {
           <p className="text-neutral-500 text-xs font-bold tracking-widest uppercase dark:text-neutral-400">Seesaw Web v2</p>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight lg:text-4xl">Style Guide Portal</h1>
           <p className="text-neutral-600 mt-2 max-w-2xl text-sm leading-6 dark:text-neutral-400">
-            점진적 이관을 위해 구축된 다양한 UI 테마 스타일 가이드 모음입니다. 각 링크를 통해 상세 컴포넌트 조합 및 룩앤필 사양을 확인하세요.
+            Seesaw Web의 단일 디자인 언어인 Editorial의 컴포넌트 조합과 룩앤필 사양을 확인하세요.
           </p>
         </div>
       </header>

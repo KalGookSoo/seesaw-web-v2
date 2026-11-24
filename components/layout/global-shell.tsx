@@ -655,7 +655,7 @@ export function GlobalShell({
   );
 
   const main = (
-    <div className="flex h-dvh min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
       <header className="border-default-separator bg-default-surface/90 sticky top-0 z-30 flex h-16 items-center gap-3 border-b px-4 backdrop-blur lg:px-6">
         <button
           className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex size-10 shrink-0 items-center justify-center rounded-full border transition lg:hidden"
@@ -717,7 +717,7 @@ export function GlobalShell({
         )}
       </header>
 
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain scroll-smooth">
+      <main className="min-w-0 flex-1">
         {children}
       </main>
     </div>
@@ -725,12 +725,12 @@ export function GlobalShell({
 
   return (
     <div
-      className={`bg-default-surface-grouped text-default-label h-dvh overflow-hidden transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
+      className={`bg-default-surface-grouped text-default-label min-h-dvh transition-[grid-template-columns] duration-300 ease-out ${desktopShellClassName}`}
     >
       {navigationPosition === 'left' ? (
         <>
           <div
-            className={`bg-default-surface hidden min-w-0 self-stretch overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex ${
+            className={`bg-default-surface hidden min-w-0 self-start overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex lg:sticky lg:top-0 lg:h-dvh ${
               navigationCollapsed
                 ? '-translate-x-4 opacity-0'
                 : 'translate-x-0 opacity-100'
@@ -744,7 +744,7 @@ export function GlobalShell({
         <>
           {main}
           <div
-            className={`bg-default-surface hidden min-w-0 self-stretch overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex ${
+            className={`bg-default-surface hidden min-w-0 self-start overflow-hidden transition-[opacity,transform] duration-300 ease-out lg:flex lg:sticky lg:top-0 lg:h-dvh ${
               navigationCollapsed
                 ? 'translate-x-4 opacity-0'
                 : 'translate-x-0 opacity-100'

@@ -1,72 +1,48 @@
 import Link from 'next/link';
-import {
-  PageIntro,
-  PreviewPanel,
-  StyleGuideSection
-} from 'app/style-guide/editorial/_components/style-guide-section';
+import editorial from './editorial.module.css';
 
-const editorialNavigationItems = [
-  { href: '/style-guide/editorial/colors', label: 'Colors' },
-  { href: '/style-guide/editorial/forms', label: 'Forms' },
-  { href: '/style-guide/editorial/feedback', label: 'Alert · Modal · Confirm' },
-  { href: '/style-guide/editorial/components', label: 'Components' }
+const sections = [
+  ['Foundations', '/style-guide/editorial/foundations', 'Tokens, typography, spacing, and the editorial grid.'],
+  ['Atoms', '/style-guide/editorial/atoms', 'The smallest visible units: labels, controls, and actions.'],
+  ['Molecules', '/style-guide/editorial/molecules', 'Useful combinations that create a clear reading rhythm.'],
+  ['Organisms', '/style-guide/editorial/organisms', 'Reusable content blocks for boards, articles, and comments.'],
+  ['Patterns', '/style-guide/editorial/patterns', 'Complete page compositions built from the system.']
 ] as const;
 
-export default function StyleGuidePage() {
+export default function EditorialPage() {
   return (
-    <>
-      <PageIntro title="Overview">
-        스타일 가이드는 페이지 단위로 나누어 관리합니다. 각 페이지는 컴포넌트의
-        속성, 상태, 조합 사례를 분리해서 보여주며, `layout.html`의 header, main,
-        footer 골격을 Next.js 컴포넌트로 옮기기 전 기준선으로 사용합니다.
-      </PageIntro>
-
-      <StyleGuideSection eyebrow="Structure" title="문서 구성">
-        <div className="grid gap-6 lg:grid-cols-2">
-          {editorialNavigationItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <PreviewPanel title={item.label}>
-                <p className="font-serif text-sm leading-6 text-[var(--editorial-ink-soft)] italic">
-                  {item.label} 기준을 별도 페이지에서 확인합니다. 이후 개별
-                  컴포넌트가 늘어나면 이 하위에 세부 페이지를 추가합니다.
-                </p>
-              </PreviewPanel>
-            </Link>
-          ))}
+    <div className="space-y-16">
+      <section className="grid gap-10 border-b pb-12 lg:grid-cols-[1.4fr_0.6fr]" style={{ borderColor: 'var(--editorial-line)' }}>
+        <div>
+          <p className={`${editorial.label} text-[var(--editorial-accent)]`}>Issue 01 · Design direction</p>
+          <h2 className={`${editorial.display} mt-5 text-[clamp(4rem,13vw,11rem)]`}>Content<br />in print.</h2>
         </div>
-      </StyleGuideSection>
+        <div className="flex items-end">
+          <p className={`${editorial.body} max-w-md text-lg leading-8 text-[var(--editorial-ink-soft)]`}>편집 디자인의 긴장감과 여백을 디지털 화면에 옮깁니다. 크고 명확한 제목, 얇은 선, 정교한 정보 계층으로 콘텐츠가 먼저 보이게 합니다.</p>
+        </div>
+      </section>
 
-      <StyleGuideSection eyebrow="Shell" title="Application layout preview">
-        <PreviewPanel title="Header · Main · Footer">
-          <div className="rounded-none border border-[var(--editorial-line)]">
-            <header className="flex items-center justify-between border-b border-[var(--editorial-line-soft)] bg-[var(--editorial-surface)] px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div className="size-6 rounded-none bg-[var(--editorial-line)]" />
-                <span className="font-serif font-bold text-[var(--editorial-ink)]">
-                  대전포스트잇
-                </span>
-              </div>
-              <nav className="hidden gap-6 text-xs font-bold tracking-wider text-[var(--editorial-ink-muted)] uppercase sm:flex">
-                <a href="#" className="hover:text-[var(--editorial-ink)]">
-                  홈
-                </a>
-                <a href="#" className="hover:text-[var(--editorial-ink)]">
-                  공지
-                </a>
-                <a href="#" className="hover:text-[var(--editorial-ink)]">
-                  일정
-                </a>
-              </nav>
-            </header>
-            <main className="border-b border-[var(--editorial-line-soft)] bg-[var(--editorial-surface-muted)] px-4 py-12 font-serif text-sm text-[var(--editorial-ink-soft)] italic">
-              페이지 콘텐츠 영역
-            </main>
-            <footer className="bg-[var(--editorial-surface)] px-4 py-4 text-xs tracking-widest text-[var(--editorial-ink-muted)] uppercase">
-              문의 · 신고 · 버전 정보
-            </footer>
-          </div>
-        </PreviewPanel>
-      </StyleGuideSection>
-    </>
+      <section className="grid gap-0 border-y sm:grid-cols-2 lg:grid-cols-5" style={{ borderColor: 'var(--editorial-line)' }}>
+        {sections.map(([title, href, description], index) => (
+          <Link key={href} href={href} className="group border-b p-6 transition-colors hover:bg-[var(--editorial-ink)] hover:text-[var(--editorial-surface)] lg:border-b-0 lg:border-r lg:last:border-r-0" style={{ borderColor: 'var(--editorial-line)' }}>
+            <span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-accent)]`}>0{index + 1}</span>
+            <h3 className="mt-16 text-3xl font-black tracking-[-0.05em] uppercase">{title}</h3>
+            <p className={`${editorial.body} mt-4 text-sm leading-6 text-[var(--editorial-ink-soft)] group-hover:text-[var(--editorial-surface)]`}>{description}</p>
+            <span className="mt-12 block text-xs font-bold tracking-widest uppercase">Open →</span>
+          </Link>
+        ))}
+      </section>
+
+      <section>
+        <div className="mb-5 flex items-end justify-between border-b pb-3" style={{ borderColor: 'var(--editorial-line)' }}>
+          <p className={editorial.label}>Composition study</p><span className={editorial.label}>03 / 03</span>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr_1fr]">
+          <div className={`${editorial.imagePlaceholder} min-h-80 p-6 text-white`}><p className={editorial.label}>Feature image</p><p className="mt-24 text-5xl font-black tracking-[-0.07em] uppercase">The<br />cover<br />story</p></div>
+          <div className="border p-5" style={{ borderColor: 'var(--editorial-line-soft)' }}><p className={editorial.label}>01 · Article</p><h3 className="mt-20 text-2xl font-black tracking-[-0.05em] uppercase">Strong hierarchy</h3><p className={`${editorial.body} mt-4 leading-7 text-[var(--editorial-ink-soft)]`}>정보의 우선순위를 크기와 간격, 규칙선으로 명확하게 전달합니다.</p></div>
+          <div className="border p-5" style={{ borderColor: 'var(--editorial-line-soft)' }}><p className={editorial.label}>02 · Note</p><p className={`${editorial.body} mt-20 text-2xl leading-8`}>“Good design is as little design as possible.”</p></div>
+        </div>
+      </section>
+    </div>
   );
 }

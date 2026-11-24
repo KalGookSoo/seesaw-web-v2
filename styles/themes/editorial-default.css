@@ -1,0 +1,150 @@
+:root {
+  --default-background: #f7f7f5;
+  --default-surface: #ffffff;
+  --default-surface-elevated: #ffffff;
+  --default-surface-grouped: #eeeeeb;
+  --default-label: #111111;
+  --default-secondary-label: #4f4f4c;
+  --default-tertiary-label: #858581;
+  --default-fill: #eeeeeb;
+  --default-fill-strong: #d5d5d1;
+  --default-separator: rgb(17 17 17 / 0.2);
+  --default-primary: #5f6f61;
+  --default-primary-soft: #e1e8df;
+  --default-primary-muted: #435347;
+  --default-primary-contrast: #ffffff;
+  --default-secondary: #7a817b;
+  --default-secondary-soft: #e8e9e5;
+  --default-secondary-contrast: #20231f;
+  /* Legacy aliases keep existing utility classes aligned with the new semantic tokens. */
+  --default-blue: var(--default-primary);
+  --default-blue-soft: var(--default-primary-soft);
+  --default-blue-muted: var(--default-primary-muted);
+  --default-blue-contrast: var(--default-primary-contrast);
+  --default-green: #356d45;
+  --default-green-soft: #dcebdd;
+  --default-orange: #936613;
+  --default-orange-soft: #f4e7c7;
+  --default-orange-muted: #b18327;
+  --default-orange-contrast: #4a3100;
+  --default-danger: #a34f43;
+  --default-danger-soft: #f0ded9;
+  --default-danger-muted: #c17a6d;
+  --default-red: var(--default-danger);
+  --default-red-soft: var(--default-danger-soft);
+  --default-red-muted: var(--default-danger-muted);
+  --default-mint-soft: #dcefe8;
+  --default-gray-4: #c9c9c5;
+  --default-gray-5: #ddddda;
+  --default-gray-6: #eeeeeb;
+  --default-radius: 0;
+}
+
+.dark {
+  --default-background: #111111;
+  --default-surface: #181818;
+  --default-surface-elevated: #202020;
+  --default-surface-grouped: #242424;
+  --default-label: #f6f6f3;
+  --default-secondary-label: #c6c6c1;
+  --default-tertiary-label: #898984;
+  --default-fill: #242424;
+  --default-fill-strong: #363636;
+  --default-separator: rgb(246 246 243 / 0.24);
+  --default-primary: #a9b9a9;
+  --default-primary-soft: #263328;
+  --default-primary-muted: #c5d1c4;
+  --default-primary-contrast: #172019;
+  --default-secondary: #aeb5ae;
+  --default-secondary-soft: #2b302c;
+  --default-secondary-contrast: #171917;
+  --default-blue: var(--default-primary);
+  --default-blue-soft: var(--default-primary-soft);
+  --default-blue-muted: var(--default-primary-muted);
+  --default-blue-contrast: var(--default-primary-contrast);
+  --default-green: #8fcf99;
+  --default-green-soft: #19321f;
+  --default-orange: #e9c46a;
+  --default-orange-soft: #3a2c12;
+  --default-orange-muted: #f4d58b;
+  --default-orange-contrast: #111111;
+  --default-danger: #e39a8b;
+  --default-danger-soft: #452a26;
+  --default-danger-muted: #efb8aa;
+  --default-red: var(--default-danger);
+  --default-red-soft: var(--default-danger-soft);
+  --default-red-muted: var(--default-danger-muted);
+  --default-mint-soft: #193b32;
+  --default-gray-4: #484848;
+  --default-gray-5: #363636;
+  --default-gray-6: #242424;
+}
+
+@theme inline {
+  --color-default-background: var(--default-background);
+  --color-default-surface: var(--default-surface);
+  --color-default-surface-elevated: var(--default-surface-elevated);
+  --color-default-surface-grouped: var(--default-surface-grouped);
+  --color-default-label: var(--default-label);
+  --color-default-secondary-label: var(--default-secondary-label);
+  --color-default-tertiary-label: var(--default-tertiary-label);
+  --color-default-fill: var(--default-fill);
+  --color-default-fill-strong: var(--default-fill-strong);
+  --color-default-separator: var(--default-separator);
+  --color-default-primary: var(--default-primary);
+  --color-default-primary-soft: var(--default-primary-soft);
+  --color-default-primary-muted: var(--default-primary-muted);
+  --color-default-primary-contrast: var(--default-primary-contrast);
+  --color-default-secondary: var(--default-secondary);
+  --color-default-secondary-soft: var(--default-secondary-soft);
+  --color-default-secondary-contrast: var(--default-secondary-contrast);
+  --color-default-danger: var(--default-danger);
+  --color-default-danger-soft: var(--default-danger-soft);
+  --color-default-danger-muted: var(--default-danger-muted);
+  --color-default-blue: var(--default-blue);
+  --color-default-blue-soft: var(--default-blue-soft);
+  --color-default-blue-muted: var(--default-blue-muted);
+  --color-default-blue-contrast: var(--default-blue-contrast);
+  --color-default-green: var(--default-green);
+  --color-default-green-soft: var(--default-green-soft);
+  --color-default-orange: var(--default-orange);
+  --color-default-orange-soft: var(--default-orange-soft);
+  --color-default-orange-muted: var(--default-orange-muted);
+  --color-default-orange-contrast: var(--default-orange-contrast);
+  --color-default-red: var(--default-red);
+  --color-default-red-soft: var(--default-red-soft);
+  --color-default-red-muted: var(--default-red-muted);
+  --color-default-mint-soft: var(--default-mint-soft);
+  --color-default-gray-4: var(--default-gray-4);
+  --color-default-gray-5: var(--default-gray-5);
+  --color-default-gray-6: var(--default-gray-6);
+}
+
+body {
+  background: var(--default-background);
+  color: var(--default-label);
+  background-image: none;
+}
+
+.bg-default-surface,
+.bg-default-surface-elevated,
+body [class*='shadow-'] {
+  box-shadow: none;
+}
+
+button.bg-default-label,
+a.bg-default-label,
+button.bg-default-blue,
+a.bg-default-blue {
+  background-image: none;
+  box-shadow: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+button.bg-default-label:hover,
+a.bg-default-label:hover,
+button.bg-default-blue:hover,
+a.bg-default-blue:hover {
+  background-color: var(--default-blue);
+  color: var(--default-blue-contrast);
+}

@@ -1,70 +1,34 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { StyleGuideNavigation } from 'app/style-guide/editorial/_components/style-guide-navigation';
 import { ThemeToggle } from 'components/theme/theme-toggle';
-import { ArrowLeft } from 'lucide-react';
+import editorial from './editorial.module.css';
 
-import {
-  ThemeColorControls,
-  ThemeColorPlayground
-} from '@/app/style-guide/_components/theme-color-playground';
-import editorialTheme from '@/app/style-guide/editorial/editorial.module.css';
-
-export default function StyleGuideLayout({
-  children
-}: Readonly<{
-  children: ReactNode;
-}>) {
+export default function EditorialLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ThemeColorPlayground
-      className={`${editorialTheme.theme} min-h-dvh bg-[var(--editorial-background)] font-sans text-[var(--editorial-ink)] transition-colors duration-200`}
-      initialAccentColor="#006f94"
-      initialBackgroundColor="#f1f3f5"
-    >
-      <header className="border-b border-[var(--editorial-line-soft)] bg-[var(--editorial-surface)]/85 backdrop-blur">
-        <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-start lg:px-8">
-          <div className="min-w-0">
-            <Link
-              className="mb-5 inline-flex w-fit items-center gap-2 border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-3 py-1.5 text-xs font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
-              href="/style-guide"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Style Guide Index
-            </Link>
-            <p className="text-xs font-bold tracking-widest text-[var(--editorial-accent)] uppercase">
-              Seesaw Web v2
-            </p>
-            <h1 className="mt-2 font-serif text-4xl font-black tracking-tight lg:text-5xl">
-              Editorial Style Guide
-            </h1>
-            <p className="mt-4 max-w-3xl font-serif text-base leading-7 text-[var(--editorial-ink-soft)] italic">
-              타이포그래피와 단단한 직선 경계선 중심의 지면 레이아웃 감각으로
-              구성한 디자인 시스템 문서입니다.
-            </p>
+    <div className={`${editorial.theme} min-h-dvh font-sans transition-colors duration-200`}>
+      <header className="border-b px-6 py-5 lg:px-10" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+        <div className="mx-auto flex max-w-7xl items-start justify-between gap-6">
+          <div>
+            <Link href="/style-guide" className={`${editorial.label} text-[var(--editorial-ink-muted)] hover:text-[var(--editorial-ink)]`}>← Style Guide Index</Link>
+            <p className="mt-8 text-xs font-bold tracking-[0.2em] text-[var(--editorial-ink-muted)] uppercase">Seesaw Web v2</p>
+            <h1 className="mt-3 text-4xl font-black tracking-[-0.06em] uppercase sm:text-6xl">Editorial<br />Style Guide</h1>
           </div>
-          <div className="flex min-w-0 flex-col gap-3">
-            <div className="w-full border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-2 font-mono text-xs tracking-wider text-[var(--editorial-ink-soft)] uppercase">
-              /style-guide/editorial
-            </div>
-            <ThemeColorControls
-              className="w-full space-y-3 border border-[var(--editorial-line)] bg-[var(--editorial-surface-muted)] px-4 py-3"
-              inputClassName="size-8 rounded-none border border-[var(--editorial-line)] bg-transparent p-0"
-              labelClassName="font-mono text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase"
-              resetButtonClassName="border border-[var(--editorial-line-soft)] px-2 py-1 font-mono text-[0.625rem] font-bold tracking-widest text-[var(--editorial-ink-soft)] uppercase transition hover:border-[var(--editorial-line)] hover:bg-[var(--editorial-accent)] hover:text-[var(--editorial-accent-contrast)]"
-            />
+          <div className="flex flex-col items-end gap-4">
+            <code className="hidden border px-4 py-3 text-xs sm:block" style={{ borderColor: 'var(--editorial-line-soft)' }}>/style-guide/editorial</code>
             <ThemeToggle />
           </div>
         </div>
-        <div className="border-t border-[var(--editorial-line-soft)]">
-          <div className="mx-auto max-w-7xl">
-            <StyleGuideNavigation />
-          </div>
-        </div>
+        <nav className="mx-auto mt-10 flex max-w-7xl gap-5 overflow-x-auto overscroll-x-auto border-t pt-4 text-xs font-bold tracking-[0.14em] uppercase" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+          <Link href="/style-guide/editorial">Overview</Link>
+          <Link href="/style-guide/editorial/foundations" className="text-[var(--editorial-ink-muted)]">Foundations</Link>
+          <Link href="/style-guide/editorial/atoms" className="text-[var(--editorial-ink-muted)]">Atoms</Link>
+          <Link href="/style-guide/editorial/molecules" className="text-[var(--editorial-ink-muted)]">Molecules</Link>
+          <Link href="/style-guide/editorial/organisms" className="text-[var(--editorial-ink-muted)]">Organisms</Link>
+          <Link href="/style-guide/editorial/patterns" className="text-[var(--editorial-ink-muted)]">Patterns</Link>
+          <Link href="/style-guide/editorial/components" className="text-[var(--editorial-ink-muted)]">Component index</Link>
+        </nav>
       </header>
-
-      <div className="mx-auto max-w-7xl space-y-12 px-6 py-12 lg:px-8">
-        {children}
-      </div>
-    </ThemeColorPlayground>
+      <main className="mx-auto max-w-7xl px-6 py-10 lg:px-10">{children}</main>
+    </div>
   );
 }

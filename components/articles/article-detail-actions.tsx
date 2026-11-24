@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { decode } from 'entities';
 import { ArrowRightLeft, Check, MessageCircle, Pencil, Send, Trash2, X } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
@@ -36,6 +37,10 @@ function formatDate(value: string | null | undefined): string {
     month: '2-digit',
     day: '2-digit'
   }).format(new Date(value));
+}
+
+function decodeReplyContent(content: string | null | undefined): string {
+  return decode(content ?? '');
 }
 
 export function ArticleReplies({
@@ -192,7 +197,7 @@ export function ArticleReplies({
                     <textarea
                       aria-label="댓글 수정"
                       className="form-control form-textarea min-h-20 flex-1 text-sm"
-                      defaultValue={reply.content ?? ''}
+                      defaultValue={decodeReplyContent(reply.content)}
                       name="content"
                       required
                     />
@@ -207,7 +212,7 @@ export function ArticleReplies({
                   </form>
                 ) : (
                   <p className="border-default-separator bg-default-surface-grouped/45 text-default-secondary-label mt-4 border px-4 py-3 text-sm leading-6 whitespace-pre-wrap">
-                    {reply.content}
+                    {decodeReplyContent(reply.content)}
                   </p>
                 )}
               </li>
