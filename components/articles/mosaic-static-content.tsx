@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { ContentContainer } from '@/components/layout/content-container';
 import styles from './mosaic-static-content.module.css';
 
 type GalleryImage = Readonly<{
@@ -132,7 +133,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
 
   return (
     <div className={styles.experience} ref={experienceRef}>
-      <div className={styles.reader}>
+      <ContentContainer className={styles.reader}>
         <section className={styles.cover} aria-labelledby="static-content-cover-title">
           <div className={styles.coverMeta}>
             <span>전시관</span>
@@ -241,7 +242,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
             <footer className={styles.readerFooter}>전시의 끝</footer>
           </section>
         )}
-      </div>
+      </ContentContainer>
 
       {selectedGalleryImage ? (
         <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event) => {

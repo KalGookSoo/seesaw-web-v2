@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { ContentContainer } from '@/components/layout/content-container';
 import styles from './mosaic-static-content.module.css';
 
 type MagazineImage = Readonly<{
@@ -77,7 +78,7 @@ export function MagazineStaticContent({ articles, categoryName, categoryDescript
 
   return (
     <div className={styles.experience}>
-      <div className={styles.reader}>
+      <ContentContainer className={styles.reader}>
         <header className={styles.cover} aria-labelledby="static-content-cover-title">
           <div className={styles.coverMeta}>
             <span>전시관</span>
@@ -132,7 +133,7 @@ export function MagazineStaticContent({ articles, categoryName, categoryDescript
             );
           })}
         </section>
-      </div>
+      </ContentContainer>
 
       {selectedArticle ? (
         <div className={styles.magazineModalBackdrop} role="presentation" onMouseDown={(event) => {
