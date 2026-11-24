@@ -12,6 +12,7 @@ import { MOCK_AUTHENTICATION } from '@/lib/mock-auth';
 import { Confirm } from '@/components/ui/confirm';
 import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
+import { DropdownSelect } from '@/components/ui/dropdown-select';
 
 const buttonClassName =
   'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
@@ -396,20 +397,12 @@ export function ArticleManagementActions({
         >
           <label className="text-default-label block text-sm font-semibold">
             이동할 카테고리
-            <select
-              className="border-default-separator bg-default-fill mt-2 block h-11 w-full rounded-lg border px-3 text-sm"
+            <DropdownSelect
+              className="mt-2"
               defaultValue={article.categoryId ?? ''}
               name="categoryId"
-              required
-            >
-              {categories
-                .filter((category) => category.type !== 'NONE')
-                .map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-            </select>
+              options={categories.filter((category) => category.type !== 'NONE').map((category) => ({ label: category.name, value: category.id }))}
+            />
           </label>
           <div className="flex justify-end gap-2">
             <button

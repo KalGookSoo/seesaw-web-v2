@@ -12,6 +12,7 @@ import { AttachmentUpload } from '@/components/articles/attachment-upload';
 import { useToast } from '@/components/ui/toast';
 import { ArticleEditor } from '@/components/articles/article-editor';
 import { Confirm } from '@/components/ui/confirm';
+import { DropdownSelect } from '@/components/ui/dropdown-select';
 
 type InlineFile = Readonly<{
   file: File;
@@ -148,7 +149,7 @@ export function ScheduleForm({
           <label className="text-default-label text-sm font-medium" htmlFor="schedule-start">시작 일시<input id="schedule-start" className="form-control mt-2 text-base" type="datetime-local" value={dtStart} onChange={(event) => setDtStart(event.target.value)} required /></label>
           <label className="text-default-label text-sm font-medium" htmlFor="schedule-end">종료 일시<input id="schedule-end" className="form-control mt-2 text-base" type="datetime-local" value={dtEnd} onChange={(event) => setDtEnd(event.target.value)} required /></label>
           <label className="text-default-label text-sm font-medium" htmlFor="schedule-location">장소<input id="schedule-location" className="form-control mt-2 text-base" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="장소를 입력하세요" /></label>
-          <label className="text-default-label text-sm font-medium" htmlFor="schedule-status">상태<select id="schedule-status" className="form-select mt-2 text-base" value={status} onChange={(event) => setStatus(event.target.value as EventStatus)}>{EVENT_STATUSES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+          <label className="text-default-label text-sm font-medium">상태<DropdownSelect className="mt-2" options={EVENT_STATUSES} value={status} onValueChange={(value) => setStatus(value as EventStatus)} /></label>
         </div>
         <details className="group border-default-separator border-b">
           <summary className="text-default-label hover:bg-default-fill flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-semibold transition [&::-webkit-details-marker]:hidden sm:px-7">

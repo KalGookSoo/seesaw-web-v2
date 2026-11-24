@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ThemeToggle } from 'components/theme/theme-toggle';
+import { EditorialNavigation } from './_components/editorial-navigation';
 import editorial from './editorial.module.css';
 
 export default function EditorialLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -18,15 +19,7 @@ export default function EditorialLayout({ children }: Readonly<{ children: React
             <ThemeToggle />
           </div>
         </div>
-        <nav className="mx-auto mt-10 flex max-w-7xl gap-5 overflow-x-auto overscroll-x-auto border-t pt-4 text-xs font-bold tracking-[0.14em] uppercase" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-          <Link href="/style-guide/editorial">Overview</Link>
-          <Link href="/style-guide/editorial/foundations" className="text-[var(--editorial-ink-muted)]">Foundations</Link>
-          <Link href="/style-guide/editorial/atoms" className="text-[var(--editorial-ink-muted)]">Atoms</Link>
-          <Link href="/style-guide/editorial/molecules" className="text-[var(--editorial-ink-muted)]">Molecules</Link>
-          <Link href="/style-guide/editorial/organisms" className="text-[var(--editorial-ink-muted)]">Organisms</Link>
-          <Link href="/style-guide/editorial/patterns" className="text-[var(--editorial-ink-muted)]">Patterns</Link>
-          <Link href="/style-guide/editorial/components" className="text-[var(--editorial-ink-muted)]">Component index</Link>
-        </nav>
+        <EditorialNavigation />
       </header>
       <main className="mx-auto max-w-7xl px-6 py-10 lg:px-10">{children}</main>
     </div>
