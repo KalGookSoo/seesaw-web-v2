@@ -28,6 +28,7 @@ import {
 } from '@/components/articles/article-detail-actions';
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { AttachmentList } from '@/components/attachments/attachment-list';
+import { VoteButton } from '@/components/vote/vote-button';
 import styles from './article-detail.module.css';
 
 type ArticleDetailPageProps = Readonly<{
@@ -408,6 +409,9 @@ export default async function ArticleDetailPage({
                   <Eye aria-hidden className="size-3.5" />
                   조회 {article.views?.length ?? 0}
                 </span>
+                </div>
+                <div className="mt-5 flex justify-end border-t border-default-separator pt-4">
+                  <VoteButton referenceId={article.id} />
                 </div>
               </div>
             </div>

@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  Check,
+  Bell,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -14,7 +14,6 @@ import {
   Loader2,
   LogIn,
   LogOut,
-  Mail,
   Menu,
   MessageCircleQuestion,
   Moon,
@@ -23,7 +22,6 @@ import {
   RefreshCw,
   Send,
   Settings,
-  ShieldCheck,
   Sun,
   UserRound,
   UserX
@@ -44,6 +42,7 @@ import { authorizedFetch } from '@/lib/api-fetch';
 import { removeMyRoleMapping } from '@/lib/role-mappings';
 import { useToast } from '@/components/ui/toast';
 import { GlobalSearch } from '@/components/search/global-search';
+import { NotificationBell } from '@/components/notifications/notification-bell';
 
 type Locale = 'ko' | 'en';
 type ThemeMode = 'light' | 'dark';
@@ -423,7 +422,6 @@ export function GlobalShell({
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [myPageOpen, setMyPageOpen] = useState(false);
-  const [receiveEmail, setReceiveEmail] = useState(false);
   const [policyOpen, setPolicyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -607,11 +605,6 @@ export function GlobalShell({
     setPreferenceCookie(NAVIGATION_POSITION_COOKIE_KEY, nextPosition);
   };
 
-  const handleMyPageSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    // API가 아직 없어 실제 저장은 이후 연동 시 채운다.
-    event.preventDefault();
-  };
-
   const handleExtendSession = async () => {
     setExtendSessionPending(true);
     try {
@@ -677,6 +670,8 @@ export function GlobalShell({
         </div>
 
         <GlobalSearch />
+
+        <NotificationBell isAuthenticated={isAuthenticated} />
 
         <button
           className="border-default-separator bg-default-background text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 shrink-0 items-center justify-center border transition"
@@ -943,23 +938,13 @@ export function GlobalShell({
         variant="editorial"
         onClose={() => setMyPageOpen(false)}
         footer={
-          <>
-            <button
-              className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex h-11 items-center justify-center border px-4 text-sm font-semibold transition"
-              type="button"
-              onClick={() => setMyPageOpen(false)}
-            >
-              닫기
-            </button>
-            <button
-              className="bg-default-label text-default-background hover:bg-default-secondary-label inline-flex h-11 items-center gap-1.5 px-4 text-sm font-semibold transition"
-              form="my-page-form"
-              type="submit"
-            >
-              <Check size={15} aria-hidden />
-              저장
-            </button>
-          </>
+          <button
+            className="border-default-separator bg-default-surface text-default-label hover:bg-default-fill inline-flex h-11 items-center justify-center border px-4 text-sm font-semibold transition"
+            type="button"
+            onClick={() => setMyPageOpen(false)}
+          >
+            닫기
+          </button>
         }
       >
         {user ? (
@@ -1056,28 +1041,20 @@ export function GlobalShell({
               </div>
             </section>
 
-            <form
-              className="space-y-3"
-              id="my-page-form"
-              onSubmit={handleMyPageSubmit}
-            >
+            <section className="space-y-3">
               <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
-                <ShieldCheck size={16} aria-hidden />
+                <Bell size={16} aria-hidden />
                 <span>알림 설정</span>
               </div>
-              <label className="border-default-separator flex items-center justify-between gap-4 border px-4 py-4">
-                <span className="flex items-center gap-2 text-sm">
-                  <Mail aria-hidden className="text-default-secondary-label size-4" />
-                  이메일 수신
-                </span>
-                <input
-                  checked={receiveEmail}
-                  className="form-choice"
-                  type="checkbox"
-                  onChange={(event) => setReceiveEmail(event.target.checked)}
-                />
-              </label>
-            </form>
+              <Link
+                className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label flex items-center justify-between gap-4 border px-4 py-4 text-sm transition"
+                href="/notifications/settings"
+                onClick={() => setMyPageOpen(false)}
+              >
+                <span>알림함에서 유형별 수신 채널을 관리합니다.</span>
+                <ChevronRight aria-hidden className="size-4 shrink-0" />
+              </Link>
+            </section>
           </div>
         ) : null}
       </Modal>

@@ -12,3 +12,9 @@ export type VoteResponse = Readonly<{
   approved?: boolean | null;
   baseModel?: BaseEntity | null;
 }>;
+
+export type VoteSummaryResponse = Readonly<{
+  referenceId: string;
+  count: number;
+  liked: boolean;
+}>;

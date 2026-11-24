@@ -9,7 +9,8 @@ const items = [
   ['Atoms', '/style-guide/editorial/atoms'],
   ['Molecules', '/style-guide/editorial/molecules'],
   ['Organisms', '/style-guide/editorial/organisms'],
-  ['Patterns', '/style-guide/editorial/patterns']
+  ['Patterns', '/style-guide/editorial/patterns'],
+  ['Interaction', '/style-guide/editorial/interaction']
 ] as const;
 
 export function EditorialNavigation() {

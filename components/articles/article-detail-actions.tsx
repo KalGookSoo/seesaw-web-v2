@@ -13,6 +13,7 @@ import { Confirm } from '@/components/ui/confirm';
 import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 import { DropdownSelect } from '@/components/ui/dropdown-select';
+import { VoteButton } from '@/components/vote/vote-button';
 
 const buttonClassName =
   'inline-flex h-9 items-center justify-center gap-1.5 border px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50';
@@ -153,34 +154,37 @@ export function ArticleReplies({
                     </div>
                   </div>
 
-                  {authentication.authenticated && (isOwner || isManager) ? (
-                    <div className="flex gap-2">
-                      {isOwner || isManager ? (
+                  <div className="flex shrink-0 items-center gap-2">
+                    {authentication.authenticated && (isOwner || isManager) ? (
+                      <div className="flex gap-2">
+                        {isOwner || isManager ? (
+                          <button
+                            className={`${buttonClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
+                            type="button"
+                            onClick={() =>
+                              setEditingReplyId(isEditing ? null : reply.id)
+                            }
+                          >
+                            {isEditing ? (
+                              <X className="size-4" />
+                            ) : (
+                              <Pencil className="size-4" />
+                            )}
+                            {isEditing ? '취소' : '수정'}
+                          </button>
+                        ) : null}
                         <button
-                          className={`${buttonClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
+                          className={`${buttonClassName} border-default-red-muted text-default-red hover:bg-default-red-soft`}
                           type="button"
-                          onClick={() =>
-                            setEditingReplyId(isEditing ? null : reply.id)
-                          }
+                          onClick={() => setDeleteReplyId(reply.id)}
                         >
-                          {isEditing ? (
-                            <X className="size-4" />
-                          ) : (
-                            <Pencil className="size-4" />
-                          )}
-                          {isEditing ? '취소' : '수정'}
+                          <Trash2 className="size-4" />
+                          삭제
                         </button>
-                      ) : null}
-                      <button
-                        className={`${buttonClassName} border-default-red-muted text-default-red hover:bg-default-red-soft`}
-                        type="button"
-                        onClick={() => setDeleteReplyId(reply.id)}
-                      >
-                        <Trash2 className="size-4" />
-                        삭제
-                      </button>
-                    </div>
-                  ) : null}
+                      </div>
+                    ) : null}
+                    <VoteButton referenceId={reply.id} />
+                  </div>
                 </div>
 
                 {isEditing ? (
