@@ -11,9 +11,9 @@ const environments = [
     description: '현재 프로세스 환경변수에서 조회한 애플리케이션 이름'
   },
   {
-    key: 'NEXT_PUBLIC_SEESAW_APPLICATION_VERSION',
+    key: 'package.json version',
     value: APPLICATION_VERSION,
-    description: '현재 프로세스 환경변수에서 조회한 애플리케이션 버전'
+    description: 'package.json에 정의된 애플리케이션 버전'
   },
   {
     key: 'NODE_ENV',
