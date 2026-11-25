@@ -48,6 +48,22 @@
   text-transform: uppercase;
 }
 
+.displayContainer {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.responsiveDisplay {
+  font-size: clamp(2rem, 9vw, 11rem);
+  overflow-wrap: anywhere;
+}
+
+@supports (font-size: 1cqw) {
+  .responsiveDisplay {
+    font-size: clamp(2rem, 19cqw, 11rem);
+  }
+}
+
 .label {
   font-size: 0.65rem;
   font-weight: 700;

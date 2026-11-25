@@ -12,10 +12,10 @@ const sections = [
 export default function EditorialPage() {
   return (
     <div className="space-y-16">
-      <section className="grid gap-10 border-b pb-12 lg:grid-cols-[1.4fr_0.6fr]" style={{ borderColor: 'var(--editorial-line)' }}>
-        <div>
+      <section className="grid gap-10 border-b pb-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]" style={{ borderColor: 'var(--editorial-line)' }}>
+        <div className={editorial.displayContainer}>
           <p className={`${editorial.label} text-[var(--editorial-accent)]`}>Issue 01 · Design direction</p>
-          <h2 className={`${editorial.display} mt-5 text-[clamp(4rem,13vw,11rem)]`}>Content<br />in print.</h2>
+          <h2 className={`${editorial.display} ${editorial.responsiveDisplay} mt-5`}>Content<br />in print.</h2>
         </div>
         <div className="flex items-end">
           <p className={`${editorial.body} max-w-md text-lg leading-8 text-[var(--editorial-ink-soft)]`}>편집 디자인의 긴장감과 여백을 디지털 화면에 옮깁니다. 크고 명확한 제목, 얇은 선, 정교한 정보 계층으로 콘텐츠가 먼저 보이게 합니다.</p>
