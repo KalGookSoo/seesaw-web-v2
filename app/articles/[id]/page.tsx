@@ -21,6 +21,7 @@ import type { CategoryResponse } from '@/types/category';
 import { APPLICATION_NAME } from '@/lib/application-constants';
 import { fetchArticleDetail, toArticleDetailHref } from '@/lib/articles';
 import { getSiteContext } from '@/lib/site';
+import { fetchEvent } from '@/lib/events';
 import {
   ArticleManagementActions,
   ArticleReplies
@@ -28,6 +29,7 @@ import {
 import { ArticleViewer } from '@/components/articles/article-viewer';
 import { AttachmentList } from '@/components/attachments/attachment-list';
 import { VoteButton } from '@/components/vote/vote-button';
+import { ScheduleDetail } from '@/components/articles/schedule-detail';
 import styles from './article-detail.module.css';
 
 type ArticleDetailPageProps = Readonly<{
@@ -344,8 +346,10 @@ export default async function ArticleDetailPage({
 
   const categories = site.categories ?? [];
   const category =
-    findCategory(categories, search.categoryId) ??
-    findCategory(categories, article.categoryId);
+    findCategory(categories, article.categoryId) ??
+    findCategory(categories, search.categoryId);
+  const isSchedule = category?.type === 'SCHEDULE';
+  const event = isSchedule ? await fetchEvent(article.id).catch(() => null) : null;
   const navigationSearch: SearchArticleDetailRequest = {
     ...search,
     categoryId: search.categoryId ?? article.categoryId,
@@ -390,7 +394,7 @@ export default async function ArticleDetailPage({
         <article className={`${styles.article} space-y-4`}>
           <header className={styles.articleHeader}>
             <div className="flex items-center justify-between gap-3">
-              <p className={styles.articleEyebrow}>게시글 · 상세</p>
+              <p className={styles.articleEyebrow}>{isSchedule ? 'Schedule · 일정 상세' : '게시글 · 상세'}</p>
             </div>
             <div className="mt-5 min-w-0">
               <div>
@@ -412,6 +416,10 @@ export default async function ArticleDetailPage({
               </div>
             </div>
           </header>
+
+          {isSchedule ? event ? <ScheduleDetail event={event} canonicalUrl={canonicalUrl} description={toDescription(article)} /> : (
+            <p className="border-default-separator text-default-secondary-label border px-5 py-5 text-sm">일정 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</p>
+          ) : null}
 
           <div className={`${styles.articleContent} border-default-separator bg-default-surface border`}>
             <div className={styles.articleBody}>
@@ -463,7 +471,7 @@ export default async function ArticleDetailPage({
             </div>
 
             <Link className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label border-y px-4 py-4 text-center text-xs font-semibold transition sm:border-x sm:border-y-0" href={listHref}>
-              목록으로 돌아가기
+              {isSchedule ? '일정 목록으로 돌아가기' : '목록으로 돌아가기'}
             </Link>
 
             <div className="flex justify-start p-4 sm:justify-end sm:p-5">

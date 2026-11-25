@@ -49,6 +49,15 @@ export async function fetchEventsByCategory(categoryId: string): Promise<VEventR
   return response.json();
 }
 
+export async function fetchEvent(id: string): Promise<VEventResponse> {
+  const response = await fetch(`${APPLICATION_API_BASE_URL}/events/${encodeURIComponent(id)}`, {
+    headers: { Accept: 'application/json' },
+    cache: 'no-store'
+  });
+  if (!response.ok) throw new Error('일정 정보를 조회하지 못했습니다.');
+  return response.json();
+}
+
 export async function createEvent(command: CreateEventRequest): Promise<EventMutationResult> {
   return toMutationResult(await authorizedFetch('/api/events', {
     method: 'POST',
