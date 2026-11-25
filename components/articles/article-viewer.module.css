@@ -1,9 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 .viewer {
   color: var(--default-label);
-  font-family: Arial, Helvetica, 'Apple SD Gothic Neo', 'Pretendard', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 1rem;
-  letter-spacing: -0.02em;
-  line-height: 1.65;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
@@ -16,8 +17,17 @@
 }
 
 .viewer p {
-  margin: 0.75em 0;
+  margin: 0;
   white-space: pre-wrap;
+}
+
+.viewer p:not(:first-child):not(td p):not(th p) {
+  margin-top: 20px;
+}
+
+.viewer li p:not(:first-child),
+.viewer blockquote p {
+  margin-top: 0;
 }
 
 .viewer h1,
@@ -28,31 +38,39 @@
 .viewer h6 {
   color: var(--default-label);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.35;
-  margin: 1.4em 0 0.5em;
+  margin: 0;
 }
 
 .viewer h1 {
   font-size: 1.5em;
+  margin-top: 3em;
 }
 
 .viewer h2 {
   font-size: 1.25em;
+  margin-top: 2.5em;
 }
 
 .viewer h3 {
   font-size: 1.125em;
+  font-weight: 600;
+  margin-top: 2em;
 }
 
 .viewer h4 {
   font-size: 1em;
+  font-weight: 600;
+  margin-top: 2em;
 }
 
 .viewer ul,
 .viewer ol {
-  margin: 1em 0;
-  padding-left: 1.75rem;
+  margin: 1.5em 0;
+  padding-left: 1.5em;
+}
+
+.viewer :is(ul, ol) :is(ul, ol) {
+  margin: 0;
 }
 
 .viewer ul {
@@ -64,10 +82,10 @@
 }
 
 .viewer blockquote {
-  border-left: 3px solid var(--default-label);
+  border-left: 0.25em solid var(--default-label);
   color: var(--default-secondary-label);
-  margin: 1.25em 0;
-  padding: 0.25em 0 0.25em 1rem;
+  margin: 1.5rem 0;
+  padding: 0.375em 0 0.375em 1em;
 }
 
 .viewer a {
