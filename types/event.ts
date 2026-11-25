@@ -38,6 +38,7 @@ export type CreateEventRequest = Readonly<{
   title: string;
   content: string;
   location?: string | null;
+  locationDetail?: string | null;
   status?: EventStatus | null;
   tzid?: string | null;
   categoryId: string;
@@ -54,6 +55,7 @@ export type UpdateEventRequest = Readonly<{
   title: string;
   content?: string | null;
   location?: string | null;
+  locationDetail?: string | null;
   status?: EventStatus | null;
   tzid?: string | null;
   categoryId?: string | null;
@@ -86,6 +88,7 @@ export type VEventResponse = Readonly<{
   title?: string | null;
   description?: string | null;
   location?: string | null;
+  locationDetail?: string | null;
   status?: EventStatus | null;
   rrule?: RecurrenceRule | null;
   tzid?: string | null;

@@ -7,6 +7,7 @@ import { CalendarDays, Check, ChevronLeft, ChevronRight, Clipboard, Clock3, Link
 import { fetchMonthlyEvents } from '@/lib/home-summary';
 import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 import type { VEventResponse } from '@/types/event';
+import { formatEventLocation } from '@/lib/event-location';
 import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 
@@ -81,10 +82,10 @@ function EventRow({ event }: Readonly<{ event: VEventResponse }>) {
         {event.title ?? '제목 없는 일정'}
       </p>
       {event.statusDescription ? <p className="text-default-tertiary-label mt-1 text-xs">{event.statusDescription}</p> : null}
-      {event.location ? (
+      {formatEventLocation(event.location, event.locationDetail) ? (
         <p className="text-default-secondary-label mt-2 flex min-w-0 items-start gap-1.5 text-xs leading-5">
           <MapPin aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-          <span className="min-w-0 [overflow-wrap:anywhere]">{event.location}</span>
+          <span className="min-w-0 [overflow-wrap:anywhere]">{formatEventLocation(event.location, event.locationDetail)}</span>
         </p>
       ) : null}
     </div>

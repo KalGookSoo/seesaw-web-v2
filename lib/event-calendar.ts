@@ -1,4 +1,5 @@
 import type { VEventResponse } from '@/types/event';
+import { formatEventLocation } from './event-location.ts';
 
 function escapeText(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/\r\n|\r|\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
@@ -45,7 +46,8 @@ export function createEventCalendar(event: VEventResponse, url: string): string 
   else if (event.duration && /^P(?:\d+W|\d+D(?:T(?:\d+H)?(?:\d+M)?(?:\d+S)?)?|T(?:\d+H)?(?:\d+M)?(?:\d+S)?)$/.test(event.duration)) lines.push(`DURATION:${event.duration}`);
   lines.push(`SUMMARY:${escapeText(event.title || '제목 없는 일정')}`);
   if (event.description) lines.push(`DESCRIPTION:${escapeText(event.description)}`);
-  if (event.location) lines.push(`LOCATION:${escapeText(event.location)}`);
+  const location = formatEventLocation(event.location, event.locationDetail);
+  if (location) lines.push(`LOCATION:${escapeText(location)}`);
   if (event.status) lines.push(`STATUS:${event.status}`);
   lines.push(`URL:${url}`);
 

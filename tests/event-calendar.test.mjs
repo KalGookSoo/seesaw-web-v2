@@ -25,6 +25,11 @@ test('UTF-8 바이트 기준으로 긴 줄을 접는다', () => {
   for (const line of calendar.split('\r\n')) assert.ok(Buffer.byteLength(line) <= 75);
 });
 
+test('캘린더 장소에 상세 장소를 포함한다', () => {
+  const calendar = createEventCalendar({ ...event, location: '대전 동구', locationDetail: '2, 3층' }, 'https://example.com/');
+  assert.match(calendar, /LOCATION:대전 동구 2\\, 3층/);
+});
+
 test('지원하지 않는 시간대와 잘못된 날짜를 거절한다', () => {
   assert.throws(() => createEventCalendar({ ...event, tzid: 'America/New_York' }, 'https://example.com/'));
   assert.throws(() => createEventCalendar({ ...event, dtStart: '2026-02-30T10:00:00' }, 'https://example.com/'));

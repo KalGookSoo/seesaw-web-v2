@@ -54,6 +54,7 @@ export function ScheduleForm({
   const [dtStart, setDtStart] = useState(toDateTimeLocal(initialEvent?.dtStart));
   const [dtEnd, setDtEnd] = useState(toDateTimeLocal(initialEvent?.dtEnd));
   const [location, setLocation] = useState(initialEvent?.location ?? '');
+  const [locationDetail, setLocationDetail] = useState(initialEvent?.locationDetail ?? '');
   const [status, setStatus] = useState<EventStatus>(initialEvent?.status ?? 'CONFIRMED');
   const [content, setContent] = useState(initialEvent?.description ?? initialEvent?.article?.content ?? '');
   const [files, setFiles] = useState<File[]>([]);
@@ -89,6 +90,7 @@ export function ScheduleForm({
       title,
       content,
       location,
+      locationDetail,
       status,
       multipartFiles: files,
       inlineImages: inlineImages
@@ -157,6 +159,7 @@ export function ScheduleForm({
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-start">시작 일시<input id="schedule-start" className="form-control mt-2 text-base" type="datetime-local" value={dtStart} onChange={(event) => setDtStart(event.target.value)} required /></label>
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-end">종료 일시<input id="schedule-end" className="form-control mt-2 text-base" type="datetime-local" value={dtEnd} onChange={(event) => setDtEnd(event.target.value)} required /></label>
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-location">장소<input id="schedule-location" className="form-control mt-2 text-base" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="장소를 입력하세요" /></label>
+            <label className="text-default-label text-sm font-medium" htmlFor="schedule-location-detail">상세 장소<input id="schedule-location-detail" className="form-control mt-2 text-base" value={locationDetail} onChange={(event) => setLocationDetail(event.target.value)} maxLength={255} placeholder="층, 호수 등 상세 장소를 입력하세요" /></label>
             <label className="text-default-label text-sm font-medium">상태<DropdownSelect className="mt-2" options={EVENT_STATUSES} value={status} onValueChange={(value) => setStatus(value as EventStatus)} /></label>
           </div>
         </section>

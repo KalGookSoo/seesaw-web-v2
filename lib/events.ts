@@ -21,6 +21,7 @@ function buildEventFormData(
   formData.set('title', command.title);
   formData.set('content', command.content ?? '');
   formData.set('location', command.location ?? '');
+  if (command.locationDetail != null) formData.set('locationDetail', command.locationDetail);
   if (command.status) formData.set('status', command.status);
   if (command.tzid) formData.set('tzid', command.tzid);
   (command.multipartFiles ?? []).forEach((file) => formData.append('multipartFiles', file));
