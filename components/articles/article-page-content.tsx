@@ -156,21 +156,21 @@ function ViewSwitcher({
     return (
       <div className="flex border border-[var(--editorial-line-soft)]">
         <Link
-          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'CALENDAR' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
+          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'CALENDAR' ? 'bg-default-primary text-default-primary-contrast font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CALENDAR', viewType: 'TABLE' })}
         >
           <CalendarDays className="size-4" />
           캘린더
         </Link>
         <Link
-          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'TABLE' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
+          className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${scheduleView === 'TABLE' ? 'bg-default-primary text-default-primary-contrast font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'TABLE', viewType: 'TABLE' })}
         >
           <List className="size-4" />
           목록
         </Link>
         <Link
-          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
+          className={`${controlClassName} ${scheduleView === 'CARD' ? 'bg-default-primary text-default-primary-contrast font-semibold' : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'}`}
           href={buildArticlesHref(search, { page: 0, scheduleView: 'CARD', viewType: 'CARD' })}
         >
           <Grid2X2 className="size-4" />
@@ -185,7 +185,7 @@ function ViewSwitcher({
       <Link
         className={`${controlClassName} border-r border-[var(--editorial-line-soft)] ${
           viewType === 'TABLE'
-            ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold'
+            ? 'bg-default-primary text-default-primary-contrast font-semibold'
             : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'TABLE' })}
@@ -196,7 +196,7 @@ function ViewSwitcher({
       <Link
         className={`${controlClassName} ${
           viewType === 'CARD'
-            ? 'bg-[var(--editorial-ink)] text-[var(--editorial-surface)] font-semibold'
+            ? 'bg-default-primary text-default-primary-contrast font-semibold'
             : 'text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]'
         }`}
         href={buildArticlesHref(search, { page: 0, viewType: 'CARD' })}
@@ -228,7 +228,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
       ) : null}
       <SearchFieldDropdown defaultValue={search.keyField ?? 'title'} />
       <input
-        className="form-control h-10"
+        className="form-control"
         name="keyWord"
         type="search"
         defaultValue={search.keyWord ?? ''}
@@ -236,7 +236,7 @@ function SearchForm({ search }: Readonly<{ search: SearchArticlesParams }>) {
         aria-label="검색어"
       />
       <button
-        className="inline-flex h-10 items-center justify-center gap-2 border border-[var(--editorial-ink)] bg-[var(--editorial-ink)] px-4 text-sm font-semibold text-[var(--editorial-surface)] transition hover:bg-[var(--editorial-primary)]"
+        className="bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted inline-flex min-h-[2.875rem] items-center justify-center gap-2 px-4 text-sm font-semibold transition"
         type="submit"
       >
         <Search className="size-4" />
@@ -555,7 +555,7 @@ export function ArticlePageContent({
               내가 쓴 글
             </Link>
             <Link
-              className={`${controlClassName} bg-[var(--editorial-primary)] font-semibold text-[var(--editorial-surface)] hover:bg-[var(--editorial-ink)]`}
+              className={`${controlClassName} bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted font-semibold`}
               href={`/articles/new?categoryId=${encodeURIComponent(search.categoryId)}&categoryType=${encodeURIComponent(search.categoryType ?? category.type ?? 'BOARD')}`}
             >
               <Pencil className="size-4" />
