@@ -22,9 +22,6 @@ export function ArticleEditPageContent({
   const { user, isAuthenticated } = useAuth();
   const category = ALL_CATEGORIES[categoryId];
 
-  const isManager = (user?.authorities ?? []).some(
-    (authority) => authority === 'ROLE_ADMIN' || authority === 'ROLE_MANAGER'
-  );
   const isOwner = isAuthenticated && user?.username === article.createdBy;
 
   if (!isAuthenticated) {
@@ -43,7 +40,7 @@ export function ArticleEditPageContent({
     );
   }
 
-  if (!isOwner && !isManager) {
+  if (!isOwner) {
     return (
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
         <p className="text-default-secondary-label text-sm">

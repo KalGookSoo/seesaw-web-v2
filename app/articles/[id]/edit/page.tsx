@@ -6,7 +6,7 @@ import { APPLICATION_NAME } from '@/lib/application-constants';
 import { fetchArticleDetail } from '@/lib/articles';
 import { fetchEventsByCategory } from '@/lib/events';
 import { ArticleEditPageContent } from '@/components/articles/article-edit-page-content';
-import { ScheduleForm } from '@/components/articles/schedule-form';
+import { ScheduleEditPageContent } from '@/components/articles/schedule-edit-page-content';
 import { getSiteContext } from '@/lib/site';
 import { ContentContainer } from '@/components/layout/content-container';
 
@@ -70,15 +70,12 @@ export default async function EditArticlePage({
       return (
         <main className="bg-default-surface-grouped text-default-label min-h-full">
           <ContentContainer className="py-8 lg:py-12">
-            <ScheduleForm
+            <ScheduleEditPageContent
+              article={article}
+              event={event}
               categoryId={categoryId}
               categoryName={category.name ?? ''}
-              cancelHref={detailHref}
-              eventId={event.id}
-              initialAttachments={article.attachments ?? []}
-              initialEvent={event}
-              mode="edit"
-              successHref={detailHref}
+              detailHref={detailHref}
             />
           </ContentContainer>
         </main>

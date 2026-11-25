@@ -475,7 +475,7 @@ export default async function ArticleDetailPage({
             </Link>
 
             <div className="flex justify-start p-4 sm:justify-end sm:p-5">
-              <ArticleManagementActions article={article} categories={categories} listHref={listHref} />
+              <ArticleManagementActions article={article} categories={categories} listHref={listHref} isSchedule={isSchedule} />
             </div>
           </div>
         </footer>

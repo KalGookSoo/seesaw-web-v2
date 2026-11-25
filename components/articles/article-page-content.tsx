@@ -8,10 +8,8 @@ import {
   Inbox,
   List,
   MessageCircle,
-  Pencil,
   Pin,
   Search,
-  UserRound
 } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
@@ -30,6 +28,7 @@ import { MagazineStaticContent } from '@/components/articles/magazine-static-con
 import { MonochromeImage } from '@/components/ui/monochrome-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 import { ContentContainer } from '@/components/layout/content-container';
+import { ArticleListActions } from '@/components/articles/article-list-actions';
 import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 type ArticlePageContentProps = Readonly<{
@@ -542,26 +541,7 @@ export function ArticlePageContent({
         </header>
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-b py-4" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              className={`${controlClassName} border border-[var(--editorial-line-soft)] text-[var(--editorial-ink-soft)] hover:bg-[var(--editorial-surface-muted)] hover:text-[var(--editorial-ink)]`}
-              href={buildArticlesHref(search, {
-                keyField: 'createdBy',
-                keyWord: '',
-                page: 0
-              })}
-            >
-              <UserRound className="size-4" />
-              내가 쓴 글
-            </Link>
-            <Link
-              className={`${controlClassName} bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted font-semibold`}
-              href={`/articles/new?categoryId=${encodeURIComponent(search.categoryId)}&categoryType=${encodeURIComponent(search.categoryType ?? category.type ?? 'BOARD')}`}
-            >
-              <Pencil className="size-4" />
-              글쓰기
-            </Link>
-          </div>
+          <ArticleListActions categoryId={search.categoryId} categoryType={search.categoryType ?? category.type ?? 'BOARD'} mineHref={buildArticlesHref(search, { keyField: 'createdBy', keyWord: '', page: 0 })} className={controlClassName} />
           <ViewSwitcher search={search} scheduleView={scheduleView} viewType={viewType} />
         </div>
 

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { useSiteContext } from '@/app/site-context-provider';
 import { useAuth } from '@/hooks/use-auth';
+import { useCategoryCreatePermission } from '@/hooks/use-category-create-permission';
 import { ArticleForm } from '@/components/articles/article-form';
 import { ScheduleForm } from '@/components/articles/schedule-form';
 import { ContentContainer } from '@/components/layout/content-container';
@@ -17,6 +18,7 @@ export default function NewArticlePage() {
   const categoryId = searchParams.get('categoryId') ?? '';
   const categoryType = searchParams.get('categoryType');
   const category = categoryId ? ALL_CATEGORIES[categoryId] : undefined;
+  const { canCreate, loading } = useCategoryCreatePermission(categoryId);
 
   const listParams = new URLSearchParams();
   if (categoryId) {
@@ -52,6 +54,9 @@ export default function NewArticlePage() {
       </main>
     );
   }
+
+  if (loading) return <main className="text-default-secondary-label p-8" role="status">권한을 확인하고 있습니다.</main>;
+  if (!canCreate) return <main className="text-default-secondary-label flex min-h-[60vh] flex-col items-center justify-center gap-4 p-8"><p>이 카테고리에 글을 작성할 권한이 없습니다.</p><Link href={listHref} className="border-default-separator border px-4 py-2">목록으로 돌아가기</Link></main>;
 
   return (
       <main className="bg-default-surface-grouped text-default-label min-h-full">

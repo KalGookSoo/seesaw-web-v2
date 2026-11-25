@@ -8,7 +8,9 @@ import { ArrowRightLeft, Check, MessageCircle, Pencil, Send, Trash2, X } from 'l
 import type { ArticleResponse } from '@/types/article';
 import type { CategoryResponse } from '@/types/category';
 import type { ReplyResponse } from '@/types/reply';
-import { MOCK_AUTHENTICATION } from '@/lib/mock-auth';
+import { useAuth } from '@/hooks/use-auth';
+import { authorizedFetch } from '@/lib/api-fetch';
+import { contentPermissions } from '@/lib/content-permissions';
 import { Confirm } from '@/components/ui/confirm';
 import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
@@ -56,10 +58,8 @@ export function ArticleReplies({
   const [deleteReplyId, setDeleteReplyId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const replies = article.replies ?? [];
-  const authentication = MOCK_AUTHENTICATION;
-  const isManager = authentication.roles.some(
-    (role) => role === 'ROLE_ADMIN' || role === 'ROLE_MANAGER'
-  );
+  const { user, isAuthenticated } = useAuth();
+  const { manager: isManager } = contentPermissions(user, isAuthenticated);
 
   function submitReply(
     endpoint: string,
@@ -70,7 +70,7 @@ export function ArticleReplies({
       try {
         const body = new FormData(form);
         body.set('exposed', 'true');
-        const response = await fetch(endpoint, {
+        const response = await authorizedFetch(endpoint, {
           method: 'POST',
           body,
           credentials: 'include'
@@ -92,7 +92,7 @@ export function ArticleReplies({
 
     startTransition(async () => {
       try {
-        const response = await fetch(
+        const response = await authorizedFetch(
           `/api/replies/${encodeURIComponent(deleteReplyId)}`,
           {
             method: 'DELETE',
@@ -123,7 +123,7 @@ export function ArticleReplies({
       {replies.length > 0 ? (
         <ol>
           {replies.map((reply) => {
-            const isOwner = reply.createdBy === authentication.username;
+            const { owner: isOwner } = contentPermissions(user, isAuthenticated, reply.createdBy);
             const isEditing = editingReplyId === reply.id;
 
             return (
@@ -155,9 +155,9 @@ export function ArticleReplies({
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">
-                    {authentication.authenticated && (isOwner || isManager) ? (
+                    {isAuthenticated && (isOwner || isManager) ? (
                       <div className="flex gap-2">
-                        {isOwner || isManager ? (
+                        {isOwner ? (
                           <button
                             className={`${buttonClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
                             type="button"
@@ -231,7 +231,7 @@ export function ArticleReplies({
       )}
 
       <div className="border-default-separator bg-default-surface-grouped/35 border-t p-4 sm:p-5">
-        {authentication.authenticated ? (
+        {isAuthenticated ? (
           <form
             className="flex flex-col gap-2.5 sm:flex-row"
             onSubmit={(event) => {
@@ -284,32 +284,31 @@ export function ArticleReplies({
 export function ArticleManagementActions({
   article,
   categories,
-  listHref
+  listHref,
+  isSchedule = false
 }: Readonly<{
   article: ArticleResponse;
   categories: readonly CategoryResponse[];
   listHref: string;
+  isSchedule?: boolean;
 }>) {
   const router = useRouter();
   const { showToast } = useToast();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);
   const [pending, startTransition] = useTransition();
-  const authentication = MOCK_AUTHENTICATION;
-  const isManager = authentication.roles.some(
-    (role) => role === 'ROLE_ADMIN' || role === 'ROLE_MANAGER'
-  );
-  const isOwner = article.createdBy === authentication.username;
+  const { user, isAuthenticated } = useAuth();
+  const { canMove, canEdit, canDelete } = contentPermissions(user, isAuthenticated, article.createdBy, isSchedule);
 
-  if (!authentication.authenticated) {
+  if (!isAuthenticated) {
     return null;
   }
 
   function deleteArticle() {
     startTransition(async () => {
       try {
-        const response = await fetch(
-          `/api/articles/${encodeURIComponent(article.id)}`,
+        const response = await authorizedFetch(
+          `/api/${isSchedule ? 'events' : 'articles'}/${encodeURIComponent(article.id)}`,
           {
             method: 'DELETE',
             credentials: 'include'
@@ -332,7 +331,7 @@ export function ArticleManagementActions({
 
     startTransition(async () => {
       try {
-        const response = await fetch(
+        const response = await authorizedFetch(
           `/api/articles/${encodeURIComponent(article.id)}/move`,
           {
             method: 'PUT',
@@ -355,7 +354,7 @@ export function ArticleManagementActions({
   return (
     <>
       <div className="flex flex-wrap justify-end gap-2">
-        {isManager ? (
+        {canMove ? (
           <button
             className={`${buttonClassName} border-default-separator text-default-secondary-label hover:bg-default-fill`}
             type="button"
@@ -365,7 +364,7 @@ export function ArticleManagementActions({
             이동
           </button>
         ) : null}
-        {isOwner || isManager ? (
+        {canEdit ? (
           <a
             className={`${buttonClassName} border-default-separator text-default-label hover:bg-default-fill`}
             href={`/articles/${encodeURIComponent(article.id)}/edit?categoryId=${encodeURIComponent(article.categoryId ?? '')}`}
@@ -374,7 +373,7 @@ export function ArticleManagementActions({
             수정
           </a>
         ) : null}
-        {isOwner || isManager ? (
+        {canDelete ? (
           <button
             className={`${buttonClassName} border-default-red-muted text-default-red hover:bg-default-red-soft`}
             type="button"
