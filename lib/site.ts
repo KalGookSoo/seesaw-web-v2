@@ -5,13 +5,18 @@ import { APPLICATION_API_BASE_URL } from '@/lib/application-constants';
 
 const SITE_REVALIDATE_SECONDS = 60 * 60 * 24;
 
+export function siteCacheTag(domainName: string): string {
+  return `site:${domainName}`;
+}
+
 export const getCurrentSite = cache(async (domainName: string): Promise<SiteResponse> => {
   const response = await fetch(`${APPLICATION_API_BASE_URL}/sites/by-domain/${encodeURIComponent(domainName)}`, {
     headers: {
       Accept: 'application/json'
     },
     next: {
-      revalidate: SITE_REVALIDATE_SECONDS
+      revalidate: SITE_REVALIDATE_SECONDS,
+      tags: [siteCacheTag(domainName)]
     }
   });
 
@@ -28,7 +33,8 @@ export const getSiteContext = cache(async (domainName: string): Promise<SiteResp
       Accept: 'application/json'
     },
     next: {
-      revalidate: SITE_REVALIDATE_SECONDS
+      revalidate: SITE_REVALIDATE_SECONDS,
+      tags: [siteCacheTag(domainName)]
     }
   });
 

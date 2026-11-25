@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronDown,
@@ -414,6 +415,8 @@ export function GlobalShell({
   initialNavigationCollapsed,
   initialNavigationPosition
 }: GlobalShellProps) {
+  const router = useRouter();
+  const [siteRefreshPending, setSiteRefreshPending] = useState(false);
   const [locale, setLocale] = useState<Locale>('ko');
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -444,6 +447,25 @@ export function GlobalShell({
   const { isAuthenticated, login, logout, user, expiresAt, refresh, bootstrap } =
     useAuth();
   const { showToast } = useToast();
+  const canRefreshSite = isAuthenticated && user?.authorities.some(
+    (authority) => authority === 'ROLE_MANAGER' || authority === 'ROLE_ADMIN'
+  );
+
+  const refreshSite = async () => {
+    setSiteRefreshPending(true);
+    try {
+      const response = await authorizedFetch('/api/site-cache', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('사이트 정보를 갱신하지 못했습니다. 권한과 로그인 상태를 확인해주세요.');
+      }
+      router.refresh();
+      showToast('사이트 정보를 갱신했습니다.', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : '사이트 정보를 갱신하지 못했습니다.', 'error');
+    } finally {
+      setSiteRefreshPending(false);
+    }
+  };
   const categories = useMemo(
     () => NESTED_CATEGORIES.filter((category) => category.exposed),
     [NESTED_CATEGORIES]
@@ -923,6 +945,22 @@ export function GlobalShell({
               </SegmentedButton>
             </div>
           </section>
+          {canRefreshSite ? (
+            <section className="space-y-3">
+              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
+                <RefreshCw size={16} aria-hidden />
+                <span>사이트 정보</span>
+              </div>
+              <button
+                className="border-default-separator text-default-label hover:bg-default-fill inline-flex h-10 items-center gap-2 border px-4 text-sm font-semibold transition disabled:opacity-50"
+                type="button"
+                disabled={siteRefreshPending}
+                onClick={refreshSite}
+              >
+                {siteRefreshPending ? '갱신 중...' : '사이트 정보 갱신'}
+              </button>
+            </section>
+          ) : null}
         </div>
       </Modal>
 
