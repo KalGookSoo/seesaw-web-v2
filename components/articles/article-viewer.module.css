@@ -1,10 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
-
 .viewer {
   color: var(--default-label);
-  font-family: 'DM Sans', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
@@ -17,17 +15,14 @@
 }
 
 .viewer p {
-  margin: 0;
+  margin: 0 0 1em;
   white-space: pre-wrap;
 }
 
-.viewer p:not(:first-child):not(td p):not(th p) {
-  margin-top: 20px;
-}
-
-.viewer li p:not(:first-child),
-.viewer blockquote p {
-  margin-top: 0;
+.viewer li > p,
+.viewer blockquote > p:last-child,
+.viewer :is(td, th) > p:last-child {
+  margin-bottom: 0;
 }
 
 .viewer h1,
@@ -38,35 +33,32 @@
 .viewer h6 {
   color: var(--default-label);
   font-weight: 700;
-  margin: 0;
+  line-height: 1.25;
+  margin: 1.5em 0 0.5em;
 }
 
 .viewer h1 {
-  font-size: 1.5em;
-  margin-top: 3em;
+  font-size: 2em;
 }
 
 .viewer h2 {
-  font-size: 1.25em;
-  margin-top: 2.5em;
+  font-size: 1.5em;
 }
 
 .viewer h3 {
-  font-size: 1.125em;
+  font-size: 1.25em;
   font-weight: 600;
-  margin-top: 2em;
 }
 
 .viewer h4 {
   font-size: 1em;
   font-weight: 600;
-  margin-top: 2em;
 }
 
 .viewer ul,
 .viewer ol {
-  margin: 1.5em 0;
-  padding-left: 1.5em;
+  margin: 0 0 1em;
+  padding-left: 2em;
 }
 
 .viewer :is(ul, ol) :is(ul, ol) {
@@ -81,37 +73,37 @@
   list-style: decimal;
 }
 
+.viewer li + li {
+  margin-top: 0.25em;
+}
+
 .viewer blockquote {
   border-left: 0.25em solid var(--default-label);
   color: var(--default-secondary-label);
-  margin: 1.5rem 0;
+  margin: 0 0 1em;
   padding: 0.375em 0 0.375em 1em;
 }
 
 .viewer a {
   color: var(--default-label);
-  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
 .viewer img,
 .viewer video {
-  border: 1px solid var(--default-separator);
-  border-radius: 0;
   height: auto;
-  margin: 1.5em auto;
   max-width: 100%;
 }
 
 .viewerImageFrame {
   position: relative;
-  display: flex;
+  display: inline-flex;
   width: fit-content;
   max-width: 100%;
   align-items: center;
   justify-content: center;
-  margin: 1.5em auto;
+  vertical-align: middle;
   overflow: hidden;
   background: transparent;
   border: 0;
@@ -138,7 +130,7 @@
 
 .viewerImageFallback {
   display: none;
-  min-height: 8rem;
+  min-height: 2rem;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
@@ -223,6 +215,7 @@
 }
 
 .textOnly img,
-.textOnly video {
+.textOnly video,
+.textOnly .viewerImageFrame {
   display: none;
 }

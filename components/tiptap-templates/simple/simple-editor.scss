@@ -108,7 +108,43 @@ body,
   background: var(--tt-bg-color);
   padding: 1.5rem;
   overflow-wrap: anywhere;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
 }
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor p:not(td p):not(th p) {
+  margin: 0 0 1em;
+  line-height: 1.5;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor :is(li, blockquote) > p:last-child {
+  margin-bottom: 0;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor :is(h1, h2, h3, h4) {
+  margin: 1.5em 0 0.5em;
+  line-height: 1.25;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor h1 { font-size: 2em; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor h2 { font-size: 1.5em; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor h3 { font-size: 1.25em; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor h4 { font-size: 1em; }
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor :is(ul, ol) {
+  margin: 0 0 1em;
+  padding-left: 2em;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor :is(ul, ol) :is(ul, ol) {
+  margin: 0;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor li + li { margin-top: 0.25em; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor blockquote { margin: 0 0 1em; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor > :first-child { margin-top: 0; }
+.simple-editor-content .tiptap.ProseMirror.simple-editor > :last-child { margin-bottom: 0; }
 
 .dark .simple-editor-content {
   background: var(--tt-gray-dark-a-50);

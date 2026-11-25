@@ -113,19 +113,11 @@
 }
 
 .articleBody :global([data-article-viewer] blockquote) {
-  margin: 2rem 0;
+  margin: 0 0 1em;
   padding: 0.375em 1em;
   color: var(--default-secondary-label);
   border-left: 2px solid var(--default-primary);
   background: var(--default-fill);
-}
-
-.articleBody :global([data-article-viewer] img),
-.articleBody :global([data-article-viewer] video) {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  margin: 2.5rem auto;
 }
 
 .articleBody :global([data-article-viewer] a) {
