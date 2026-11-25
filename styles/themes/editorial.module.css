@@ -56,13 +56,13 @@
 }
 
 :global(.dark) .theme {
-  --editorial-background: #11100e;
-  --editorial-surface: #1a1714;
-  --editorial-surface-elevated: #24201c;
-  --editorial-surface-muted: #171411;
+  --editorial-background: #454a44;
+  --editorial-surface: #4c514b;
+  --editorial-surface-elevated: #535952;
+  --editorial-surface-muted: #596058;
   --editorial-ink: #f7efe4;
-  --editorial-ink-soft: #cfc2b2;
-  --editorial-ink-muted: #9d8e80;
+  --editorial-ink-soft: #e0e4dd;
+  --editorial-ink-muted: #c3c9c0;
   --editorial-line: #efe1cc;
   --editorial-line-soft: rgb(239 225 204 / 0.18);
   --editorial-primary: #a9b9a9;

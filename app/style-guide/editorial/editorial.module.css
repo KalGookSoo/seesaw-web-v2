@@ -16,12 +16,12 @@
 }
 
 :global(.dark) .theme {
-  --editorial-background: #111111;
-  --editorial-surface: #181818;
-  --editorial-surface-muted: #242424;
+  --editorial-background: #454a44;
+  --editorial-surface: #4c514b;
+  --editorial-surface-muted: #596058;
   --editorial-ink: #f6f6f3;
-  --editorial-ink-soft: #c6c6c1;
-  --editorial-ink-muted: #898984;
+  --editorial-ink-soft: #e0e4dd;
+  --editorial-ink-muted: #c3c9c0;
   --editorial-line: #f6f6f3;
   --editorial-line-soft: rgb(246 246 243 / 0.24);
   --editorial-primary: #a8b8aa;

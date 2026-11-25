@@ -41,15 +41,15 @@
 }
 
 .dark {
-  --default-background: #111111;
-  --default-surface: #181818;
-  --default-surface-elevated: #202020;
-  --default-surface-grouped: #242424;
+  --default-background: #454a44;
+  --default-surface: #4c514b;
+  --default-surface-elevated: #535952;
+  --default-surface-grouped: #3e433d;
   --default-label: #f6f6f3;
-  --default-secondary-label: #c6c6c1;
-  --default-tertiary-label: #898984;
-  --default-fill: #242424;
-  --default-fill-strong: #363636;
+  --default-secondary-label: #e0e4dd;
+  --default-tertiary-label: #c3c9c0;
+  --default-fill: #596058;
+  --default-fill-strong: #757d73;
   --default-separator: rgb(246 246 243 / 0.24);
   --default-primary: #a9b9a9;
   --default-primary-soft: #263328;
@@ -75,9 +75,9 @@
   --default-red-soft: var(--default-danger-soft);
   --default-red-muted: var(--default-danger-muted);
   --default-mint-soft: #193b32;
-  --default-gray-4: #484848;
-  --default-gray-5: #363636;
-  --default-gray-6: #242424;
+  --default-gray-4: #757d73;
+  --default-gray-5: #596058;
+  --default-gray-6: #454a44;
 }
 
 @theme inline {
