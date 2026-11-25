@@ -13,6 +13,8 @@ export function CategoryAnchorLink({
   children: ReactNode;
 }>) {
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    event.currentTarget.closest('details')?.removeAttribute('open');
+
     if (!href.startsWith('#')) {
       return;
     }
@@ -23,7 +25,7 @@ export function CategoryAnchorLink({
     }
 
     event.preventDefault();
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
     history.replaceState(null, '', href);
   }
 

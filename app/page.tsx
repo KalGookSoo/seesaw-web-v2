@@ -116,30 +116,32 @@ export default async function Home() {
 
         {visibleCategories.length > 0 ? (
           <section id="index">
-            <ContentContainer className="py-10 lg:py-14">
-            <div className="mb-5 flex items-end justify-between border-b pb-3" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-              <p className={editorial.label}>Index · Contents</p>
-              <span className={editorial.label}>{String(visibleCategories.length).padStart(2, '0')} sections</span>
-            </div>
-            <nav aria-label="사이트 카테고리 바로가기" className="grid border-l border-t sm:grid-cols-2 lg:grid-cols-4" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-              {visibleCategories.map((category, index) => {
-                const onPage = category.type === 'BOARD' || category.type === 'SCHEDULE';
-                return (
-                  <CategoryAnchorLink
-                    key={category.id}
-                    href={onPage ? `#${category.id}` : toCategoryHref(category)}
-                    className="group min-h-36 border-r border-b p-5 transition-colors hover:bg-[#eeeeeb] hover:text-[var(--editorial-ink)] sm:p-6"
-                  >
-                    <span className={`${editorial.label} text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span>
-                    <span className="mt-12 flex items-center justify-between gap-3 text-xl font-black tracking-tight">
-                      <span className="truncate">{category.name}</span>
-                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">↗</span>
-                    </span>
-                    <span className={`${editorial.label} mt-2 block text-[var(--editorial-ink-muted)]`}>{category.type === 'SCHEDULE' ? 'Schedule' : 'Board'}</span>
-                  </CategoryAnchorLink>
-                );
-              })}
-            </nav>
+            <ContentContainer className="py-4 lg:py-6">
+            <details className="group/index border-b" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 [&::-webkit-details-marker]:hidden">
+                <span className={editorial.label}>Index · Contents <span className="ml-2">카테고리 바로가기</span></span>
+                <span className={`${editorial.label} flex shrink-0 items-center gap-3`}>
+                  {String(visibleCategories.length).padStart(2, '0')} sections
+                  <span aria-hidden="true" className="transition-transform group-open/index:rotate-180">⌄</span>
+                </span>
+              </summary>
+              <nav aria-label="사이트 카테고리 바로가기" className="grid border-l border-t sm:grid-cols-2 lg:grid-cols-4" style={{ borderColor: 'var(--editorial-line-soft)' }}>
+                {visibleCategories.map((category, index) => {
+                  const onPage = category.type === 'BOARD' || category.type === 'SCHEDULE';
+                  return (
+                    <CategoryAnchorLink
+                      key={category.id}
+                      href={onPage ? `#${category.id}` : toCategoryHref(category)}
+                      className="group flex min-h-14 items-center gap-3 border-r border-b px-4 py-3 transition-colors hover:bg-[#eeeeeb] hover:text-[var(--editorial-ink)]"
+                    >
+                      <span className={`${editorial.label} shrink-0 text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span>
+                      <span className="min-w-0 flex-1 text-base font-bold tracking-tight">{category.name}</span>
+                      <span aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1">↗</span>
+                    </CategoryAnchorLink>
+                  );
+                })}
+              </nav>
+            </details>
             </ContentContainer>
           </section>
         ) : null}
