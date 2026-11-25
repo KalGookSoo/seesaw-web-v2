@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { autoUpdate, flip, FloatingPortal, offset, shift, size, useFloating } from '@floating-ui/react';
 import { Bell, CheckCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,6 +27,26 @@ export function NotificationBell({
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { refs, floatingStyles } = useFloating({
+    open,
+    placement: 'bottom-end',
+    strategy: 'fixed',
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      offset(12),
+      flip({ padding: 8 }),
+      shift({ padding: 8 }),
+      size({
+        padding: 8,
+        apply({ availableWidth, availableHeight, elements }) {
+          Object.assign(elements.floating.style, {
+            maxWidth: `${Math.max(0, availableWidth)}px`,
+            maxHeight: `${Math.max(0, availableHeight)}px`
+          });
+        }
+      })
+    ]
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -89,7 +110,7 @@ export function NotificationBell({
     }
 
     const closeOnOutsideClick = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      if (!rootRef.current?.contains(event.target as Node) && !refs.floating.current?.contains(event.target as Node)) {
         setOpen(false);
       }
     };
@@ -105,7 +126,7 @@ export function NotificationBell({
       document.removeEventListener('mousedown', closeOnOutsideClick);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [open]);
+  }, [open, refs.floating]);
 
   if (!isAuthenticated) {
     return null;
@@ -144,6 +165,7 @@ export function NotificationBell({
   return (
     <div ref={rootRef} className="relative shrink-0">
       <button
+        ref={refs.setReference}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label={count > 0 ? `알림, 읽지 않은 알림 ${count}개` : '알림'}
@@ -160,12 +182,15 @@ export function NotificationBell({
       </button>
 
       {open ? (
+        <FloatingPortal>
         <section
+          ref={refs.setFloating}
+          style={floatingStyles}
           aria-label="최근 알림"
-          className="border-default-label bg-default-surface absolute top-[calc(100%+0.75rem)] right-0 z-50 w-[min(24rem,calc(100vw-2rem))] overflow-hidden border"
+          className="border-default-label bg-default-surface z-50 flex w-[min(24rem,calc(100vw-1rem))] flex-col overflow-hidden border"
           role="dialog"
         >
-          <header className="border-default-separator flex items-start justify-between gap-4 border-b px-4 py-4">
+          <header className="border-default-separator flex shrink-0 items-start justify-between gap-4 border-b px-4 py-4">
             <div>
               <p className="text-default-primary text-[0.65rem] font-bold tracking-[0.18em] uppercase">Activity</p>
               <h2 className="text-default-label mt-1 text-lg font-bold tracking-tight">알림</h2>
@@ -181,7 +206,7 @@ export function NotificationBell({
             </button>
           </header>
 
-          <div className="max-h-[min(28rem,60vh)] overflow-y-auto">
+          <div className="min-h-0 max-h-[min(28rem,60vh)] overflow-y-auto">
             {loading ? (
               <div className="text-default-tertiary-label flex items-center justify-center gap-2 px-4 py-10 text-sm">
                 <Loader2 aria-hidden className="size-4 animate-spin" />
@@ -202,12 +227,13 @@ export function NotificationBell({
             )}
           </div>
 
-          <footer className="border-default-separator border-t px-4 py-3 text-right">
+          <footer className="border-default-separator shrink-0 border-t px-4 py-3 text-right">
             <Link className="text-default-label hover:text-default-primary text-xs font-bold transition" href="/notifications" onClick={() => setOpen(false)}>
               모든 알림 보기 <span aria-hidden>→</span>
             </Link>
           </footer>
         </section>
+        </FloatingPortal>
       ) : null}
     </div>
   );
