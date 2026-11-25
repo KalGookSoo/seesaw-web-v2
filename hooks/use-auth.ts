@@ -10,6 +10,7 @@ export function useAuth() {
   const logout = useAuthStore((state) => state.logout);
   const refresh = useAuthStore((state) => state.refresh);
   const bootstrap = useAuthStore((state) => state.bootstrap);
+  const clearAuthentication = useAuthStore((state) => state.clearAuthentication);
 
-  return { user, isAuthenticated, expiresAt, login, logout, refresh, bootstrap };
+  return { user, isAuthenticated, expiresAt, login, logout, refresh, bootstrap, clearAuthentication };
 }

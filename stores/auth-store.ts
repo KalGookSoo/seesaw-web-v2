@@ -12,6 +12,7 @@ type AuthState = Readonly<{
   isAuthenticated: boolean;
   login: (tokens: JsonWebToken) => Promise<void>;
   logout: () => Promise<void>;
+  clearAuthentication: () => void;
   refresh: () => Promise<boolean>;
   bootstrap: () => Promise<void>;
 }>;
@@ -34,6 +35,7 @@ export const useAuthStore = create<AuthState>()(
       expiresAt: null,
       user: null,
       isAuthenticated: false,
+      clearAuthentication: () => set({ expiresAt: null, user: null, isAuthenticated: false }),
       // 로그인 성공 응답(토큰)은 이미 서버가 httpOnly 쿠키로 내려준 상태다. 여기서는 그 값을 저장하지
       // 않고(JS가 토큰을 갖고 있지 않게 하는 것이 목적) /api/me로 본인 정보만 조회해 채운다.
       login: async (tokens) => {

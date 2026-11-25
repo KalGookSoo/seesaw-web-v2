@@ -444,7 +444,7 @@ export function GlobalShell({
   );
   const { CURRENT_CATEGORY, NESTED_CATEGORIES, SITE_CONTEXT } =
     useSiteContext();
-  const { isAuthenticated, login, logout, user, expiresAt, refresh, bootstrap } =
+  const { isAuthenticated, login, logout, user, expiresAt, refresh, bootstrap, clearAuthentication } =
     useAuth();
   const { showToast } = useToast();
   const canRefreshSite = isAuthenticated && user?.authorities.some(
@@ -495,6 +495,32 @@ export function GlobalShell({
       setMyPageOpen(false);
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    const checkExpiration = () => {
+      if (expiresAt !== null && expiresAt <= Date.now()) {
+        clearAuthentication();
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkExpiration();
+      }
+    };
+    window.addEventListener('seesaw:authentication-expired', clearAuthentication);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    checkExpiration();
+    const timeoutId = expiresAt === null ? undefined : window.setTimeout(checkExpiration, Math.max(0, expiresAt - Date.now()));
+    return () => {
+      window.removeEventListener('seesaw:authentication-expired', clearAuthentication);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.clearTimeout(timeoutId);
+    };
+  }, [isAuthenticated, expiresAt, clearAuthentication]);
 
   const startNaverLogin = async () => {
     setLoginPending(true);
