@@ -1,6 +1,7 @@
 import { CalendarDays, Clock3, MapPin, Repeat2 } from 'lucide-react';
 import type { VEventResponse } from '@/types/event';
 import { ScheduleDetailActions } from '@/components/articles/schedule-detail-actions';
+import { ScheduleLocationMap } from '@/components/articles/schedule-location-map';
 
 function dateParts(value: string | null | undefined): { date: string; time: string } | null {
   const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -39,6 +40,7 @@ export function ScheduleDetail({ event, canonicalUrl, description }: Readonly<{ 
         <div className="min-w-0">
           <p className="text-default-tertiary-label text-xs font-semibold">장소</p>
           <p className="text-default-label mt-2 flex items-start gap-2 text-sm leading-6"><MapPin aria-hidden className="text-default-primary mt-1 size-4 shrink-0" /><span className="min-w-0 [overflow-wrap:anywhere]">{event.location?.trim() || '장소 미정'}</span></p>
+          {event.location?.trim() ? <ScheduleLocationMap location={event.location.trim()} /> : null}
         </div>
       </div>
       <div className="border-default-separator border-t px-5 py-5 sm:px-7">
