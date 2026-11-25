@@ -4,6 +4,7 @@ import { NotificationSettings } from '@/components/notifications/notification-se
 import { ContentContainer } from '@/components/layout/content-container';
 
 export const dynamic = 'force-dynamic';
+export const metadata = { title: '알림 설정', robots: { index: false, follow: false } };
 
 export default function NotificationSettingsPage() {
   return (

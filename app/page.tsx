@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { CategoryResponse } from '@/types/category';
 import { APPLICATION_NAME } from '@/lib/application-constants';
 import { toAttachmentUrl } from '@/lib/home-summary';
@@ -11,6 +12,18 @@ import editorial from './style-guide/editorial/editorial.module.css';
 export const dynamic = 'force-dynamic';
 
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContext(domainName);
+  const title = site.name?.trim() || 'Seesaw';
+  const description = site.description?.trim() || site.intro?.trim() || undefined;
+  const image = site.profileImage ? `/api/attachments/${encodeURIComponent(site.profileImage.id)}` : undefined;
+  return {
+    alternates: { canonical: '/' },
+    openGraph: { type: 'website', title, description, url: '/', siteName: title, images: image ? [image] : undefined },
+    twitter: { card: image ? 'summary_large_image' : 'summary', title, description, images: image ? [image] : undefined }
+  };
+}
 
 function isVisibleChildCategory(category: CategoryResponse): boolean {
   return Boolean(category.parentId) && category.siteExposed;

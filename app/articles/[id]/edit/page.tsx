@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
 import type { CategoryResponse } from '@/types/category';
 import { APPLICATION_NAME } from '@/lib/application-constants';
@@ -37,6 +38,7 @@ function findCategory(
 }
 
 export const dynamic = 'force-dynamic';
+export const metadata: Metadata = { title: '게시글 수정', robots: { index: false, follow: false } };
 
 export default async function EditArticlePage({
   params,

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { decode } from 'entities';
+import sanitizeHtml from 'sanitize-html';
 import {
   CalendarDays,
   ChevronLeft,
@@ -16,10 +18,7 @@ import type {
   SearchArticleDetailRequest
 } from '@/types/article';
 import type { CategoryResponse } from '@/types/category';
-import {
-  APPLICATION_API_BASE_URL,
-  APPLICATION_NAME
-} from '@/lib/application-constants';
+import { APPLICATION_NAME } from '@/lib/application-constants';
 import { fetchArticleDetail, toArticleDetailHref } from '@/lib/articles';
 import { getSiteContext } from '@/lib/site';
 import {
@@ -131,14 +130,9 @@ function buildListHref(
 }
 
 function toDescription(article: ArticleResponse): string {
-  return (
-    article.plainContent ??
-    article.content
-      ?.replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim() ??
-    ''
-  ).slice(0, 160);
+  const content = article.plainContent || article.content || '';
+  return decode(sanitizeHtml(decode(content), { allowedTags: [], allowedAttributes: {} }))
+    .replace(/\s+/g, ' ').trim().slice(0, 160);
 }
 
 function toArticleJsonLd(
@@ -153,7 +147,7 @@ function toArticleJsonLd(
     headline: article.title ?? undefined,
     description: toDescription(article) || undefined,
     image: image
-      ? `${APPLICATION_API_BASE_URL}/attachments/${image.id}`
+      ? `https://${domainName}/api/attachments/${encodeURIComponent(image.id)}`
       : undefined,
     datePublished: article.createdDate ?? undefined,
     dateModified: article.lastModifiedDate ?? article.createdDate ?? undefined,
@@ -270,6 +264,7 @@ export async function generateMetadata({
     const article = detail.ok ? detail.data.article : null;
     if (!article) {
       return {
+        robots: { index: false, follow: false },
         title:
           !detail.ok && detail.status === 401
             ? '로그인이 필요합니다.'
@@ -280,20 +275,24 @@ export async function generateMetadata({
     const description = toDescription(article);
     const image = article.inlineImages?.[0];
     const images = image
-      ? [`${APPLICATION_API_BASE_URL}/attachments/${image.id}`]
+      ? [`/api/attachments/${encodeURIComponent(image.id)}`]
       : undefined;
+    const canonical = `/articles/${encodeURIComponent(id)}`;
 
     return {
       title: article.title ?? '게시글 상세',
       description,
-      keywords: firstValue(resolvedSearchParams.categoryType),
+      robots: article.exposed === false ? { index: false, follow: false } : undefined,
       alternates: {
-        canonical: `https://${domainName}/articles/${id}`
+        canonical
       },
       openGraph: {
         type: 'article',
         title: article.title ?? '게시글 상세',
         description,
+        url: canonical,
+        publishedTime: article.createdDate ?? undefined,
+        modifiedTime: article.lastModifiedDate ?? undefined,
         images
       },
       twitter: {
@@ -304,7 +303,7 @@ export async function generateMetadata({
       }
     };
   } catch {
-    return { title: '게시글 상세' };
+    return { title: '게시글 상세', robots: { index: false, follow: false } };
   }
 }
 

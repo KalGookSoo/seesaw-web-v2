@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
 import type { CategoryResponse } from '@/types/category';
 import { APPLICATION_NAME } from '@/lib/application-constants';
@@ -70,6 +71,30 @@ function findCategory(
 }
 
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
+
+export async function generateMetadata({ searchParams }: ArticlesPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const categoryId = getSearchParam(params, 'categoryId');
+  if (!categoryId) return { title: '게시판', robots: { index: false } };
+  const site = await getSiteContext(domainName);
+  const category = findCategory(site.categories ?? [], categoryId);
+  if (!category) return { title: '카테고리를 찾을 수 없습니다', robots: { index: false } };
+
+  const title = category.name?.trim() || '게시판';
+  const description = category.description?.trim() || site.description?.trim() || undefined;
+  const query = new URLSearchParams({ categoryType: category.type ?? 'BOARD', categoryId });
+  const page = toPage(getSearchParam(params, 'page'));
+  if (page > 0) query.set('page', String(page));
+  const canonical = `/articles?${query}`;
+  const filtered = Boolean(getSearchParam(params, 'keyWord')?.trim() || getSearchParam(params, 'keyField') === 'createdBy');
+  return {
+    title: page > 0 ? `${title} - ${page + 1}페이지` : title,
+    description,
+    robots: filtered || category.exposed === false || site.searchEngineExposed === false ? { index: false, follow: true } : undefined,
+    alternates: { canonical },
+    openGraph: { type: 'website', title, description, url: canonical, siteName: site.name ?? undefined }
+  };
+}
 
 export default async function ArticlesPage({
   searchParams
