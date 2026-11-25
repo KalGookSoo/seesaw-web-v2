@@ -31,6 +31,7 @@ import {
 
 import type { CategoryResponse } from '@/types/category';
 import type { NavigationPosition } from '@/lib/navigation-preferences';
+import { APPLICATION_VERSION } from '@/lib/application-constants';
 import {
   NAVIGATION_COLLAPSED_COOKIE_KEY,
   NAVIGATION_POSITION_COOKIE_KEY
@@ -987,6 +988,10 @@ export function GlobalShell({
               </button>
             </section>
           ) : null}
+          <section className="border-default-separator flex items-center justify-between gap-4 border-t pt-5 text-sm">
+            <span className="text-default-secondary-label">웹 앱 버전</span>
+            <span className="text-default-label font-semibold">{APPLICATION_VERSION}</span>
+          </section>
         </div>
       </Modal>
 
