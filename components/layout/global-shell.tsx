@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import {
   Bell,
@@ -705,56 +706,62 @@ export function GlobalShell({
           <Menu size={18} aria-hidden />
         </button>
 
-        <div className="min-w-0 flex-1">
-          <p className="text-default-label truncate text-sm font-semibold leading-5">
-            {SITE_CONTEXT.name}
-          </p>
-          <p className="text-default-secondary-label truncate text-xs leading-4">
-            {SITE_CONTEXT.domainName}
-          </p>
-        </div>
+        <Link href="/" className="text-default-label min-w-0 flex-1 truncate text-sm font-semibold">
+          {SITE_CONTEXT.name}
+        </Link>
 
         <GlobalSearch />
 
         <NotificationBell isAuthenticated={isAuthenticated} />
 
-        <button
-          className="border-default-separator bg-default-background text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex size-10 shrink-0 items-center justify-center border transition"
-          type="button"
-          aria-label="환경설정 열기"
-          onClick={() => setSettingsOpen(true)}
-        >
-          <Settings size={18} aria-hidden />
-        </button>
-        {isAuthenticated ? (
-          <>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
             <button
-              className="border-default-separator bg-default-background text-default-label hover:bg-default-fill hidden h-10 items-center gap-1.5 border px-3 py-2 text-sm font-medium transition sm:inline-flex"
+              className="border-default-separator bg-default-background text-default-label hover:bg-default-fill inline-flex size-11 shrink-0 items-center justify-center border transition"
               type="button"
-              onClick={() => setMyPageOpen(true)}
+              aria-label="계정 및 설정 메뉴"
             >
-              <UserRound size={15} aria-hidden />
-              마이페이지
+              <UserRound size={18} aria-hidden />
             </button>
-            <button
-              className="border-default-separator bg-default-background text-default-label hover:bg-default-fill inline-flex h-10 items-center gap-1.5 border px-3 py-2 text-sm font-medium transition"
-              type="button"
-              onClick={signOut}
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              align="end"
+              sideOffset={8}
+              className="border-default-separator bg-default-background text-default-label z-50 min-w-44 border p-1 shadow-lg"
             >
-              <LogOut size={15} aria-hidden />
-              로그아웃
-            </button>
-          </>
-        ) : (
-          <button
-            className="bg-default-primary hover:bg-default-primary-muted inline-flex h-10 items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white transition"
-            type="button"
-            onClick={() => setLoginOpen(true)}
-          >
-            <LogIn size={15} aria-hidden />
-            로그인
-          </button>
-        )}
+              {isAuthenticated ? (
+                <DropdownMenu.Item
+                  className="hover:bg-default-fill focus:bg-default-fill flex cursor-pointer items-center gap-2 px-3 py-2.5 text-sm outline-none"
+                  onSelect={() => setMyPageOpen(true)}
+                >
+                  <UserRound size={16} aria-hidden /> 마이페이지
+                </DropdownMenu.Item>
+              ) : (
+                <DropdownMenu.Item
+                  className="hover:bg-default-fill focus:bg-default-fill flex cursor-pointer items-center gap-2 px-3 py-2.5 text-sm outline-none"
+                  onSelect={() => setLoginOpen(true)}
+                >
+                  <LogIn size={16} aria-hidden /> 로그인
+                </DropdownMenu.Item>
+              )}
+              <DropdownMenu.Item
+                className="hover:bg-default-fill focus:bg-default-fill flex cursor-pointer items-center gap-2 px-3 py-2.5 text-sm outline-none"
+                onSelect={() => setSettingsOpen(true)}
+              >
+                <Settings size={16} aria-hidden /> 환경설정
+              </DropdownMenu.Item>
+              {isAuthenticated && (
+                <DropdownMenu.Item
+                  className="hover:bg-default-fill focus:bg-default-fill flex cursor-pointer items-center gap-2 px-3 py-2.5 text-sm outline-none"
+                  onSelect={signOut}
+                >
+                  <LogOut size={16} aria-hidden /> 로그아웃
+                </DropdownMenu.Item>
+              )}
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </header>
 
       <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
