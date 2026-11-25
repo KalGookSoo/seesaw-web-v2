@@ -51,7 +51,7 @@ export default async function Home() {
             <header className="flex items-start justify-between gap-6">
               <div className="flex min-w-0 items-center gap-3">
                 {site.profileImage ? (
-                  <MonochromeImage className="size-10 shrink-0 border" imageClassName="object-cover grayscale" src={toAttachmentUrl(site.profileImage.id)} alt="" fallbackLabel="PROFILE / UNAVAILABLE" />
+                  <MonochromeImage className="size-10 shrink-0 border" imageClassName="object-cover" src={toAttachmentUrl(site.profileImage.id)} alt="" fallbackLabel="PROFILE / UNAVAILABLE" />
                 ) : (
                   <span className="flex size-10 shrink-0 items-center justify-center border text-lg font-semibold">{site.name?.slice(0, 1)}</span>
                 )}
