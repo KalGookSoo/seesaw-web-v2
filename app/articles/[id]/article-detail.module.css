@@ -110,25 +110,11 @@
 .articleBody :global([data-article-viewer]) {
   color: var(--default-label);
   font-size: 1.05rem;
-  line-height: 1.95;
-}
-
-.articleBody :global([data-article-viewer] p) {
-  margin: 1.35em 0;
-}
-
-.articleBody :global([data-article-viewer] h1),
-.articleBody :global([data-article-viewer] h2),
-.articleBody :global([data-article-viewer] h3),
-.articleBody :global([data-article-viewer] h4) {
-  margin-top: 2.25em;
-  color: var(--default-label);
-  letter-spacing: -0.035em;
 }
 
 .articleBody :global([data-article-viewer] blockquote) {
   margin: 2rem 0;
-  padding: 1rem 1.25rem;
+  padding: 0.375em 1em;
   color: var(--default-secondary-label);
   border-left: 2px solid var(--default-primary);
   background: var(--default-fill);
@@ -177,7 +163,6 @@
 
   .articleBody :global([data-article-viewer]) {
     font-size: 1rem;
-    line-height: 1.85;
   }
 }
 
