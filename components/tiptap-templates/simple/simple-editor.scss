@@ -50,10 +50,6 @@ body,
   background: transparent;
 }
 
-.tiptap.ProseMirror {
-  font-family: "DM Sans", sans-serif;
-}
-
 .simple-editor-wrapper {
   width: 100%;
   height: min(60dvh, 48rem);
@@ -108,6 +104,28 @@ body,
   background: var(--tt-bg-color);
   padding: 1.5rem;
   overflow-wrap: anywhere;
+  font-family: Arial, Helvetica, 'Apple SD Gothic Neo', 'Pretendard', sans-serif;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.65;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor p:not(td p):not(th p) {
+  line-height: 1.65;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor p:not(:first-child):not(td p):not(th p) {
+  margin-top: 0.75em;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor :is(h1, h2, h3, h4) {
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+  margin: 1.4em 0 0.5em;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor > :first-child {
+  margin-top: 0;
 }
 
 .dark .simple-editor-content {
