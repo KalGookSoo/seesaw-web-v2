@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/toast';
 import { ArticleEditor } from '@/components/articles/article-editor';
 import { Confirm } from '@/components/ui/confirm';
 import { DropdownSelect } from '@/components/ui/dropdown-select';
+import { AddressSearchModal } from '@/components/articles/address-search-modal';
 
 type InlineFile = Readonly<{
   file: File;
@@ -54,6 +55,7 @@ export function ScheduleForm({
   const [dtStart, setDtStart] = useState(toDateTimeLocal(initialEvent?.dtStart));
   const [dtEnd, setDtEnd] = useState(toDateTimeLocal(initialEvent?.dtEnd));
   const [location, setLocation] = useState(initialEvent?.location ?? '');
+  const [addressSearchOpen, setAddressSearchOpen] = useState(false);
   const [locationDetail, setLocationDetail] = useState(initialEvent?.locationDetail ?? '');
   const [status, setStatus] = useState<EventStatus>(initialEvent?.status ?? 'CONFIRMED');
   const [content, setContent] = useState(initialEvent?.description ?? initialEvent?.article?.content ?? '');
@@ -158,7 +160,7 @@ export function ScheduleForm({
           <div className="mt-6 grid gap-4 border-t pt-5 sm:grid-cols-2">
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-start">시작 일시<input id="schedule-start" className="form-control mt-2 text-base" type="datetime-local" value={dtStart} onChange={(event) => setDtStart(event.target.value)} required /></label>
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-end">종료 일시<input id="schedule-end" className="form-control mt-2 text-base" type="datetime-local" value={dtEnd} onChange={(event) => setDtEnd(event.target.value)} required /></label>
-            <label className="text-default-label text-sm font-medium" htmlFor="schedule-location">장소<input id="schedule-location" className="form-control mt-2 text-base" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="장소를 입력하세요" /></label>
+            <div className="min-w-0"><label className="text-default-label text-sm font-medium" htmlFor="schedule-location">장소</label><div className="mt-2 flex gap-2"><input id="schedule-location" className="form-control min-w-0 flex-1 text-base" value={location} readOnly placeholder="주소를 검색해 선택하세요" /><button className="border-default-separator text-default-label hover:bg-default-fill shrink-0 border px-4 text-sm font-semibold" type="button" onClick={() => setAddressSearchOpen(true)}>주소 검색</button>{location ? <button className="border-default-separator text-default-secondary-label hover:bg-default-fill shrink-0 border px-3 text-sm" type="button" onClick={() => setLocation('')} aria-label="장소 지우기">지우기</button> : null}</div></div>
             <label className="text-default-label text-sm font-medium" htmlFor="schedule-location-detail">상세 장소<input id="schedule-location-detail" className="form-control mt-2 text-base" value={locationDetail} onChange={(event) => setLocationDetail(event.target.value)} maxLength={255} placeholder="층, 호수 등 상세 장소를 입력하세요" /></label>
             <label className="text-default-label text-sm font-medium">상태<DropdownSelect className="mt-2" options={EVENT_STATUSES} value={status} onValueChange={(value) => setStatus(value as EventStatus)} /></label>
           </div>
@@ -200,6 +202,7 @@ export function ScheduleForm({
       >
         삭제한 첨부파일은 복구할 수 없습니다.
       </Confirm>
+      <AddressSearchModal open={addressSearchOpen} onClose={() => setAddressSearchOpen(false)} onSelect={setLocation} />
     </form>
   );
 }
