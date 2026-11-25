@@ -109,15 +109,6 @@
 
 .articleBody :global([data-article-viewer]) {
   color: var(--default-label);
-  font-size: 1.05rem;
-}
-
-.articleBody :global([data-article-viewer] blockquote) {
-  margin: 0 0 1em;
-  padding: 0.375em 1em;
-  color: var(--default-secondary-label);
-  border-left: 2px solid var(--default-primary);
-  background: var(--default-fill);
 }
 
 .articleBody :global([data-article-viewer] a) {
@@ -153,9 +144,6 @@
     padding: 2rem 1rem 2.5rem;
   }
 
-  .articleBody :global([data-article-viewer]) {
-    font-size: 1rem;
-  }
 }
 
 @media (min-width: 640px) {
