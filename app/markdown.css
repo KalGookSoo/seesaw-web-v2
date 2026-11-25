@@ -1,0 +1,37 @@
+.markdown-body {
+  --fgColor-default: var(--default-label);
+  --fgColor-muted: var(--default-secondary-label);
+  --fgColor-accent: var(--default-primary);
+  --bgColor-default: transparent;
+  --bgColor-muted: var(--default-fill);
+  --bgColor-neutral-muted: var(--default-fill);
+  --borderColor-default: var(--default-separator);
+  --borderColor-muted: var(--default-separator);
+  color-scheme: inherit;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body video {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body ul ul {
+  list-style-type: circle;
+}
+
+.markdown-body ul ul ul {
+  list-style-type: square;
+}
+
+.markdown-body li > p:only-child {
+  margin: 0;
+}

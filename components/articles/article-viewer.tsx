@@ -66,7 +66,7 @@ export function ArticleViewer({
   return (
     <div
       ref={viewerRef}
-      className={`${styles.viewer} ${variant === 'text' ? styles.textOnly : ''}`}
+      className={`markdown-body ${styles.viewer} ${variant === 'text' ? styles.textOnly : ''}`}
       data-article-viewer
       dangerouslySetInnerHTML={{ __html: framedContent }}
     />

@@ -29,17 +29,6 @@
   outline: none;
   caret-color: var(--tt-cursor-color);
 
-  // Paragraph spacing
-  p:not(:first-child):not(td p):not(th p) {
-    margin-top: 20px;
-  }
-
-  p:not(td p):not(th p) {
-    font-size: 1rem;
-    line-height: 1.6;
-    font-weight: normal;
-  }
-
   // Selection styles
   &:not(.readonly):not(.ProseMirror-hideselection) {
     ::selection {
@@ -135,16 +124,6 @@
   width: 1.25em;
   height: 1.25em;
   cursor: text;
-}
-
-/* =====================
-     LINKS
-     ===================== */
-.tiptap.ProseMirror {
-  a {
-    color: var(--link-text-color);
-    text-decoration: underline;
-  }
 }
 
 /* =====================

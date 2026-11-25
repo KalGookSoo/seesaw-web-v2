@@ -13,6 +13,8 @@ import { SiteContextProvider } from '@/app/site-context-provider';
 import { ToastProvider } from '@/components/ui/toast';
 
 import './globals.css';
+import 'github-markdown-css/github-markdown.css';
+import './markdown.css';
 
 const plexMono = IBM_Plex_Mono({
   variable: '--font-plex-mono',

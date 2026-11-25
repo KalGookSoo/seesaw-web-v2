@@ -111,10 +111,6 @@
   color: var(--default-label);
 }
 
-.articleBody :global([data-article-viewer] a) {
-  color: var(--default-primary);
-}
-
 @media (max-width: 767px) {
   .shell {
     padding-top: 1.5rem;
