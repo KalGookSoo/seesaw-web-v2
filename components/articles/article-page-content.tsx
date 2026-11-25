@@ -541,7 +541,7 @@ export function ArticlePageContent({
         </header>
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-b py-4" style={{ borderColor: 'var(--editorial-line-soft)' }}>
-          <ArticleListActions categoryId={search.categoryId} categoryType={search.categoryType ?? category.type ?? 'BOARD'} mineHref={buildArticlesHref(search, { keyField: 'createdBy', keyWord: '', page: 0 })} className={controlClassName} />
+          <ArticleListActions categoryId={search.categoryId} categoryType={search.categoryType ?? category.type ?? 'BOARD'} className={controlClassName} />
           <ViewSwitcher search={search} scheduleView={scheduleView} viewType={viewType} />
         </div>
 

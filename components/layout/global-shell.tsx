@@ -1059,6 +1059,10 @@ export function GlobalShell({
               </div>
             </section>
 
+            <Link href="/activity" onClick={() => setMyPageOpen(false)} className="border-default-separator hover:bg-default-fill flex items-center justify-between border px-4 py-4 text-sm font-semibold transition-colors">
+              내 활동 이력 <span aria-hidden>→</span>
+            </Link>
+
             <section className="space-y-3">
               <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
                 <Clock size={16} aria-hidden />
