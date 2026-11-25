@@ -2,7 +2,6 @@
 
 import { CalendarPlus, Copy, Share2 } from 'lucide-react';
 import type { VEventResponse } from '@/types/event';
-import { formatEventLocation } from '@/lib/event-location';
 import { createEventCalendar } from '@/lib/event-calendar';
 import { useToast } from '@/components/ui/toast';
 
@@ -37,15 +36,6 @@ export function ScheduleDetailActions({ event, canonicalUrl }: Readonly<{ event:
     }
   }
 
-  async function copyLocation() {
-    try {
-      await navigator.clipboard.writeText(formatEventLocation(event.location, event.locationDetail));
-      showToast('장소를 복사했습니다.', 'success');
-    } catch {
-      showToast('장소를 복사하지 못했습니다.', 'error');
-    }
-  }
-
   return (
     <div className="flex flex-wrap gap-2">
       <button className="bg-default-primary text-default-primary-contrast hover:bg-default-primary-muted inline-flex min-h-10 items-center gap-2 px-4 text-sm font-semibold transition" type="button" onClick={download}>
@@ -54,7 +44,21 @@ export function ScheduleDetailActions({ event, canonicalUrl }: Readonly<{ event:
       <button className="border-default-separator text-default-label hover:bg-default-fill inline-flex min-h-10 items-center gap-2 border px-4 text-sm font-semibold transition" type="button" onClick={share}>
         <Share2 aria-hidden className="size-4" /> 일정 공유
       </button>
-      {formatEventLocation(event.location, event.locationDetail) ? <button className="border-default-separator text-default-label hover:bg-default-fill inline-flex min-h-10 items-center gap-2 border px-4 text-sm font-semibold transition" type="button" onClick={copyLocation}><Copy aria-hidden className="size-4" /> 장소 복사</button> : null}
     </div>
   );
+}
+
+export function ScheduleLocationCopy({ location }: Readonly<{ location: string }>) {
+  const { showToast } = useToast();
+
+  async function copyLocation() {
+    try {
+      await navigator.clipboard.writeText(location);
+      showToast('장소를 복사했습니다.', 'success');
+    } catch {
+      showToast('장소를 복사하지 못했습니다.', 'error');
+    }
+  }
+
+  return <button className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label inline-flex min-h-10 shrink-0 items-center gap-2 border px-3 text-sm font-semibold transition" type="button" onClick={copyLocation}><Copy aria-hidden className="size-4" /> 장소 복사</button>;
 }
