@@ -73,17 +73,20 @@ function eventHref(event: VEventResponse): string | null {
 function EventRow({ event }: Readonly<{ event: VEventResponse }>) {
   const href = eventHref(event);
   const content = (
-    <div className="group border-default-separator bg-default-surface flex gap-3 border-b px-4 py-4 last:border-b-0">
-      <div className="text-default-tertiary-label flex w-16 shrink-0 flex-col gap-1 text-xs">
-        <span className="inline-flex items-center gap-1"><Clock3 className="size-3.5" />{formatTime(event.dtStart)}</span>
-        {event.location ? <span className="inline-flex items-center gap-1 truncate"><MapPin className="size-3.5" />{event.location}</span> : null}
-      </div>
-      <div className="min-w-0">
-        <p className="text-default-label group-hover:text-default-secondary-label line-clamp-2 text-sm font-semibold transition-colors">
-          {event.title ?? '제목 없는 일정'}
+    <div className="group border-default-separator bg-default-surface border-b px-4 py-4 last:border-b-0">
+      <p className="text-default-tertiary-label flex items-center gap-1.5 text-xs">
+        <Clock3 aria-hidden className="size-3.5 shrink-0" />{formatTime(event.dtStart)}
+      </p>
+      <p className="text-default-label group-hover:text-default-secondary-label mt-2 break-words text-sm font-semibold transition-colors">
+        {event.title ?? '제목 없는 일정'}
+      </p>
+      {event.statusDescription ? <p className="text-default-tertiary-label mt-1 text-xs">{event.statusDescription}</p> : null}
+      {event.location ? (
+        <p className="text-default-secondary-label mt-2 flex min-w-0 items-start gap-1.5 text-xs leading-5">
+          <MapPin aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+          <span className="min-w-0 [overflow-wrap:anywhere]">{event.location}</span>
         </p>
-        {event.statusDescription ? <p className="text-default-tertiary-label mt-1 text-xs">{event.statusDescription}</p> : null}
-      </div>
+      ) : null}
     </div>
   );
 
