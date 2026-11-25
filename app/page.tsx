@@ -132,7 +132,7 @@ export default async function Home() {
                     <CategoryAnchorLink
                       key={category.id}
                       href={onPage ? `#${category.id}` : toCategoryHref(category)}
-                      className="group flex min-h-14 items-center gap-3 border-r border-b px-4 py-3 transition-colors hover:bg-[#eeeeeb] hover:text-[var(--editorial-ink)]"
+                      className="group flex min-h-14 items-center gap-3 border-r border-b border-[var(--editorial-line-soft)] px-4 py-3 transition-colors hover:bg-[#eeeeeb] hover:text-[var(--editorial-ink)]"
                     >
                       <span className={`${editorial.label} shrink-0 text-[var(--editorial-ink-muted)] group-hover:text-[var(--editorial-primary)]`}>{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0 flex-1 text-base font-bold tracking-tight">{category.name}</span>
