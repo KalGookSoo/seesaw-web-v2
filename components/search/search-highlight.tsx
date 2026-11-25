@@ -30,7 +30,7 @@ export function SearchHighlight({ text, keyword }: SearchHighlightProps) {
     <>
       {matches.map((match, index) => match.highlighted ? (
         <mark
-          className="bg-[var(--editorial-primary-soft)] px-0.5 font-semibold text-[var(--editorial-ink)]"
+          className="bg-[#f2d58e] px-0.5 font-semibold text-[#35280f]"
           key={`${match.text}-${index}`}
         >
           {match.text}
