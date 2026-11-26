@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import { APPLICATION_NAME } from '@/lib/application-constants.ts';
 import { NAVIGATION_COLLAPSED_COOKIE_KEY, NAVIGATION_POSITION_COOKIE_KEY } from '@/lib/navigation-preferences';
 import { getSiteContext } from '@/lib/site';
+import { siteIconUrl } from '@/lib/site-icon';
 import { createSiteContext } from '@/lib/site-context';
 import { GlobalShell } from '@/components/layout/global-shell';
 import { ServiceWorkerRegistration } from '@/app/service-worker-registration';
@@ -32,6 +33,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(`https://${domainName}`),
     title: { default: name, template: `%s | ${name}` },
     description,
+    icons: {
+      icon: [{ url: siteIconUrl(site, 32), type: 'image/png', sizes: '32x32' }],
+      apple: [{ url: siteIconUrl(site, 180), type: 'image/png', sizes: '180x180' }]
+    },
     manifest: '/manifest.json',
     robots: site.searchEngineExposed === false ? { index: false, follow: false } : undefined
   };

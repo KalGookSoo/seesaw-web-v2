@@ -1,5 +1,6 @@
 import { APPLICATION_NAME } from '@/lib/application-constants.ts';
-import { getCurrentSite } from '@/lib/site';
+import { getSiteContext } from '@/lib/site';
+import { siteIconUrl } from '@/lib/site-icon';
 
 const MANIFEST_MEDIA_TYPE = 'application/manifest+json';
 const DEFAULT_THEME_COLOR = '#000000';
@@ -14,7 +15,7 @@ function getColor(value: string | null | undefined, fallback: string): string {
 const domainName = `${APPLICATION_NAME}.seesaw.me.kr`;
 
 export async function GET() {
-  const site = await getCurrentSite(domainName);
+  const site = await getSiteContext(domainName);
   const manifest = {
     id: site.id,
     name: site.name,
@@ -27,20 +28,20 @@ export async function GET() {
     theme_color: getColor(site.themeColor, DEFAULT_THEME_COLOR),
     icons: [
       {
-        src: '/favicon.png',
-        sizes: '320x320',
-        type: 'image/png'
-      },
-      {
-        src: '/pwa-icon-192.png',
+        src: siteIconUrl(site, 192),
         sizes: '192x192',
         type: 'image/png'
       },
       {
-        src: '/pwa-icon-512.png',
+        src: siteIconUrl(site, 512),
+        sizes: '512x512',
+        type: 'image/png'
+      },
+      {
+        src: siteIconUrl(site, 512, true),
         sizes: '512x512',
         type: 'image/png',
-        purpose: 'any maskable'
+        purpose: 'maskable'
       }
     ]
   };
