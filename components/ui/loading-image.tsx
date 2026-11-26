@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 
-type MonochromeImageProps = Readonly<{
+type LoadingImageProps = Readonly<{
   alt: string;
   className?: string;
   fallbackLabel?: string;
@@ -11,7 +11,7 @@ type MonochromeImageProps = Readonly<{
   src: string;
 }>;
 
-export function MonochromeImageFallback({
+export function LoadingImageFallback({
   className = '',
   label = 'IMAGE / UNAVAILABLE'
 }: Readonly<{ className?: string; label?: string }>) {
@@ -23,13 +23,20 @@ export function MonochromeImageFallback({
   );
 }
 
-export function MonochromeImage({
+export function LoadingImage({
+  src,
+  ...props
+}: LoadingImageProps) {
+  return <LoadingImageContent key={src} src={src} {...props} />;
+}
+
+function LoadingImageContent({
   alt,
   className = '',
   fallbackLabel = 'IMAGE / UNAVAILABLE',
   imageClassName = '',
   src
-}: MonochromeImageProps) {
+}: LoadingImageProps) {
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
   return (
@@ -38,10 +45,15 @@ export function MonochromeImage({
         <span className="border-default-fill-strong border-t-default-label absolute left-1/2 top-1/2 z-10 size-7 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2" aria-label="이미지 불러오는 중" />
       ) : null}
       {status === 'error' ? (
-        <MonochromeImageFallback label={fallbackLabel} />
+        <LoadingImageFallback label={fallbackLabel} />
       ) : (
         <img
           alt={alt}
+          ref={(image) => {
+            if (image?.complete) {
+              setStatus(image.naturalWidth > 0 ? 'loaded' : 'error');
+            }
+          }}
           className={`size-full transition-[opacity,filter] duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'} ${imageClassName}`}
           src={src}
           onError={() => setStatus('error')}

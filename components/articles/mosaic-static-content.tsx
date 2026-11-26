@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { LoadingImage } from '@/components/ui/loading-image';
 import { ContentContainer } from '@/components/layout/content-container';
 import styles from './mosaic-static-content.module.css';
 
@@ -175,7 +175,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
                       onClick={() => setSelectedGalleryIndex(index)}
                     >
                       <span className={styles.galleryImage}>
-                        <MonochromeImage className="size-full" imageClassName="object-cover" src={image.src} alt={image.alt} />
+                        <LoadingImage className="size-full" imageClassName="object-cover" src={image.src} alt={image.alt} />
                       </span>
                       <span className={styles.galleryCaption}>
                         <span>{String(image.chapterIndex + 1).padStart(2, '0')} · {String(index + 1).padStart(2, '0')}</span>
@@ -219,7 +219,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
               >
                 {images.find((image) => image.articleId === article.id) ? (
                   <div className={styles.columnImage}>
-                    <MonochromeImage
+                    <LoadingImage
                       className="size-full"
                       imageClassName="object-cover"
                       src={images.find((image) => image.articleId === article.id)?.src ?? ''}
@@ -254,7 +254,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
               <button className={styles.modalClose} type="button" aria-label="갤러리 닫기" onClick={() => setSelectedGalleryIndex(null)}><X /></button>
             </div>
             <div className={styles.modalImage}>
-              <MonochromeImage className="size-full" imageClassName="object-contain" src={selectedGalleryImage.src} alt={selectedGalleryImage.alt} />
+              <LoadingImage className="size-full" imageClassName="object-contain" src={selectedGalleryImage.src} alt={selectedGalleryImage.alt} />
             </div>
             <div className={styles.modalCaption}>
               <div>
@@ -282,7 +282,7 @@ export function MosaicStaticContent({ articles, categoryName, categoryDescriptio
             </div>
             {images.find((image) => image.articleId === selectedColumn.id) ? (
               <div className={styles.modalArticleImage}>
-                <MonochromeImage
+                <LoadingImage
                   className="size-full"
                   imageClassName="object-cover"
                   src={images.find((image) => image.articleId === selectedColumn.id)?.src ?? ''}

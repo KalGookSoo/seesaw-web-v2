@@ -25,7 +25,7 @@ import { toAttachmentUrl } from '@/lib/home-summary';
 import { ArticleFeed } from '@/components/articles/article-feed';
 import { SearchFieldDropdown } from '@/components/articles/search-field-dropdown';
 import { MagazineStaticContent } from '@/components/articles/magazine-static-content';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { LoadingImage } from '@/components/ui/loading-image';
 import { ScheduleCalendar } from '@/components/articles/schedule-calendar';
 import { ContentContainer } from '@/components/layout/content-container';
 import { ArticleListActions } from '@/components/articles/article-list-actions';
@@ -344,7 +344,7 @@ function ArchiveTimelineEntry({
           <ArticleMeta article={article} showViews={!compact} />
         </div>
         {thumbnail ? (
-          <MonochromeImage
+          <LoadingImage
             className={`${compact ? 'aspect-square' : 'aspect-[4/3]'} w-full`}
             imageClassName="image-filter-transition object-cover"
             src={toAttachmentUrl(thumbnail.id)}

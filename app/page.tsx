@@ -6,7 +6,7 @@ import { getSiteContext } from '@/lib/site';
 import { CategoryAnchorLink } from '@/components/home/category-anchor-link';
 import { HomeSummarySections } from '@/components/home/home-summary-sections';
 import { ContentContainer } from '@/components/layout/content-container';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { LoadingImage } from '@/components/ui/loading-image';
 import editorial from './style-guide/editorial/editorial.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -64,7 +64,7 @@ export default async function Home() {
             <header className="flex items-start justify-between gap-6">
               <div className="flex min-w-0 items-center gap-3">
                 {site.profileImage ? (
-                  <MonochromeImage className="size-10 shrink-0 border" imageClassName="object-cover" src={toAttachmentUrl(site.profileImage.id)} alt="" fallbackLabel="PROFILE / UNAVAILABLE" />
+                  <LoadingImage className="size-10 shrink-0 border" imageClassName="object-cover" src={toAttachmentUrl(site.profileImage.id)} alt="" fallbackLabel="PROFILE / UNAVAILABLE" />
                 ) : (
                   <span className="flex size-10 shrink-0 items-center justify-center border text-lg font-semibold">{site.name?.slice(0, 1)}</span>
                 )}

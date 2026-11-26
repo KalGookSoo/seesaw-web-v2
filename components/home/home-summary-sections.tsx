@@ -16,7 +16,7 @@ import {
   fetchRecentArticles,
   toAttachmentUrl
 } from '@/lib/home-summary';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { LoadingImage } from '@/components/ui/loading-image';
 import editorial from '@/app/style-guide/editorial/editorial.module.css';
 
 type LoadState<T> =
@@ -200,7 +200,7 @@ function MagazineArticleTile({
     >
       {thumbnail ? (
         <div className="absolute inset-0">
-          <MonochromeImage
+          <LoadingImage
             className="size-full"
             imageClassName="image-filter-transition object-cover"
             src={toAttachmentUrl(thumbnail.id)}

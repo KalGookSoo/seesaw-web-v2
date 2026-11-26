@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 
 import type { ArticleResponse } from '@/types/article';
 import { ArticleViewer } from '@/components/articles/article-viewer';
-import { MonochromeImage } from '@/components/ui/monochrome-image';
+import { LoadingImage } from '@/components/ui/loading-image';
 import { ContentContainer } from '@/components/layout/content-container';
 import styles from './mosaic-static-content.module.css';
 
@@ -111,7 +111,7 @@ export function MagazineStaticContent({ articles, categoryName, categoryDescript
                   <div className={`${styles.magazineVisual} ${images.length > 1 ? styles.magazineCollage : ''}`}>
                     {images.slice(0, 3).map((image) => (
                       <div className={styles.magazineImage} key={image.id}>
-                        <MonochromeImage className="size-full" imageClassName="object-cover" src={image.src} alt={image.alt} />
+                        <LoadingImage className="size-full" imageClassName="object-cover" src={image.src} alt={image.alt} />
                       </div>
                     ))}
                   </div>
@@ -148,7 +148,7 @@ export function MagazineStaticContent({ articles, categoryName, categoryDescript
               <div className={styles.magazineModalImages}>
                 {(articleImages.get(selectedArticle.id) ?? []).map((image) => (
                   <div key={image.id}>
-                    <MonochromeImage className="size-full" imageClassName="object-contain" src={image.src} alt={image.alt} />
+                    <LoadingImage className="size-full" imageClassName="object-contain" src={image.src} alt={image.alt} />
                   </div>
                 ))}
               </div>
