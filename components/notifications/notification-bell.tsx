@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { autoUpdate, flip, FloatingPortal, offset, shift, size, useFloating } from '@floating-ui/react';
-import { Bell, CheckCheck, Loader2 } from 'lucide-react';
+import { Bell, CheckCheck, Loader2, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NotificationResponse } from '@/types/notification';
@@ -195,15 +195,25 @@ export function NotificationBell({
               <p className="text-default-primary text-[0.65rem] font-bold tracking-[0.18em] uppercase">Activity</p>
               <h2 className="text-default-label mt-1 text-lg font-bold tracking-tight">알림</h2>
             </div>
-            <button
-              className="text-default-secondary-label hover:text-default-primary inline-flex items-center gap-1 text-xs font-semibold transition disabled:opacity-40"
-              disabled={count < 1}
-              type="button"
-              onClick={() => void markAll()}
-            >
-              <CheckCheck aria-hidden className="size-3.5" />
-              모두 읽음
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                className="text-default-secondary-label hover:text-default-primary inline-flex items-center gap-1 text-xs font-semibold transition disabled:opacity-40"
+                disabled={count < 1}
+                type="button"
+                onClick={() => void markAll()}
+              >
+                <CheckCheck aria-hidden className="size-3.5" />
+                모두 읽음
+              </button>
+              <Link
+                aria-label="알림 설정"
+                className="text-default-secondary-label hover:text-default-primary inline-flex size-7 items-center justify-center transition"
+                href="/notifications/settings"
+                onClick={() => setOpen(false)}
+              >
+                <Settings aria-hidden className="size-4" />
+              </Link>
+            </div>
           </header>
 
           <div className="min-h-0 max-h-[min(28rem,60vh)] overflow-y-auto">

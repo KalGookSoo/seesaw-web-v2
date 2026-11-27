@@ -6,7 +6,6 @@ import Link from 'next/link';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import {
-  Bell,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -1117,20 +1116,6 @@ export function GlobalShell({
               </div>
             </section>
 
-            <section className="space-y-3">
-              <div className="text-default-label flex items-center gap-3 text-sm font-semibold">
-                <Bell size={16} aria-hidden />
-                <span>알림 설정</span>
-              </div>
-              <Link
-                className="border-default-separator text-default-secondary-label hover:bg-default-fill hover:text-default-label flex items-center justify-between gap-4 border px-4 py-4 text-sm transition"
-                href="/notifications/settings"
-                onClick={() => setMyPageOpen(false)}
-              >
-                <span>알림함에서 유형별 수신 채널을 관리합니다.</span>
-                <ChevronRight aria-hidden className="size-4 shrink-0" />
-              </Link>
-            </section>
           </div>
         ) : null}
       </Modal>
