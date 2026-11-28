@@ -42,21 +42,40 @@ const ALLOWED_TAGS = [
 ];
 
 const ALLOWED_ATTRIBUTES = {
+  '*': ['style'],
   a: ['href'],
   img: ['src', 'alt'],
   video: ['src', 'controls', 'aria-label'],
-  span: ['style'],
   input: ['type', 'checked', 'disabled'],
   code: ['class']
 };
 
-const CSS_LENGTH = /^[\d.]+(px|em|rem|%|pt)?$/;
+const LENGTH = '(?:0|[0-9]{1,3}(?:\\.[0-9]+)?(?:px|pt)|[0-9](?:\\.[0-9]+)?(?:em|rem)|(?:100|[0-9]{1,2})(?:\\.[0-9]+)?%)';
+const COLOR = '(?:#[0-9a-fA-F]{3,8}|[a-zA-Z]{1,20}|rgba?\\([0-9.,%\\s]+\\))';
+const BOX = `${LENGTH}(?:\\s+${LENGTH}){0,3}`;
+const css = (value: string) => new RegExp(`^${value}$`);
 
-const ALLOWED_STYLES = {
+export const ALLOWED_ARTICLE_STYLES = {
   '*': {
-    'font-size': [CSS_LENGTH],
-    'line-height': [CSS_LENGTH],
-    'text-align': [/^(left|right|center|justify)$/]
+    color: [css(COLOR)],
+    'background-color': [css(COLOR)],
+    'font-size': [css(LENGTH)],
+    'line-height': [css(`(?:[0-9](?:\\.[0-9]+)?|${LENGTH})`)],
+    'font-weight': [/^(?:normal|bold|[1-9]00)$/],
+    'font-style': [/^(?:normal|italic)$/],
+    'text-align': [/^(?:left|right|center|justify)$/],
+    'text-decoration': [/^(?:none|underline|line-through)$/],
+    margin: [css(`(?:auto|${BOX})`)],
+    'margin-top': [css(LENGTH)],
+    'margin-bottom': [css(LENGTH)],
+    padding: [css(BOX)],
+    'padding-bottom': [css(LENGTH)],
+    'border-radius': [css(BOX)],
+    border: [css(`${LENGTH}\\s+(?:solid|dashed|dotted)\\s+${COLOR}`)],
+    'border-left': [css(`${LENGTH}\\s+(?:solid|dashed|dotted)\\s+${COLOR}`)],
+    'border-bottom': [css(`${LENGTH}\\s+(?:solid|dashed|dotted)\\s+${COLOR}`)],
+    'max-width': [css(LENGTH)],
+    width: [css(LENGTH)]
   }
 };
 
@@ -72,7 +91,7 @@ export function sanitizeArticleHtml(html: string): string {
     allowedClasses: {
       code: ['language-*']
     },
-    allowedStyles: ALLOWED_STYLES,
+    allowedStyles: ALLOWED_ARTICLE_STYLES,
     allowedSchemes: ['http', 'https'],
     allowProtocolRelative: false,
     disallowedTagsMode: 'discard'

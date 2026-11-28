@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 import { mergeAttributes, Node } from "@tiptap/core"
 import sanitizeHtml from "sanitize-html"
+import { ALLOWED_ARTICLE_STYLES } from "@/lib/sanitize-article-html"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -499,6 +500,7 @@ export function SimpleEditor({
           th: ["colspan", "rowspan"],
           video: ["src", "controls", "poster"]
         },
+        allowedStyles: ALLOWED_ARTICLE_STYLES,
         allowedSchemes: ["http", "https", "mailto"],
         allowedSchemesByTag: {
           a: ["http", "https", "mailto"],
